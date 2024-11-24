@@ -39,11 +39,12 @@ class LoginController extends Controller
 
             $user = Auth::user();
             $role = strtolower($user->role->name);
+            
             return response()->json([
                 'status' => true,
-                'message' => 'Login success.',
-            ], 200);
-            return redirect()->route("{$role}.dashboard")->with('toastr', "Welcome, {$user->username}");
+                'message' => "Welcome, {$user->username}",
+                'redirect_url' => route("{$role}.dashboard"),
+            ]);
         }
 
         return response()->json([
