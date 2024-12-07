@@ -10,18 +10,13 @@
                     <p class="text-muted">Masuk untuk memulai session di {{ config('app.name') }}.</p>
                 </div>
                 <div class="p-2 mt-4">
-                    <form method="POST" action="{{ route('auth.login') }}">
+                    <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" name="username" class="form-control" id="username" placeholder="Enter username">
-                            <span class="mt-1 message-error text-danger"></span>
+                            <x-input-field label="Username" type="text" name="username" id="username" />
                         </div>
                         
                         <div class="mb-3">
-                            <div class="float-end">
-                                <a href="#" class="text-muted">Lupa password?</a>
-                            </div>
                             <label class="form-label" for="password-input">Password</label>
                             <div class="mb-3 position-relative auth-pass-inputgroup">
                                 <input type="password" name="password" class="form-control pe-5 password-input" placeholder="Enter password" id="password">
@@ -33,9 +28,7 @@
                         </div>                        
 
                         <div class="mt-4">
-                            <button class="btn btn-primary w-100" type="submit">
-                                <span class="button-text">Submit</span>
-                            </button>
+                            <x-button type="submit" class="btn btn-primary w-100" label="Submit" />
                         </div>
                     </form>
                 </div>

@@ -1,0 +1,100 @@
+Table role {  
+  id INT [pk]  
+  name VARCHAR(45)  
+}  
+
+Table bimbingan {  
+  id INT [pk]  
+  mahasiswa_id INT  
+  dosen_id INT  
+  status VARCHAR(45)  
+}  
+
+Table jurusan {  
+  id INT [pk]  
+  name VARCHAR(45)  
+}  
+
+Table users {  
+  id INT [pk]  
+  username VARCHAR(45)  
+  password VARCHAR(45)  
+  email VARCHAR(45)  
+  phone VARCHAR(45)  
+  profile_image VARCHAR(45)  
+  role_id INT   
+}  
+
+Table dosen {  
+  id INT [pk]  
+  nip VARCHAR(45)  
+  name VARCHAR(45)  
+  email VARCHAR(45)  
+  telepon VARCHAR(45)  
+  jabatan VARCHAR(45)  
+}  
+
+Table ujian_proposal {  
+  id INT [pk]  
+  dosen_id INT  
+}  
+
+Table proposal {  
+  id INT [pk]  
+  judul VARCHAR(45)  
+  komentar VARCHAR(45)  
+  nilai VARCHAR(45)  
+  tugas_akhir_id INT  
+  periode_proposal_id INT  
+  tanggal_pengajuan VARCHAR(45)  
+  mahasiswa_id INT  
+}  
+
+Table tugas_akhir {  
+  id INT [pk]  
+  judul VARCHAR(45)  
+  berkas VARCHAR(45)  
+  status VARCHAR(45)  
+  mahasiswa_id INT  
+  pembimbing1_id INT  
+  pembimbing2_id INT  
+  penguji1_id INT  
+  penguji2_id INT  
+  tanggal_pengajuan VARCHAR(45)  
+}  
+
+Table periode_proposal {  
+  id INT [pk]  
+  name VARCHAR(45)  
+  tahun_ujian YEAR  
+  expired_at VARCHAR(45)  
+}  
+
+Table unsur_penilaian {  
+  id INT [pk]  
+  nama VARCHAR(255)  
+  bobot DECIMAL(5,2)  
+}  
+
+Table penilaian {  
+  id INT [pk]  
+  unsur_penilaian_id INT  
+  skor INT  
+  proposal_id INT // Mengacu pada tabel proposal  
+  tugas_akhir_id INT // Mengacu pada tabel tugas_akhir  
+}  
+
+// Relationships  
+Ref: penilaian.unsur_penilaian_id > unsur_penilaian.id  
+Ref: penilaian.proposal_id > proposal.id  
+Ref: penilaian.tugas_akhir_id > tugas_akhir.id
+
+// Relationships  
+Ref: users.role_id > role.id
+Ref: bimbingan.mahasiswa_id > users.id  
+Ref: bimbingan.dosen_id > dosen.id  
+Ref: proposal.tugas_akhir_id > tugas_akhir.id  
+Ref: proposal.periode_proposal_id > periode_proposal.id  
+Ref: proposal.mahasiswa_id > users.id  
+Ref: ujian_proposal.dosen_id > dosen.id
+Ref: penilaian.unsur_penilaian_id > unsur_penilaian.id

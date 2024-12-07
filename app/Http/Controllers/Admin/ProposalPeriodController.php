@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Models\PeriodeProposal;
+use App\Models\ProposalPeriod;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 
-class PeriodeProposalController extends Controller
+class ProposalPeriodController extends Controller
 {
     /**
      * Display the periode proposal view.
@@ -16,7 +16,7 @@ class PeriodeProposalController extends Controller
      */
     public function index()
     {
-        return view('admin.periode_proposal');
+        return view('admin.proposal.period');
     }
 
     /**
@@ -38,7 +38,7 @@ class PeriodeProposalController extends Controller
                 'end_date' => 'required|date|after_or_equal:start_date',
             ]);
         
-            PeriodeProposal::create($request->all());
+            ProposalPeriod::create($request->all());
         
             return response()->json([
                 'status' => true,
@@ -68,22 +68,24 @@ class PeriodeProposalController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = PeriodeProposal::select(['id', 'name', 'start_date', 'end_date', 'is_active']);
-                return DataTables::of($data)
-                    ->addColumn('no', function ($row) {
-                        static $counter = 0;
-                        return ++$counter;
-                    })
-                    ->editColumn('is_active', function ($row) {
-                        return $row->is_active ? 'Active' : 'Inactive';
-                    })
-                    ->addColumn('action', function ($row) {
-                        return '
-                            <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Edit</button>
-                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>
-                        ';
-                    })
-                    ->rawColumns(['action'])
+                $data = ProposalPeriod::select(['id', 'name', 'start_date', 'end_date', 'is_active']);
+                return DataTables::of($data)  
+                    ->addColumn('no', function ($row) {  
+                        static $counter = 0;  
+                        return ++$counter;  
+                    })  
+                    ->editColumn('is_active', function ($row) {  
+                        return $row->is_active   
+                            ? '<span class="badge bg-success">Active</span>'   
+                            : '<span class="badge bg-danger">Inactive</span>';  
+                    })  
+                    ->addColumn('action', function ($row) {  
+                        return '  
+                            <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Edit</button>  
+                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
+                        ';  
+                    })  
+                    ->rawColumns(['action', 'is_active'])
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json([
@@ -107,7 +109,7 @@ class PeriodeProposalController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = PeriodeProposal::findOrFail($id);
+                $data = ProposalPeriod::findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -147,7 +149,7 @@ class PeriodeProposalController extends Controller
                     'end_date' => 'required|date|after_or_equal:start_date',
                 ]);
             
-                $data = PeriodeProposal::findOrFail($id);
+                $data = ProposalPeriod::findOrFail($id);
             
                 $data->update($request->all());
             
@@ -188,7 +190,7 @@ class PeriodeProposalController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = PeriodeProposal::findOrFail($id);
+                $periode = ProposalPeriod::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([

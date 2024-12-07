@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PeriodeProposal extends Model
+class ProposalPeriod extends Model
 {
-    protected $table = 'periode_proposal';
+    protected $table = 'proposal_period';
 
     protected $guarded = [
         'id'

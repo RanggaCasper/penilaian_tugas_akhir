@@ -61,10 +61,10 @@
                             <x-input-field label="Tanggal Berakhir" type="date" name="end_date" id="end_date_update" />
                         </div>
                         <div class="mb-3">
-                            <label for="is_active">Status</label>
+                            <label for="is_active_update">Status</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" name="is_active" type="checkbox" role="switch" id="is_active" checked>
-                                <label class="form-check-label" for="is_active">Aktif</label>
+                                <input class="form-check-input" name="is_active" type="checkbox" role="switch" id="is_active_update" checked>
+                                <label class="form-check-label" for="is_active_update">Aktif</label>
                             </div>
                         </div>
                         <x-button type="submit" class="btn btn-primary" label="Submit" />
@@ -77,12 +77,11 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('assets/js/action.js') }}"></script>
 <script>
     $('#datatables').DataTable({
         processing: true,
         serverSide: false,
-        scrollX: !0,
+        scrollX: true,
         ajax: '{{ route('admin.periode.proposal.get') }}',
         columns: [
             { data: 'no', name: 'no' },
@@ -104,6 +103,7 @@
                 $('#judul_update').val(data.name);
                 $('#start_date_update').val(data.start_date);
                 $('#end_date_update').val(data.end_date);
+                $('#is_active_update').prop('checked', !!data.is_active);
             },
             error: function(error) {
                 console.error(error);
