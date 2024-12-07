@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Periode Ujian Proposal')
+
 @section('content')
     <x-card title="Tambah Periode">
         <form action="{{ route('admin.periode.proposal.store') }}" method="POST">
