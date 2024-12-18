@@ -16,10 +16,16 @@
                 <x-menu-title title="Menu" />
                 @if (auth()->user()->role->name == "Admin")
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('admin.dashboard') }}" active="{{ request()->routeIs('admin.dashboard') }}" />
+                    <x-menu-title title="Mahasiswa" />
+                        <x-navlink icon="ri-user-line" title="Kelola Mahasiswa" href="{{ route('admin.student.index') }}" active="{{ request()->routeIs('admin.student.index') }}" />
+                    <x-menu-title title="Dosen" />
+                        <x-navlink icon="ri-user-line" title="Kelola Dosen" href="{{ route('admin.lecturer.index') }}" active="{{ request()->routeIs('admin.lecturer.index') }}" />
                     <x-menu-title title="Proposal" />
-                    <x-navlink icon="ri-calendar-event-line" title="Periode Ujian Proposal" href="{{ route('admin.periode.proposal.index') }}" active="{{ request()->routeIs('admin.periode.proposal.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Periode Ujian Proposal" href="{{ route('admin.periode.proposal.index') }}" active="{{ request()->routeIs('admin.periode.proposal.index') }}" />
+                    <x-menu-title title="Tugas Akhir" />
+                        <x-navlink icon="ri-calendar-event-line" title="Periode Tugas Akhir" href="{{ route('admin.periode.final_project.index') }}" active="{{ request()->routeIs('admin.periode.final_project.index') }}" />
                     <x-menu-title title="Penilaian" />
-                    <x-navlink icon="ri-calendar-event-line" title="Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.index') }}" />
                 @elseif (auth()->user()->role->name == "User")
                 @endif
             </ul>

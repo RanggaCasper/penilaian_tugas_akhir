@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\FinalProject;
 
 use Illuminate\Http\Request;
-use App\Models\ProposalPeriod;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use App\Models\FinalProject\FinalProjectPeriod;
 
-class ProposalPeriodController extends Controller
+class FinalProjectPeriodController extends Controller
 {
     /**
      * Display the periode proposal view.
@@ -16,7 +16,7 @@ class ProposalPeriodController extends Controller
      */
     public function index()
     {
-        return view('admin.proposal.period');
+        return view('admin.final_project.period');
     }
 
     /**
@@ -38,11 +38,11 @@ class ProposalPeriodController extends Controller
                 'end_date' => 'required|date|after_or_equal:start_date',
             ]);
         
-            ProposalPeriod::create($request->all());
+            FinalProjectPeriod::create($request->all());
         
             return response()->json([
                 'status' => true,
-                'message' => 'Periode Ujian Proposal berhasil ditambahkan',
+                'message' => 'Data berhasil ditambahkan',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -68,7 +68,7 @@ class ProposalPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = ProposalPeriod::select(['id', 'name', 'start_date', 'end_date', 'is_active']);
+                $data = FinalProjectPeriod::select(['id', 'name', 'start_date', 'end_date', 'is_active']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -95,7 +95,7 @@ class ProposalPeriodController extends Controller
             }
         }
 
-        abort(401);
+        abort(403);
     }
 
     /**
@@ -109,7 +109,7 @@ class ProposalPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = ProposalPeriod::findOrFail($id);
+                $data = FinalProjectPeriod::findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -125,7 +125,7 @@ class ProposalPeriodController extends Controller
             }
         }
 
-        abort(401);
+        abort(403);
     }
 
     /**
@@ -149,13 +149,13 @@ class ProposalPeriodController extends Controller
                     'end_date' => 'required|date|after_or_equal:start_date',
                 ]);
             
-                $data = ProposalPeriod::findOrFail($id);
+                $data = FinalProjectPeriod::findOrFail($id);
             
                 $data->update($request->all());
             
                 return response()->json([
                     'status' => true,
-                    'message' => 'Periode Ujian Proposal berhasil diubah',
+                    'message' => 'Data berhasil diubah',
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 return response()->json([
@@ -176,7 +176,7 @@ class ProposalPeriodController extends Controller
             }            
         }
 
-        abort(401);
+        abort(403);
     }
 
     /**
@@ -190,12 +190,12 @@ class ProposalPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = ProposalPeriod::findOrFail($id);
+                $periode = FinalProjectPeriod::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'Periode Ujian Proposal berhasil dihapus',
+                    'message' => 'Data berhasil dihapus',
                 ]);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 return response()->json([
@@ -210,7 +210,6 @@ class ProposalPeriodController extends Controller
             }
         }
 
-        abort(401);
+        abort(403);
     }
-
 }

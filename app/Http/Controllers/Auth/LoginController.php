@@ -2,14 +2,26 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use App\Services\SIONService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Session;
+use GuzzleHttp\Exception\RequestException;
 
 class LoginController extends Controller
 {
+    protected $sion;
+
+    public function __construct(SIONService $sion) {
+        $this->sion = $sion;
+    }
+
     /**
      * Display the login view.
      *
@@ -19,39 +31,85 @@ class LoginController extends Controller
     {
         return view('auth.login');
     }
-
+    
     /**
-     * Handle an incoming authentication request.
+     * Handle an incoming login request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required',
+            'nim' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        $nim = $credentials['nim'];
+        $password = $credentials['password'];
+        $response = $this->sion->getMahasiswaProfile($nim);
 
-            $user = Auth::user();
-            $role = strtolower($user->role->name);
-            
+        try {
+            if ($response) {
+                $user = User::where('nim', $nim)->first();
+
+                if ($user) {
+                    if (is_null($user->password)) {
+                        if ($response['passwSION'] === md5($password)) {
+                            $user->password = bcrypt($password);
+                            $user->save();
+
+                            Auth::login($user, true);
+                            Session::regenerate();
+
+                            return response()->json([
+                                'status' => true,
+                                'message' => "Welcome, {$user->name}",
+                                'redirect_url' => route('user.dashboard'),
+                            ]);
+                        } else {
+                            return response()->json([
+                                'status' => false,
+                                'message' => 'Kredensial yang anda masukan tidak cocok.',
+                            ], 404);
+                        }
+                    } else {
+                        if (Hash::check($password, $user->password)) {
+                            Auth::login($user, true);
+                            Session::regenerate();
+
+                            return response()->json([
+                                'status' => true,
+                                'message' => "Welcome, {$user->name}",
+                                'redirect_url' => route('user.dashboard'),
+                            ]);
+                        } else {
+                            return response()->json([
+                                'status' => false,
+                                'message' => 'Kredensial yang anda masukan tidak cocok.',
+                            ], 404);
+                        }
+                    }
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Kredensial yang anda masukan tidak cocok.',
+                    ], 404);
+                }
+            }
+
             return response()->json([
-                'status' => true,
-                'message' => "Welcome, {$user->username}",
-                'redirect_url' => route("{$role}.dashboard"),
-            ]);
+                'status' => false,
+                'message' => 'Kredensial yang anda masukan tidak cocok.',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'status' => false,
-            'message' => 'The provided credentials do not match our records.',
-        ], 422);
     }
-
+    
     /**
      * Log the user out of the application.
      *
@@ -61,7 +119,6 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

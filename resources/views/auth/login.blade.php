@@ -13,11 +13,11 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="mb-3">
-                            <x-input-field label="Username" type="text" name="username" id="username" />
+                            <x-input-field label="NIM" type="text" name="nim" id="nim" />
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label" for="password-input">Password</label>
+                            <label class="form-label" for="password">Password</label>
                             <div class="mb-3 position-relative auth-pass-inputgroup">
                                 <input type="password" name="password" class="form-control pe-5 password-input" placeholder="Enter password" id="password">
                                 <button class="top-0 btn btn-link position-absolute end-0 text-decoration-none text-muted password-addon" type="button" id="password-addon">

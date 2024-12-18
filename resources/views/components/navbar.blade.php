@@ -44,7 +44,7 @@
             </button>
             <div class="dropdown-menu dropdown-menu-end">
                 <!-- item-->
-                <h6 class="dropdown-header">Hi!, {{ auth()->user()->username }}</h6>
+                <h6 class="dropdown-header">Hi!, {{ auth()->user()->name }}</h6>
                 
                 <form action="{{ route('auth.logout') }}" method="POST">
                     @csrf

@@ -17,40 +17,18 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'username',
-        'email',
-        'password',
-        'role_id',
+    protected $guarded = [
+        'id'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'password' => 'hashed',
+    ];
 
-    /**
-     * Get the user's role.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Roles>
-     */
     public function role()
     {
         return $this->belongsTo(Roles::class);
