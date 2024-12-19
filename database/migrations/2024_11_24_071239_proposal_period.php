@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proposal_period', function (Blueprint $table) {
+        Schema::create('proposal_periods', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('is_active')->default(true);
+            $table->foreignId('generation_id')->constrained('generations')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proposal_period');
+        Schema::dropIfExists('proposal_periods');
     }
 };

@@ -2,11 +2,12 @@
 
 namespace App\Models\FinalProject;
 
+use App\Models\Generation;
 use Illuminate\Database\Eloquent\Model;
 
 class FinalProjectPeriod extends Model
 {
-    protected $table = 'final_project_period';
+    protected $table = 'final_project_periods';
 
     protected $guarded = [
         'id'
@@ -22,5 +23,10 @@ class FinalProjectPeriod extends Model
         return [
             'is_active' => 'boolean',
         ];
+    }
+
+    public function generation()
+    {
+        return $this->belongsTo(Generation::class);
     }
 }

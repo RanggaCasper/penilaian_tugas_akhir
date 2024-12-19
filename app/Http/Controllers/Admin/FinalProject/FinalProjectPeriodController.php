@@ -36,6 +36,7 @@ class FinalProjectPeriodController extends Controller
                 'name' => 'required',
                 'start_date' => 'required|date|before_or_equal:end_date',
                 'end_date' => 'required|date|after_or_equal:start_date',
+                'generation_id' => 'required|exists:generations,id',    
             ]);
         
             FinalProjectPeriod::create($request->all());
@@ -68,11 +69,14 @@ class FinalProjectPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = FinalProjectPeriod::select(['id', 'name', 'start_date', 'end_date', 'is_active']);
+                $data = FinalProjectPeriod::with('generation')->select(['id', 'name', 'start_date', 'end_date', 'generation_id', 'is_active']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
+                    }) 
+                    ->addColumn('generation', function ($row) {  
+                        return $row->generation->name;
                     })  
                     ->editColumn('is_active', function ($row) {  
                         return $row->is_active   
@@ -147,6 +151,7 @@ class FinalProjectPeriodController extends Controller
                     'name' => 'required',
                     'start_date' => 'required|date|before_or_equal:end_date',
                     'end_date' => 'required|date|after_or_equal:start_date',
+                    'generation_id' => 'required|exists:generations,id',
                 ]);
             
                 $data = FinalProjectPeriod::findOrFail($id);

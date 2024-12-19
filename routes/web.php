@@ -3,15 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 // User
-use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\Register\RegisterFinalProjectController;
 
 // Admin
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\Lecturer\LecturerController;
 use App\Http\Controllers\Admin\EvaluationCritariaController;
 use App\Http\Controllers\Admin\Proposal\ProposalPeriodController;
 use App\Http\Controllers\Admin\FinalProject\FinalProjectPeriodController;
-use App\Http\Controllers\Admin\Lecturer\LecturerController;
 use App\Http\Controllers\Admin\Student\StudentController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::prefix('auth')->middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
@@ -32,7 +33,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
             Route::delete('{id}', [ProposalPeriodController::class, 'destroy'])->name('destroy');
         });
 
-        Route::prefix('final_project')->as('final_project.')->group(function () {
+        Route::prefix('final-project')->as('final_project.')->group(function () {
             Route::get('/', [FinalProjectPeriodController::class, 'index'])->name('index');
             Route::post('/', [FinalProjectPeriodController::class, 'store'])->name('store');
             Route::get('/get', [FinalProjectPeriodController::class, 'get'])->name('get');
@@ -69,6 +70,14 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
     });
 });
 
-Route::prefix('user')->as('user.')->middleware('auth')->group(function () {
-    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+Route::prefix('student')->as('student.')->middleware('auth')->group(function () {
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('register')->as('register.')->group(function () {
+        Route::prefix('final-project')->as('final_project.')->group(function () {
+            Route::get('/', [RegisterFinalProjectController::class, 'index'])->name('index');
+            Route::post('/', [RegisterFinalProjectController::class, 'store'])->name('store');
+            Route::put('/', [RegisterFinalProjectController::class, 'update'])->name('update');
+        });
+    });
 });

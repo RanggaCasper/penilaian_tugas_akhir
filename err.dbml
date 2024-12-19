@@ -1,74 +1,43 @@
-Table role {  
-  id int [pk]  
+Table roles {
+  id int [pk]
   name varchar
-}  
+}
 
-Table users {  
-  id int [pk]  
-  username varchar
+Table generations {
+  id int [pk]
+  name varchar
+}
+
+Table users {
+  id int [pk]
+  nim varchar
   password varchar
   email varchar
   phone varchar
   profile_image varchar
-  role_id int [ref: > role.id]
-}  
-
-Table dosen {  
-  id int [pk]
-  nip varchar
-  name varchar
-  email varchar
-  telepon varchar
-  jabatan varchar
-}  
-
-Table ujian_proposal {  
-  id int [pk]  
-  dosen_id int  
-}  
-
-Table proposal {  
-  id int [pk]  
-  judul varchar
-  komentar varchar
-  nilai varchar
-  tugas_akhir_id int  
-  periode_proposal_id int  
-  tanggal_pengajuan varchar
-  mahasiswa_id int  
-}  
-
-Table tugas_akhir {  
-  id int [pk]  
-  judul varchar
-  berkas varchar
-  status varchar
-  mahasiswa_id int  
-  pembimbing1_id int  
-  pembimbing2_id int  
-  penguji1_id int  
-  penguji2_id int  
-  tanggal_pengajuan varchar
-}  
-
-Table periode_proposal {  
-  id int [pk]  
-  name varchar
-  start_date timestamp
-  end_data timestamp
-  is_active bool
+  generation_id int [ref: > generations.id]
+  role_id int [ref: > roles.id]
 }
 
-Table unsur_penilaian {  
-  id int [pk]  
-  nama VARCHAR(255)  
-  bobot DECIMAL(5,2)  
-}  
+Table final_project_period {
+  id int [pk]
+  name varchar
+  start_date date
+  end_date date
+  is_active bool
+  generation_id int [ref: > generations.id]
+}
 
-Table penilaian {  
-  id int [pk]  
-  unsur_penilaian_id int  
-  skor int  
-  proposal_id int
-  tugas_akhir_id int
-}  
+Table evaluation_criteria {
+  id int [pk]
+  name varchar
+  score decimal
+}
+
+Table final_project_register {
+  id int [pk]
+  title varchar
+  document varchar
+  support_document varchar
+  final_project_period_id int [ref: > final_project_period.id]
+}

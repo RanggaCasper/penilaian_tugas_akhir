@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EvaluationCritaria extends Model
 {
-    protected $table = 'evaluation_criteria';
+    protected $table = 'evaluation_criterias';
 
     protected $guarded = [
         'id'

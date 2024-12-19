@@ -26,7 +26,10 @@
                         <x-navlink icon="ri-calendar-event-line" title="Periode Tugas Akhir" href="{{ route('admin.periode.final_project.index') }}" active="{{ request()->routeIs('admin.periode.final_project.index') }}" />
                     <x-menu-title title="Penilaian" />
                         <x-navlink icon="ri-calendar-event-line" title="Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.index') }}" />
-                @elseif (auth()->user()->role->name == "User")
+                @elseif (auth()->user()->role->name == "Student")
+                    <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('student.dashboard') }}" active="{{ request()->routeIs('student.dashboard') }}" />
+                    <x-menu-title title="Tugas Akhir" />
+                        <x-navlink icon="ri-user-line" title="Daftar Tugas Akhir" href="{{ route('student.register.final_project.index') }}" active="{{ request()->routeIs('student.register.final_project.index') }}" />
                 @endif
             </ul>
         </div>

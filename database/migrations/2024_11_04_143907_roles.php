@@ -22,8 +22,8 @@ return new class extends Migration
         DB::table('roles')->insert([
             ['name' => 'Super', 'created_at' => now()],
             ['name' => 'Admin', 'created_at' => now()],
-            ['name' => 'Dosen', 'created_at' => now()],
-            ['name' => 'Mahasiswa', 'created_at' => now()],
+            ['name' => 'Lecturer', 'created_at' => now()],
+            ['name' => 'Student', 'created_at' => now()],
         ]);
         
         // Tambah relasi ke table users

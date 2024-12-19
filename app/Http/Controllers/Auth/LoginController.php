@@ -38,77 +38,32 @@ class LoginController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request): JsonResponse
+    public function login(Request $request)
     {
         $credentials = $request->validate([
-            'nim' => 'required|string',
-            'password' => 'required|string',
+            'nim' => 'required',
+            'password' => 'required',
         ]);
 
-        $nim = $credentials['nim'];
-        $password = $credentials['password'];
-        $response = $this->sion->getMahasiswaProfile($nim);
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        try {
-            if ($response) {
-                $user = User::where('nim', $nim)->first();
-
-                if ($user) {
-                    if (is_null($user->password)) {
-                        if ($response['passwSION'] === md5($password)) {
-                            $user->password = bcrypt($password);
-                            $user->save();
-
-                            Auth::login($user, true);
-                            Session::regenerate();
-
-                            return response()->json([
-                                'status' => true,
-                                'message' => "Welcome, {$user->name}",
-                                'redirect_url' => route('user.dashboard'),
-                            ]);
-                        } else {
-                            return response()->json([
-                                'status' => false,
-                                'message' => 'Kredensial yang anda masukan tidak cocok.',
-                            ], 404);
-                        }
-                    } else {
-                        if (Hash::check($password, $user->password)) {
-                            Auth::login($user, true);
-                            Session::regenerate();
-
-                            return response()->json([
-                                'status' => true,
-                                'message' => "Welcome, {$user->name}",
-                                'redirect_url' => route('user.dashboard'),
-                            ]);
-                        } else {
-                            return response()->json([
-                                'status' => false,
-                                'message' => 'Kredensial yang anda masukan tidak cocok.',
-                            ], 404);
-                        }
-                    }
-                } else {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Kredensial yang anda masukan tidak cocok.',
-                    ], 404);
-                }
-            }
-
+            $user = Auth::user();
+            $role = strtolower($user->role->name);
+            
             return response()->json([
-                'status' => false,
-                'message' => 'Kredensial yang anda masukan tidak cocok.',
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+                'status' => true,
+                'message' => "Welcome, {$user->username}",
+                'redirect_url' => route("{$role}.dashboard"),
+            ]);
         }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Kredensial yang Anda masukkan salah.',
+        ], 422);
     }
+
     
     /**
      * Log the user out of the application.

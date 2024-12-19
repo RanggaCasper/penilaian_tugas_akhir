@@ -21,7 +21,7 @@ $(document).on('submit', 'form', function(e) {
             if (response.status) {
                 $(e.target).before(`
                     <div class="mb-3 text-white alert alert-success alert-dismissible bg-success alert-label-icon fade show material-shadow" role="alert">
-                        <i class="ri-check-line label-icon"></i><strong>Success</strong> - ${response.message}
+                        <i class="ri-check-line label-icon"></i><strong>Berhasil</strong> - ${response.message}
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 `);
@@ -40,8 +40,20 @@ $(document).on('submit', 'form', function(e) {
             }
 
             if (!$(e.target).attr('id')?.endsWith('_update')) {
-                $(e.target).trigger('reset');
+                if ($(e.target).data('reset') !== false) {
+                    $(e.target).trigger('reset');
+                }
             }
+
+            $.each($(e.target).data(), function(key, value) {
+                if (typeof window[value] === 'function') {
+                    try {
+                        window[value]();
+                    } catch (err) {
+                        console.error(`Error saat memanggil fungsi dari data-${key}:`, err);
+                    }
+                }
+            });
         },
         error: function(xhr) {
             let response = xhr.responseJSON;

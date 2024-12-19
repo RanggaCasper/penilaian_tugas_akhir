@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProposalPeriod extends Model
 {
-    protected $table = 'proposal_period';
+    protected $table = 'proposal_periods';
 
     protected $guarded = [
         'id'

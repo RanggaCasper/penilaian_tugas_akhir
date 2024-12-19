@@ -16,6 +16,15 @@
                 <x-input-field label="Tanggal Berakhir" type="date" name="end_date" id="end_date" />
             </div>
             <div class="mb-3">
+                <label for="generation">Angkatan</label>
+                <select name="generation_id" class="form-control form-select" id="generation">
+                    <option selected disabled>-- Pilih Angkatan --</option>
+                    @foreach (App\Models\Generation::orderBy('name', 'desc')->get() as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="is_active">Status</label>
                 <div class="form-check form-switch">
                     <input class="form-check-input" name="is_active" type="checkbox" role="switch" id="is_active" checked>
@@ -35,6 +44,7 @@
                     <th>Judul</th>
                     <th>Tanggal Mulai</th>
                     <th>Tanggal Berakhir</th>
+                    <th>Angkatan</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -61,6 +71,15 @@
                         </div>
                         <div class="mb-3">
                             <x-input-field label="Tanggal Berakhir" type="date" name="end_date" id="end_date_update" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="generation_update">Angkatan</label>
+                            <select name="generation_id" class="form-control form-select" id="generation_update">
+                                <option selected disabled>-- Pilih Angkatan --</option>
+                                @foreach (App\Models\Generation::orderBy('name', 'desc')->get() as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="is_active_update">Status</label>
@@ -90,6 +109,7 @@
             { data: 'name', name: 'name' },
             { data: 'start_date', name: 'start_date' },
             { data: 'end_date', name: 'end_date' },
+            { data: 'generation', name: 'generation' },
             { data: 'is_active', name: 'is_active' },
             { data: 'action', name: 'action' },
         ],
@@ -105,6 +125,7 @@
                 $('#judul_update').val(data.name);
                 $('#start_date_update').val(data.start_date);
                 $('#end_date_update').val(data.end_date);
+                $('#generation_update').val(data.generation_id);
                 $('#is_active_update').prop('checked', !!data.is_active);
             },
             error: function(error) {
