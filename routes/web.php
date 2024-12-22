@@ -49,14 +49,34 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
     });
 
     Route::prefix('evaluation')->as('evaluation.')->group(function () {
+        Route::controller(\App\Http\Controllers\Admin\Evaluation\EvaluationController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/get', 'get')->name('get');
+            Route::get('/get/{id}', 'getById')->name('getById');
+            Route::put('{id}', 'update')->name('update');
+            Route::delete('{id}', 'destroy')->name('destroy');
+        });
+
         Route::prefix('criteria')->as('criteria.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\EvaluationCritariaController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Evaluation\EvaluationCriteriaController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::get('/get', 'get')->name('get');
                 Route::get('/get/{id}', 'getById')->name('getById');
                 Route::put('{id}', 'update')->name('update');
                 Route::delete('{id}', 'destroy')->name('destroy');
+            });
+
+            Route::prefix('sub')->as('sub.')->group(function () {
+                Route::controller(\App\Http\Controllers\Admin\Evaluation\SubEvaluationCriteriaController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::post('/', 'store')->name('store');
+                    Route::get('/get', 'get')->name('get');
+                    Route::get('/get/{id}', 'getById')->name('getById');
+                    Route::put('{id}', 'update')->name('update');
+                    Route::delete('{id}', 'destroy')->name('destroy');
+                });
             });
         });
     });

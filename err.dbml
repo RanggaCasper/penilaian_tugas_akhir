@@ -28,10 +28,23 @@ Table final_project_period {
   generation_id int [ref: > generations.id]
 }
 
+Table evaluation {
+  id int [pk]
+  name varchar
+}
+
 Table evaluation_criteria {
   id int [pk]
   name varchar
   score decimal
+  evaluation_id int [ref: > evaluation.id]
+}
+
+Table sub_evaluation_criteria {
+  id int [pk]
+  name varchar
+  score decimal
+  evaluation_criteria_id int [ref: > evaluation_criteria.id]
 }
 
 Table final_project_register {
@@ -40,4 +53,17 @@ Table final_project_register {
   document varchar
   support_document varchar
   final_project_period_id int [ref: > final_project_period.id]
+}
+
+Table exam_schedule {
+  id int [pk]
+  exam_date date
+  start_time time
+  end_time time
+  room varchar
+  status bool
+  student_id int [ref: > users.id]
+  primary_examiner_id int [ref: > users.id]
+  secondary_examiner_id int [ref: > users.id]
+  tertiary_examiner_id int [ref: > users.id]
 }
