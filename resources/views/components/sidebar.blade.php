@@ -25,6 +25,7 @@
                     <x-menu-title title="Tugas Akhir" />
                         <x-navlink icon="ri-calendar-event-line" title="Periode Tugas Akhir" href="{{ route('admin.periode.final_project.index') }}" active="{{ request()->routeIs('admin.periode.final_project.index') }}" />
                         <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.final_project.register.index') }}" active="{{ request()->routeIs('admin.final_project.register.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Jadwal Tugas Akhir" href="{{ route('admin.final_project.schedule.index') }}" active="{{ request()->routeIs('admin.final_project.schedule.index') }}" />
                     <x-menu-title title="Penilaian" />
                         <x-navlink icon="ri-calendar-event-line" title="Penilaian" href="{{ route('admin.evaluation.index') }}" active="{{ request()->routeIs('admin.evaluation.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.index') }}" />
