@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Admin\Evaluation;
 
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use App\Models\Evaluation\Criteria;
 use Illuminate\Routing\Controller;
-use App\Models\Evaluation\EvaluationCriteria;
-use App\Models\Evaluation\SubEvaluationCriteria;
 
-class SubEvaluationCriteriaController extends Controller
+class CriteriaController extends Controller
 {
     /**
      * Show the list of evaluation criteria.
@@ -17,7 +16,7 @@ class SubEvaluationCriteriaController extends Controller
      */
     public function index()
     {
-        return view('admin.evaluation.sub_criteria');
+        return view('admin.evaluation.criteria');
     }
 
     /**
@@ -29,27 +28,26 @@ class SubEvaluationCriteriaController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([  
+            $request->merge([
+                'has_sub' => $request->has('has_sub') ? 1 : 0,
+            ]);
+            
+            $request->validate([
                 'name' => 'required',
-                'score' => 'required|numeric',
-                'evaluation_criteria_id' => 'required'
-            ]);   
+                'score' => 'required|numeric|min:0|max:100',
+                'evaluation_id' => 'required'
+            ]);
             
-            $subEvaluation = SubEvaluationCriteria::where('evaluation_criteria_id', $request->evaluation_criteria_id)->sum('score');  
-        
-            $evaluationCriteria = EvaluationCriteria::findOrFail($request->evaluation_criteria_id); 
-            $maxScore = $evaluationCriteria->score; 
-            
-            $remainingScore = $maxScore - $subEvaluation;  
-            
-            if ($request->score > $remainingScore) {  
+            $evaluation = Criteria::where('evaluation_id', $request->evaluation_id)->sum('score');  
+
+            if ($evaluation + $request->score > 100) {  
                 return response()->json([  
                     'status' => false,  
-                    'message' => 'Total bobot sub penilaian tidak boleh lebih dari ' . $remainingScore . '.',  
+                    'message' => 'Total bobot kriteria tidak boleh lebih dari 100%',  
                 ], 422);  
             }  
-           
-            SubEvaluationCriteria::create($request->all());
+
+            Criteria::create($request->all());
         
             return response()->json([
                 'status' => true,
@@ -80,19 +78,24 @@ class SubEvaluationCriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = SubEvaluationCriteria::with('evaluation_criteria')->select(['id', 'name', 'score', 'evaluation_criteria_id']);
+                $data = Criteria::with('evaluation')->select(['id', 'name', 'score', 'evaluation_id', 'has_sub']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
                     })
+                    ->editColumn('has_sub', function ($row) {  
+                        return $row->has_sub   
+                            ? '<span class="badge bg-success">Active</span>'   
+                            : '<span class="badge bg-danger">Inactive</span>';  
+                    })  
                     ->addColumn('action', function ($row) {  
                         return '  
                             <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Edit</button>  
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
                         ';  
                     })  
-                    ->rawColumns(['action'])
+                    ->rawColumns(['has_sub','action'])
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json([
@@ -116,7 +119,7 @@ class SubEvaluationCriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = SubEvaluationCriteria::with('evaluation_criteria')->findOrFail($id);
+                $data = Criteria::with('evaluation')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -146,31 +149,29 @@ class SubEvaluationCriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
+                $request->merge([
+                    'has_sub' => $request->has('has_sub') ? 1 : 0,
+                ]);
                 
                 $request->validate([
                     'name' => 'required',
-                    'score' => 'required|numeric|min:0',
-                    'evaluation_criteria_id' => 'required'
+                    'score' => 'required|numeric|min:0|max:100',
+                    'evaluation_id' => 'required'
                 ]);
+            
+                $data = Criteria::findOrFail($id);  
 
-                $data = SubEvaluationCriteria::findOrFail($id);
+                $evaluation = Criteria::where('evaluation_id', $request->evaluation_id)->where('id', '!=', $id)->sum('score');  
 
-                $subEvaluation = SubEvaluationCriteria::where('evaluation_criteria_id', $request->evaluation_criteria_id)->where('id', '!=', $id)->sum('score');
-
-                $evaluationCriteria = EvaluationCriteria::findOrFail($request->evaluation_criteria_id);
-                $maxScore = $evaluationCriteria->score;
-
-                $remainingScore = $maxScore - $subEvaluation;
-
-                if ($request->score > $remainingScore) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Total bobot sub penilaian tidak boleh lebih dari ' . $remainingScore . '.',
-                    ], 422);
-                }
-
-                $data->update($request->only(['name', 'score', 'evaluation_criteria_id']));
-
+                if ($evaluation + $request->score > 100) {  
+                    return response()->json([  
+                        'status' => false,  
+                        'message' => 'Total bobot kriteria tidak boleh lebih dari 100%',  
+                    ], 422);  
+                }  
+            
+                $data->update($request->only(['name', 'score', 'evaluation_id', 'has_sub']));
+            
                 return response()->json([
                     'status' => true,
                     'message' => 'Kriteria Penilaian berhasil diubah',
@@ -191,12 +192,11 @@ class SubEvaluationCriteriaController extends Controller
                     'status' => false,
                     'message' => 'Terjadi kesalahan saat memperbarui data',
                 ], 500);
-            }
+            }            
         }
 
         abort(401);
     }
-
 
     /**
      * Remove the specified data from database.
@@ -209,7 +209,7 @@ class SubEvaluationCriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = SubEvaluationCriteria::findOrFail($id);
+                $periode = Criteria::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([

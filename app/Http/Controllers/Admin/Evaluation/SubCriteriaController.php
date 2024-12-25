@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Proposal;
+namespace App\Http\Controllers\Admin\Evaluation;
 
 use Illuminate\Http\Request;
-use App\Models\Proposal\ProposalPeriod;
 use Yajra\DataTables\DataTables;
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
+use App\Models\Evaluation\Criteria;
+use App\Models\Evaluation\SubCriteria;
 
-class ProposalPeriodController extends Controller
+class SubCriteriaController extends Controller
 {
     /**
-     * Display the periode proposal view.
+     * Show the list of evaluation criteria.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('admin.proposal.period');
+        return view('admin.evaluation.sub_criteria');
     }
 
     /**
@@ -28,21 +29,31 @@ class ProposalPeriodController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->merge([
-                'is_active' => $request->has('is_active') ? 1 : 0,
-            ]);
-
-            $request->validate([
+            $request->validate([  
                 'name' => 'required',
-                'start_date' => 'required|date|before_or_equal:end_date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-            ]);
+                'score' => 'required|numeric',
+                'evaluation_criteria_id' => 'required'
+            ]);   
+            
+            $subCriteria = SubCriteria::where('evaluation_criteria_id', $request->evaluation_criteria_id)->sum('score');  
         
-            ProposalPeriod::create($request->all());
+            $criteria = Criteria::findOrFail($request->evaluation_criteria_id); 
+            $maxScore = $criteria->score; 
+            
+            $remainingScore = $maxScore - $subCriteria;  
+            
+            if ($request->score > $remainingScore) {  
+                return response()->json([  
+                    'status' => false,  
+                    'message' => 'Total bobot sub penilaian tidak boleh lebih dari ' . $remainingScore . '.',  
+                ], 422);  
+            }  
+           
+            SubCriteria::create($request->all());
         
             return response()->json([
                 'status' => true,
-                'message' => 'Data berhasil ditambahkan',
+                'message' => 'Kriteria Penilaian berhasil ditambahkan',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -53,6 +64,7 @@ class ProposalPeriodController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
+                'errors' => $e->getMessage(),
                 'message' => 'Terjadi kesalahan saat menyimpan data',
             ], 500);
         }        
@@ -68,24 +80,19 @@ class ProposalPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = ProposalPeriod::select(['id', 'name', 'start_date', 'end_date', 'is_active']);
+                $data = SubCriteria::with('evaluation_criteria')->select(['id', 'name', 'score', 'evaluation_criteria_id']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
-                    })  
-                    ->editColumn('is_active', function ($row) {  
-                        return $row->is_active   
-                            ? '<span class="badge bg-success">Active</span>'   
-                            : '<span class="badge bg-danger">Inactive</span>';  
-                    })  
+                    })
                     ->addColumn('action', function ($row) {  
                         return '  
                             <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Edit</button>  
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
                         ';  
                     })  
-                    ->rawColumns(['action', 'is_active'])
+                    ->rawColumns(['action'])
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json([
@@ -95,21 +102,21 @@ class ProposalPeriodController extends Controller
             }
         }
 
-        abort(403);
+        abort(401);
     }
 
     /**
-     * Display the specified data.
+     * Retrieve the specified Evaluation Criteria by ID.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getById(Request $request, $id)
     {
         if ($request->ajax()) {
             try {
-                $data = ProposalPeriod::findOrFail($id);
+                $data = SubCriteria::with('evaluation_criteria')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -125,11 +132,11 @@ class ProposalPeriodController extends Controller
             }
         }
 
-        abort(403);
+        abort(401);
     }
 
     /**
-     * Update the specified data in database.
+     * Update the specified Evaluation Criteria in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -139,23 +146,34 @@ class ProposalPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $request->merge([
-                    'is_active' => $request->has('is_active') ? 1 : 0,
-                ]);
                 
                 $request->validate([
                     'name' => 'required',
-                    'start_date' => 'required|date|before_or_equal:end_date',
-                    'end_date' => 'required|date|after_or_equal:start_date',
+                    'score' => 'required|numeric|min:0',
+                    'evaluation_criteria_id' => 'required'
                 ]);
-            
-                $data = ProposalPeriod::findOrFail($id);
-            
-                $data->update($request->all());
-            
+
+                $data = SubCriteria::findOrFail($id);
+
+                $subCriteria = SubCriteria::where('evaluation_criteria_id', $request->evaluation_criteria_id)->where('id', '!=', $id)->sum('score');
+
+                $criteria = Criteria::findOrFail($request->evaluation_criteria_id);
+                $maxScore = $criteria->score;
+
+                $remainingScore = $maxScore - $subCriteria;
+
+                if ($request->score > $remainingScore) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Total bobot sub penilaian tidak boleh lebih dari ' . $remainingScore . '.',
+                    ], 422);
+                }
+
+                $data->update($request->only(['name', 'score', 'evaluation_criteria_id']));
+
                 return response()->json([
                     'status' => true,
-                    'message' => 'Data berhasil diubah',
+                    'message' => 'Kriteria Penilaian berhasil diubah',
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 return response()->json([
@@ -173,11 +191,12 @@ class ProposalPeriodController extends Controller
                     'status' => false,
                     'message' => 'Terjadi kesalahan saat memperbarui data',
                 ], 500);
-            }            
+            }
         }
 
-        abort(403);
+        abort(401);
     }
+
 
     /**
      * Remove the specified data from database.
@@ -190,12 +209,12 @@ class ProposalPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = ProposalPeriod::findOrFail($id);
+                $periode = SubCriteria::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'Data berhasil dihapus',
+                    'message' => 'Kriteria Penilaian berhasil dihapus',
                 ]);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 return response()->json([
@@ -210,6 +229,6 @@ class ProposalPeriodController extends Controller
             }
         }
 
-        abort(403);
+        abort(401);
     }
 }

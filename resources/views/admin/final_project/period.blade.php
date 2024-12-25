@@ -4,7 +4,7 @@
 
 @section('content')
     <x-card title="Tambah Periode">
-        <form action="{{ route('admin.periode.final_project.store') }}" method="POST">
+        <form action="{{ route('admin.final_project.period.store') }}" method="POST">
             @csrf
             <div class="mb-3">
                 <x-input-field label="Judul" type="text" name="name" id="judul" />
@@ -103,7 +103,7 @@
         processing: true,
         serverSide: false,
         scrollX: true,
-        ajax: '{{ route('admin.periode.final_project.get') }}',
+        ajax: '{{ route('admin.final_project.period.get') }}',
         columns: [
             { data: 'no', name: 'no' },
             { data: 'name', name: 'name' },
@@ -118,10 +118,10 @@
     $('#datatables').on('click', '.edit-btn', function() {
         var id = $(this).data('id');
         $.ajax({
-            url: '{{ route("admin.periode.final_project.getById", ["id" => ":id"]) }}'.replace(':id', id),
+            url: '{{ route("admin.final_project.period.getById", ["id" => ":id"]) }}'.replace(':id', id),
             type: 'GET',
             success: function(data) {
-                $('#form_update').attr('action', '{{ route("admin.periode.final_project.update", ["id" => ":id"]) }}'.replace(':id', id));
+                $('#form_update').attr('action', '{{ route("admin.final_project.period.update", ["id" => ":id"]) }}'.replace(':id', id));
                 $('#judul_update').val(data.name);
                 $('#start_date_update').val(data.start_date);
                 $('#end_date_update').val(data.end_date);
@@ -154,7 +154,7 @@
         }).then(function(t) {
             if(t.value) {
                 $.ajax({
-                    url: '{{ route("admin.periode.final_project.destroy", ["id" => ":id"]) }}'.replace(':id', id),
+                    url: '{{ route("admin.final_project.period.destroy", ["id" => ":id"]) }}'.replace(':id', id),
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',

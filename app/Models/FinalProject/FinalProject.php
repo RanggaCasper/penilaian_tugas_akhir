@@ -14,13 +14,13 @@ class FinalProject extends Model
     ];
 
     /**
-     * Relation with FinalProjectPeriod model
+     * Relation with Period model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function period()
     {
-        return $this->belongsTo(FinalProjectPeriod::class, 'final_project_period_id');
+        return $this->belongsTo(Period::class, 'final_project_period_id');
     }
 
     /**

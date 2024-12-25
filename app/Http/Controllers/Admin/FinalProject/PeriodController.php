@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin\FinalProject;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\FinalProject\FinalProjectPeriod;
+use App\Models\FinalProject\Period;
 
-class FinalProjectPeriodController extends Controller
+class PeriodController extends Controller
 {
     /**
      * Display the periode proposal view.
@@ -39,7 +39,7 @@ class FinalProjectPeriodController extends Controller
                 'generation_id' => 'required|exists:generations,id',    
             ]);
         
-            FinalProjectPeriod::create($request->all());
+            Period::create($request->all());
         
             return response()->json([
                 'status' => true,
@@ -69,7 +69,7 @@ class FinalProjectPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = FinalProjectPeriod::with('generation')->select(['id', 'name', 'start_date', 'end_date', 'generation_id', 'is_active']);
+                $data = Period::with('generation')->select(['id', 'name', 'start_date', 'end_date', 'generation_id', 'is_active']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -113,7 +113,7 @@ class FinalProjectPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = FinalProjectPeriod::findOrFail($id);
+                $data = Period::findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -154,7 +154,7 @@ class FinalProjectPeriodController extends Controller
                     'generation_id' => 'required|exists:generations,id',
                 ]);
             
-                $data = FinalProjectPeriod::findOrFail($id);
+                $data = Period::findOrFail($id);
             
                 $data->update($request->all());
             
@@ -195,7 +195,7 @@ class FinalProjectPeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = FinalProjectPeriod::findOrFail($id);
+                $periode = Period::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([

@@ -16,7 +16,7 @@
             <label for="evaluation">Penilaian</label>
             <select name="evaluation_criteria_id" id="evaluation" class="form-control form-select">
                 <option selected disabled>-- Pilih Kriteria Penilaian --</option>
-                @foreach (App\Models\Evaluation\EvaluationCriteria::with('evaluation')->where('has_sub', true)->orderBy('name', 'desc')->get() as $item)
+                @foreach (App\Models\Evaluation\Criteria::with('evaluation')->where('has_sub', true)->orderBy('name', 'desc')->get() as $item)
                     <option value="{{ $item->id }}">{{ $item->name }} - [ {{ $item->evaluation->name }} ]</option>
                 @endforeach
             </select>
@@ -60,7 +60,7 @@
                         <label for="evaluation_criteria_update">Penilaian</label>
                         <select name="evaluation_criteria_id" id="evaluation_criteria_update" class="form-control form-select">
                             <option selected disabled>-- Pilih Kriteria Penilaian --</option>
-                            @foreach (App\Models\Evaluation\EvaluationCriteria::where('has_sub', true)->orderBy('name', 'desc')->get() as $item)
+                            @foreach (App\Models\Evaluation\Criteria::where('has_sub', true)->orderBy('name', 'desc')->get() as $item)
                                 <option value="{{ $item->id }}">{{ $item->name }} - [ {{ $item->evaluation->name }} ]</option>
                             @endforeach
                         </select>

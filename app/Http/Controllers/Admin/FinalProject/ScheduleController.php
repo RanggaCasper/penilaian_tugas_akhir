@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Models\FinalProject\Schedule;
 
-class FinalProjectScheduleController extends Controller
+class ScheduleController extends Controller
 {
     /**
      * Display the final project schedule view.

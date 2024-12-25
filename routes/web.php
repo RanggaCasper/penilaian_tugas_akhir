@@ -14,18 +14,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
 
     Route::prefix('periode')->as('periode.')->group(function () {
         Route::prefix('proposal')->as('proposal.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\Proposal\ProposalPeriodController::class)->group(function () {
-                Route::get('/', 'index')->name('index');
-                Route::post('/', 'store')->name('store');
-                Route::get('/get', 'get')->name('get');
-                Route::get('/get/{id}', 'getById')->name('getById');
-                Route::put('{id}', 'update')->name('update');
-                Route::delete('{id}', 'destroy')->name('destroy');
-            });
-        });
-
-        Route::prefix('final-project')->as('final_project.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\FinalProject\FinalProjectPeriodController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Proposal\PeriodController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::get('/get', 'get')->name('get');
@@ -36,9 +25,21 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
     
+    // Final Project
     Route::prefix('final-project')->as('final_project.')->group(function () {
+        Route::prefix('period')->as('period.')->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\FinalProject\PeriodController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::get('/get', 'get')->name('get');
+                Route::get('/get/{id}', 'getById')->name('getById');
+                Route::put('{id}', 'update')->name('update');
+                Route::delete('{id}', 'destroy')->name('destroy');
+            });
+        });
+
         Route::prefix('register')->as('register.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\FinalProject\FinalProjectRegisterController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\FinalProject\RegisterController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/get', 'get')->name('get');
                 Route::get('/get/{id}', 'getById')->name('getById');
@@ -48,7 +49,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
 
         Route::prefix('schedule')->as('schedule.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\FinalProject\FinalProjectScheduleController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\FinalProject\ScheduleController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::get('/get', 'get')->name('get');
@@ -61,6 +62,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
 
+    // Evaluation
     Route::prefix('evaluation')->as('evaluation.')->group(function () {
         Route::controller(\App\Http\Controllers\Admin\Evaluation\EvaluationController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -72,7 +74,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
 
         Route::prefix('criteria')->as('criteria.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\Evaluation\EvaluationCriteriaController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Evaluation\CriteriaController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::get('/get', 'get')->name('get');
@@ -82,7 +84,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
             });
 
             Route::prefix('sub')->as('sub.')->group(function () {
-                Route::controller(\App\Http\Controllers\Admin\Evaluation\SubEvaluationCriteriaController::class)->group(function () {
+                Route::controller(\App\Http\Controllers\Admin\Evaluation\SubCriteriaController::class)->group(function () {
                     Route::get('/', 'index')->name('index');
                     Route::post('/', 'store')->name('store');
                     Route::get('/get', 'get')->name('get');
@@ -94,6 +96,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
 
+    // Student
     Route::prefix('student')->as('student.')->group(function () {
         Route::controller(\App\Http\Controllers\Admin\Student\StudentController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -102,6 +105,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
 
+    // Lecturer
     Route::prefix('lecturer')->as('lecturer.')->group(function () {
         Route::controller(\App\Http\Controllers\Admin\Lecturer\LecturerController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -119,7 +123,7 @@ Route::prefix('student')->as('student.')->middleware('auth')->group(function () 
 
     Route::prefix('register')->as('register.')->group(function () {
         Route::prefix('final-project')->as('final_project.')->group(function () {
-            Route::controller(\App\Http\Controllers\Student\FinalProject\FinalProjectRegisterController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Student\FinalProject\RegisterController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::put('/', 'update')->name('update');

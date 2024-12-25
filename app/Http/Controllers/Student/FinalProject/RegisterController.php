@@ -6,16 +6,16 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FinalProject\FinalProject;
-use App\Models\FinalProject\FinalProjectPeriod;
+use App\Models\FinalProject\Period;
 use Illuminate\Http\JsonResponse;
 
-class FinalProjectRegisterController extends Controller
+class RegisterController extends Controller
 {
     private $active_period;
 
     public function __construct()
     {
-        $this->active_period = FinalProjectPeriod::where([
+        $this->active_period = Period::where([
             ['generation_id', '=', Auth::user()->generation_id],
             ['start_date', '<=', now()],
             ['end_date', '>=', now()],

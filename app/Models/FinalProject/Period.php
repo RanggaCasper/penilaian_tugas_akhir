@@ -5,7 +5,7 @@ namespace App\Models\FinalProject;
 use App\Models\Generation;
 use Illuminate\Database\Eloquent\Model;
 
-class FinalProjectPeriod extends Model
+class Period extends Model
 {
     protected $table = 'final_project_periods';
 

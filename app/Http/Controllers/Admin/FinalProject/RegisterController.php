@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FinalProject\FinalProject;
 use Illuminate\Http\JsonResponse;
 
-class FinalProjectRegisterController extends Controller
+class RegisterController extends Controller
 {
     public function index()
     {

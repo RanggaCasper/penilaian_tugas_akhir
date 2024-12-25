@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Evaluation;
+namespace App\Http\Controllers\Admin\Proposal;
 
 use Illuminate\Http\Request;
+use App\Models\Proposal\ProposalPeriod;
 use Yajra\DataTables\DataTables;
-use App\Models\Evaluation\EvaluationCriteria;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 
-class EvaluationCriteriaController extends Controller
+class PeriodController extends Controller
 {
     /**
-     * Show the list of evaluation criteria.
+     * Display the periode proposal view.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
-        return view('admin.evaluation.criteria');
+        return view('admin.proposal.period');
     }
 
     /**
@@ -29,29 +29,20 @@ class EvaluationCriteriaController extends Controller
     {
         try {
             $request->merge([
-                'has_sub' => $request->has('has_sub') ? 1 : 0,
+                'is_active' => $request->has('is_active') ? 1 : 0,
             ]);
-            
+
             $request->validate([
                 'name' => 'required',
-                'score' => 'required|numeric|min:0|max:100',
-                'evaluation_id' => 'required'
+                'start_date' => 'required|date|before_or_equal:end_date',
+                'end_date' => 'required|date|after_or_equal:start_date',
             ]);
-            
-            $evaluation = EvaluationCriteria::where('evaluation_id', $request->evaluation_id)->sum('score');  
-
-            if ($evaluation + $request->score > 100) {  
-                return response()->json([  
-                    'status' => false,  
-                    'message' => 'Total bobot kriteria tidak boleh lebih dari 100%',  
-                ], 422);  
-            }  
-
-            EvaluationCriteria::create($request->all());
+        
+            ProposalPeriod::create($request->all());
         
             return response()->json([
                 'status' => true,
-                'message' => 'Kriteria Penilaian berhasil ditambahkan',
+                'message' => 'Data berhasil ditambahkan',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -62,7 +53,6 @@ class EvaluationCriteriaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'errors' => $e->getMessage(),
                 'message' => 'Terjadi kesalahan saat menyimpan data',
             ], 500);
         }        
@@ -78,14 +68,14 @@ class EvaluationCriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = EvaluationCriteria::with('evaluation')->select(['id', 'name', 'score', 'evaluation_id', 'has_sub']);
+                $data = ProposalPeriod::select(['id', 'name', 'start_date', 'end_date', 'is_active']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
-                    })
-                    ->editColumn('has_sub', function ($row) {  
-                        return $row->has_sub   
+                    })  
+                    ->editColumn('is_active', function ($row) {  
+                        return $row->is_active   
                             ? '<span class="badge bg-success">Active</span>'   
                             : '<span class="badge bg-danger">Inactive</span>';  
                     })  
@@ -95,7 +85,7 @@ class EvaluationCriteriaController extends Controller
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
                         ';  
                     })  
-                    ->rawColumns(['has_sub','action'])
+                    ->rawColumns(['action', 'is_active'])
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json([
@@ -105,21 +95,21 @@ class EvaluationCriteriaController extends Controller
             }
         }
 
-        abort(401);
+        abort(403);
     }
 
     /**
-     * Retrieve the specified Evaluation Criteria by ID.
+     * Display the specified data.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
     public function getById(Request $request, $id)
     {
         if ($request->ajax()) {
             try {
-                $data = EvaluationCriteria::with('evaluation')->findOrFail($id);
+                $data = ProposalPeriod::findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -135,11 +125,11 @@ class EvaluationCriteriaController extends Controller
             }
         }
 
-        abort(401);
+        abort(403);
     }
 
     /**
-     * Update the specified Evaluation Criteria in database.
+     * Update the specified data in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -150,31 +140,22 @@ class EvaluationCriteriaController extends Controller
         if ($request->ajax()) {
             try {
                 $request->merge([
-                    'has_sub' => $request->has('has_sub') ? 1 : 0,
+                    'is_active' => $request->has('is_active') ? 1 : 0,
                 ]);
                 
                 $request->validate([
                     'name' => 'required',
-                    'score' => 'required|numeric|min:0|max:100',
-                    'evaluation_id' => 'required'
+                    'start_date' => 'required|date|before_or_equal:end_date',
+                    'end_date' => 'required|date|after_or_equal:start_date',
                 ]);
             
-                $data = EvaluationCriteria::findOrFail($id);  
-
-                $evaluation = EvaluationCriteria::where('evaluation_id', $request->evaluation_id)->where('id', '!=', $id)->sum('score');  
-
-                if ($evaluation + $request->score > 100) {  
-                    return response()->json([  
-                        'status' => false,  
-                        'message' => 'Total bobot kriteria tidak boleh lebih dari 100%',  
-                    ], 422);  
-                }  
+                $data = ProposalPeriod::findOrFail($id);
             
-                $data->update($request->only(['name', 'score', 'evaluation_id', 'has_sub']));
+                $data->update($request->all());
             
                 return response()->json([
                     'status' => true,
-                    'message' => 'Kriteria Penilaian berhasil diubah',
+                    'message' => 'Data berhasil diubah',
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 return response()->json([
@@ -195,7 +176,7 @@ class EvaluationCriteriaController extends Controller
             }            
         }
 
-        abort(401);
+        abort(403);
     }
 
     /**
@@ -209,12 +190,12 @@ class EvaluationCriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = EvaluationCriteria::findOrFail($id);
+                $periode = ProposalPeriod::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'Kriteria Penilaian berhasil dihapus',
+                    'message' => 'Data berhasil dihapus',
                 ]);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 return response()->json([
@@ -229,6 +210,6 @@ class EvaluationCriteriaController extends Controller
             }
         }
 
-        abort(401);
+        abort(403);
     }
 }

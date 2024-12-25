@@ -5,7 +5,7 @@ namespace App\Models\Evaluation;
 use App\Models\Evaluation\Evaluation;
 use Illuminate\Database\Eloquent\Model;
 
-class SubEvaluationCriteria extends Model
+class SubCriteria extends Model
 {
     protected $table = 'sub_evaluation_criterias';
 
@@ -20,6 +20,6 @@ class SubEvaluationCriteria extends Model
      */
     public function evaluation_criteria()
     {
-        return $this->belongsTo(EvaluationCriteria::class);
+        return $this->belongsTo(Criteria::class);
     }
 }

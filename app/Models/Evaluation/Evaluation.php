@@ -19,6 +19,6 @@ class Evaluation extends Model
      */
     public function evaluation_criterias()
     {  
-        return $this->hasMany(EvaluationCriteria::class);  
+        return $this->hasMany(Criteria::class);  
     }
 }
