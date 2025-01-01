@@ -104,4 +104,48 @@ class SIONService {
             return false;
         }
     }
+
+    /**
+     * Get daftar dosen.
+     *
+     * @param string $tahun Academic year
+     * @param string $jurusan Department
+     * @param string $prodi Study program
+     *
+     * @return array|false Returns an array of lecturers if successful, or false on failure
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getDosen($tahun, $jurusan, $prodi)
+    {
+        $hashCode = $this->generateHashCode([$tahun, $jurusan, $prodi]);
+
+        $url = $this->apiUrl . '/Daftardosen';
+
+        $request = [
+            'TahunAkademik' => $tahun,
+            'Jurusan' => $jurusan,
+            'Prodi' => $prodi,
+            'HashCode' => $hashCode,
+        ];
+
+        try {
+            $response = $this->client->post($url, [
+                'body' => json_encode($request), 
+                'timeout' => 5,
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            if ($statusCode === 200) {
+                $body = $response->getBody();
+                $data = json_decode($body, true);
+                $data = $data['daftar'];
+                return $data;
+            }
+
+            return false;
+        } catch (GuzzleException $e) {
+            return false;
+        }
+    }
 }

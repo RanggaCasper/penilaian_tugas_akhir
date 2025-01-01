@@ -111,6 +111,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::get('/get', 'get')->name('get');
+            Route::get('/get-data', 'getData')->name('getData');
             Route::get('/get/{id}', 'getById')->name('getById');
             Route::put('{id}', 'update')->name('update');
             Route::delete('{id}', 'destroy')->name('destroy');

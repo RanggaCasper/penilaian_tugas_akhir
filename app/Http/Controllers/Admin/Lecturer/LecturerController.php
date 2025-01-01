@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin\Lecturer;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\SIONService;
 use Yajra\DataTables\DataTables;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use Faker\Factory as Faker;
 
 class LecturerController extends Controller
 {
@@ -61,6 +63,60 @@ class LecturerController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }        
+    }
+
+    public function getData(): JsonResponse  
+    {  
+        try {  
+            set_time_limit(300);
+            $sion = new SIONService();  
+            $response = $sion->getDosen('20241', '40', '58302');  
+            $skipped = [];  
+            $inserted = [];  
+            $updated = [];
+
+            foreach ($response as $data) {  
+                $existingUser = User::where('nim', $data['nidn'])->first();  
+
+                if ($existingUser) {
+                    if (is_null($existingUser->password)) {
+                        $existingUser->update([
+                            'password' => bcrypt($data['email']),
+                        ]);
+                        $updated[] = $data['nidn'];
+                    } else {
+                        $skipped[] = $data['nidn'];
+                    }
+                    continue;  
+                }  
+
+                $faker = Faker::create('id_ID');
+
+                User::create([
+                    'name' => $data['nama'],
+                    'nim' => $data['nidn'],
+                    'email' => strtolower(substr(explode(' ', $data['nama'])[0] ?? '', 0, 4)) . strtolower(substr(explode(' ', $data['nama'])[1] ?? '', 0, 4)) . rand(10, 99) . '@pnb.ac.id',
+                    'phone' => '08' . $faker->numerify('##########'),
+                    'role_id' => 3,
+                    'password' => bcrypt($data['nip']),
+                ]);                
+
+                $inserted[] = $data['nidn'];  
+            }  
+
+            return response()->json([  
+                'status' => true,  
+                'message' => count($inserted) > 0 ? 'Data berhasil diproses.' : 'Tidak ada data baru yang ditambahkan.',  
+                'inserted' => $inserted,  
+                'updated' => $updated,
+                'skipped' => $skipped,  
+            ]);  
+        } catch (\Exception $e) {  
+            return response()->json([  
+                'status' => false,  
+                'message' => 'Terjadi kesalahan saat mengambil data.',  
+            ], 500);  
+        }  
     }
     
     /**
