@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         // $response = $sion->getMahasiswa('20241', '40', '58302');
 
         // foreach ($response as $mahasiswa) {  
-        //     $gen = '20' . substr($mahasiswa['nim'], 0, 2);  
+        //     $gen = '20' . substr($mahasiswa['identity'], 0, 2);  
 
         //     $generation = Generation::firstOrCreate(  
         //         ['name' => $gen],
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
 
         //     User::create([  
         //         'name' => $mahasiswa['nama'],  
-        //         'nim' => $mahasiswa['nim'],  
+        //         'identity' => $mahasiswa['identity'],  
         //         'email' => $mahasiswa['email'],  
         //         'phone' => $mahasiswa['telepon'],  
         //         'generation_id' => $generation->id,
@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'nim' => '01',
+            'identity' => '01',
             'name' => 'Super Admin',
             'password' => bcrypt('super123'),
             'phone' => '08312345678',
@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'nim' => '02',
+            'identity' => '02',
             'name' => 'Admin',
             'password' => bcrypt('admin123'),
             'phone' => '08312345678',
@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'nim' => '03',
+            'identity' => '03',
             'name' => 'Dosen',
             'password' => bcrypt('dosen123'),
             'phone' => '08312345678',
@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'nim' => '04',
+            'identity' => '04',
             'name' => 'student',
             'password' => bcrypt('student123'),
             'phone' => '08312345678',

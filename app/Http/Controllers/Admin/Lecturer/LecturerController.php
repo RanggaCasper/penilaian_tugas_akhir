@@ -35,14 +35,14 @@ class LecturerController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'phone' => 'required|unique:users',
-                'nim' => 'required|unique:users',
+                'identity' => 'required|unique:users',
             ]);
         
             User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'nim' => $request->nim,
+                'identity' => $request->identity,
                 'password' => bcrypt("dosen123"),
                 'role_id' => 3
             ]);
@@ -76,7 +76,7 @@ class LecturerController extends Controller
             $updated = [];
 
             foreach ($response as $data) {  
-                $existingUser = User::where('nim', $data['nidn'])->first();  
+                $existingUser = User::where('identity', $data['nidn'])->first();  
 
                 if ($existingUser) {
                     if (is_null($existingUser->password)) {
@@ -94,7 +94,7 @@ class LecturerController extends Controller
 
                 User::create([
                     'name' => $data['nama'],
-                    'nim' => $data['nidn'],
+                    'identity' => $data['nidn'],
                     'email' => strtolower(substr(explode(' ', $data['nama'])[0] ?? '', 0, 4)) . strtolower(substr(explode(' ', $data['nama'])[1] ?? '', 0, 4)) . rand(10, 99) . '@pnb.ac.id',
                     'phone' => '08' . $faker->numerify('##########'),
                     'role_id' => 3,
@@ -106,10 +106,7 @@ class LecturerController extends Controller
 
             return response()->json([  
                 'status' => true,  
-                'message' => count($inserted) > 0 ? 'Data berhasil diproses.' : 'Tidak ada data baru yang ditambahkan.',  
-                'inserted' => $inserted,  
-                'updated' => $updated,
-                'skipped' => $skipped,  
+                'message' => count($inserted) > 0 ? 'Data berhasil ditambahkan, berhasil menambahkan '.count($inserted).' data.' : 'Tidak ada data baru yang ditambahkan.',  
             ]);  
         } catch (\Exception $e) {  
             return response()->json([  
@@ -130,7 +127,7 @@ class LecturerController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = User::select(['id', 'name', 'email', 'phone', 'nim'])->where('role_id', 3)->orderBy('nim', 'asc');
+                $data = User::select(['id', 'name', 'email', 'phone', 'identity'])->where('role_id', 3)->orderBy('identity', 'asc');
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -200,7 +197,7 @@ class LecturerController extends Controller
                     'name' => 'required',
                     'email' => 'required|email|unique:users,email,' . $id,
                     'phone' => 'required|unique:users,phone,' . $id,
-                    'nim' => 'required|unique:users,nim,' . $id,
+                    'identity' => 'required|unique:users,identity,' . $id,
                 ]);
             
                 $data = User::findOrFail($id);

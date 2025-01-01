@@ -13,7 +13,7 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="mb-3">
-                            <x-input-field label="NIM" type="text" name="nim" id="nim" />
+                            <x-input-field label="NIM / NIDN" type="text" name="identity" id="identity" />
                         </div>
                         
                         <div class="mb-3">

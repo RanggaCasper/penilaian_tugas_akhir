@@ -126,7 +126,7 @@ class RegisterController extends Controller
                 'title' => $request->title,
                 'document' => $request->document,
                 'support_document' => $request->support_document,
-                'is_editables' => false
+                'is_editable' => false
             ]);
 
             return response()->json([

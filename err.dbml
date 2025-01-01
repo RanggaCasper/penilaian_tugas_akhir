@@ -10,7 +10,7 @@ Table generations {
 
 Table users {
   id int [pk]
-  nim varchar
+  identity varchar
   password varchar
   email varchar
   phone varchar

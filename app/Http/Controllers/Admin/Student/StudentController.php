@@ -32,7 +32,7 @@ class StudentController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = User::with('generation')->select(['id', 'name', 'email', 'phone', 'nim', 'generation_id'])->where('role_id', 4)->orderBy('nim', 'asc');
+                $data = User::with('generation')->select(['id', 'name', 'email', 'phone', 'identity', 'generation_id'])->where('role_id', 4)->orderBy('identity', 'asc');
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -70,7 +70,7 @@ class StudentController extends Controller
             $updated = [];
 
             foreach ($response as $mahasiswa) {  
-                $existingUser = User::where('nim', $mahasiswa['nim'])->first();  
+                $existingUser = User::where('identity', $mahasiswa['nim'])->first();  
 
                 if ($existingUser) {
                     if (is_null($existingUser->password)) {
@@ -91,7 +91,7 @@ class StudentController extends Controller
 
                 User::create([  
                     'name' => $mahasiswa['nama'],  
-                    'nim' => $mahasiswa['nim'],  
+                    'identity' => $mahasiswa['nim'],  
                     'email' => $mahasiswa['email'],  
                     'phone' => $mahasiswa['telepon'],  
                     'generation_id' => $generation->id,  
@@ -104,15 +104,12 @@ class StudentController extends Controller
 
             return response()->json([  
                 'status' => true,  
-                'message' => count($inserted) > 0 ? 'Data berhasil diproses.' : 'Tidak ada data baru yang ditambahkan.',  
-                'inserted' => $inserted,  
-                'updated' => $updated,
-                'skipped' => $skipped,  
+                'message' => count($inserted) > 0 ? 'Data berhasil ditambahkan, berhasil menambahkan '.count($inserted).' data.' : 'Tidak ada data baru yang ditambahkan.',  
             ]);  
         } catch (\Exception $e) {  
             return response()->json([  
                 'status' => false,  
-                'message' => 'Terjadi kesalahan saat mengambil data.',  
+                'message' => 'Terjadi kesalahan saat mengambil data.',
             ], 500);  
         }  
     }

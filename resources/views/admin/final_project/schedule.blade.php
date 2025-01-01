@@ -15,9 +15,6 @@
                         <x-input-field label="Jam Mulai" type="time" name="start_time" id="start_time" />
                     </div>
                     <div class="mb-3">
-                        <x-input-field label="Jam Berakhir" type="time" name="end_time" id="end_time" />
-                    </div>
-                    <div class="mb-3">
                         <x-input-field label="Ruangan" type="text" name="room" id="room" />
                     </div>
                 </div>

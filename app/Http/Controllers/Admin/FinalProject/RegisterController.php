@@ -103,14 +103,14 @@ class RegisterController extends Controller
             try {
                 $request->validate([
                    'status' => 'required|in:pending,approved,rejected',
-                   'is_editables' => 'required|boolean',
+                   'is_editable' => 'required|boolean',
                 ]);
                 
                 $data = FinalProject::findOrFail($id);
                 
                 $data->update([
                     'status' => $request->status,
-                    'is_editables' => $request->is_editables
+                    'is_editable' => $request->is_editable
                 ]);
                 
                 return response()->json([

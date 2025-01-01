@@ -16,7 +16,7 @@
                 <x-input-field label="No. Ponsel" type="text" name="phone" id="phone" />
             </div>
             <div class="mb-3">
-                <x-input-field label="NIP" type="text" name="nim" id="nim" />
+                <x-input-field label="NIP" type="text" name="identity" id="identity" />
             </div>
             <x-button type="submit" class="btn btn-primary" label="Submit" />
             <x-button type="reset" class="btn btn-danger" label="Reset" />
@@ -63,7 +63,7 @@
                             <x-input-field label="No. Ponsel" type="text" name="phone" id="phone_update" />
                         </div>
                         <div class="mb-3">
-                            <x-input-field label="NIP" type="text" name="nim" id="nim_update" />
+                            <x-input-field label="NIP" type="text" name="identity" id="identity_update" />
                         </div>
                         <x-button type="submit" class="btn btn-primary" label="Submit" />
                         <x-button type="reset" class="btn btn-danger" label="Reset" />
@@ -86,7 +86,7 @@
             { data: 'name', name: 'name' },
             { data: 'email', name: 'email' },
             { data: 'phone', name: 'phone' },
-            { data: 'nim', name: 'nim' },
+            { data: 'identity', name: 'identity' },
             { data: 'action', name: 'action' },
         ],
     });
@@ -148,7 +148,7 @@
                 $('#name_update').val(data.name);
                 $('#email_update').val(data.email);
                 $('#phone_update').val(data.phone);
-                $('#nim_update').val(data.nim);
+                $('#identity_update').val(data.identity);
             },
             error: function(error) {
                 console.error(error);

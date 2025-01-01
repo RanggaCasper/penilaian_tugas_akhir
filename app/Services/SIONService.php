@@ -33,16 +33,16 @@ class SIONService {
     /**
      * Get mahasiswa profile
      *
-     * @param string $nim
+     * @param string $identity
      *
      * @return array|false
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getMahasiswaProfile($nim)
+    public function getMahasiswaProfile($identity)
     {
-        $hashCode = $this->generateHashCode([$nim]);
-        $url = $this->apiUrl . '/mahasiswa/' . urlencode($nim) . '&' . $hashCode;
+        $hashCode = $this->generateHashCode([$identity]);
+        $url = $this->apiUrl . '/mahasiswa/' . urlencode($identity) . '&' . $hashCode;
 
         try {
             $response = $this->client->get($url);

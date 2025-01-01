@@ -33,7 +33,7 @@
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-4 fw-bold">NIM</label>
-                        <div class="col-sm-8" id="detail-nim"></div>
+                        <div class="col-sm-8" id="detail-identity"></div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-4 fw-bold">Judul</label>
@@ -66,7 +66,7 @@
                             <option value="rejected">Tolak</option>
                         </select>
                         <label for="is_editable_update">Izin Perubahan Data</label>
-                        <select class="mb-3 form-control form-select" name="is_editables" id="is_editable_update">
+                        <select class="mb-3 form-control form-select" name="is_editable" id="is_editable_update">
                             <option value="0">Tolak</option>
                             <option value="1">Setujui</option>
                         </select>
@@ -89,7 +89,7 @@
         columns: [
             { data: 'no', name: 'no' },
             { data: 'user.name', name: 'user.name' },
-            { data: 'user.nim', name: 'user.nim' },
+            { data: 'user.identity', name: 'user.identity' },
             { data: 'title', name: 'title' },
             { data: 'user.generation.name', name: 'user.generation.name' },
             { data: 'status', name: 'status' },
@@ -105,14 +105,14 @@
             success: function(data) {
                 $('#form_update').attr('action', '{{ route("admin.final_project.register.update", ["id" => ":id"]) }}'.replace(':id', id));
                 $('#detail-student').text(data.user.name);
-                $('#detail-nim').text(data.user.nim);
+                $('#detail-identity').text(data.user.identity);
                 $('#detail-title').text(data.title);
                 $('#detail-document').attr('href', data.document);
                 $('#detail-support-document').attr('href', data.support_document);
                 $('#detail-generation').text(data.user.generation.name);
                 $('#detail-status').text(data.status);
                 $('#status_update').val(data.status);
-                $('#is_editable_update').val(data.is_editables);
+                $('#is_editable_update').val(data.is_editable);
             },
             error: function(error) {
                 console.error(error);

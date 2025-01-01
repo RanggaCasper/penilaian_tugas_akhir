@@ -21,7 +21,16 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
     public function __construct($data, $title = 'JADWAL UJIAN TUGAS AKHIR')
     {
         $this->data = $data;
-        $this->title = $title;
+
+        $examDates = $this->data->pluck('exam_date')->unique()->sort();
+
+        if ($examDates->count() === 1) {
+            $this->title = $title . ' - ' . $this->formatDate($examDates->first());
+        } elseif ($examDates->count() > 1) {
+            $this->title = $title . ' - ' . $this->formatDate($examDates->first()) . ' s/d ' . $this->formatDate($examDates->last());
+        } else {
+            $this->title = $title;
+        }
     }
 
     public function collection()
@@ -29,23 +38,21 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
         return $this->data->map(function ($schedule, $key) {
             return [
                 'No' => $key + 1,
-                'NIM' => $schedule->student->nim,
+                'NIM' => $schedule->student->identity,
                 'Mahasiswa' => $schedule->student->name,
                 'Penguji 1' => $schedule->primary_examiner->name ?? '-',
                 'Penguji 2' => $schedule->secondary_examiner->name ?? '-',
                 'Penguji 3' => $schedule->tertiary_examiner->name ?? '-',
-                'Tanggal Ujian' => $schedule->exam_date,
                 'Waktu Mulai' => $schedule->start_time,
                 'Waktu Berakhir' => $schedule->end_time,
                 'Ruangan' => $schedule->room,
-                'Status' => $schedule->status ? 'Active' : 'Locked',
             ];
         });
     }
 
     public function headings(): array
     {
-        return ['No', 'NIM', 'Mahasiswa', 'Penguji 1', 'Penguji 2', 'Penguji 3', 'Tanggal Ujian', 'Waktu Mulai', 'Waktu Berakhir', 'Ruangan', 'Status'];
+        return ['No', 'NIM', 'Mahasiswa', 'Penguji 1', 'Penguji 2', 'Penguji 3', 'Waktu Mulai', 'Waktu Berakhir', 'Ruangan'];
     }
 
     public function styles(Worksheet $sheet)
@@ -60,7 +67,8 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $sheet->mergeCells('A1:K1');
+                
+                $sheet->mergeCells('A1:I1');
                 $sheet->setCellValue('A1', $this->title);
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => [
@@ -72,7 +80,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                     ],
                 ]);
 
-                $sheet->getStyle('A3:K3')->applyFromArray([
+                $sheet->getStyle('A3:I3')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['argb' => 'FFFFFF'],
@@ -94,7 +102,8 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                 ]);
 
                 $rowCount = 3 + $this->data->count();
-                $sheet->getStyle("A4:K{$rowCount}")->applyFromArray([
+
+                $sheet->getStyle("A4:I{$rowCount}")->applyFromArray([
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
                         'startColor' => ['argb' => 'F5F5F5'],
@@ -111,13 +120,23 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                     ],
                 ]);
 
-                $sheet->setAutoFilter('A3:K3');
+                $sheet->setAutoFilter('A3:I3');
+
+                foreach (range('A', 'I') as $column) {
+                    $sheet->getColumnDimension($column)->setAutoSize(true);
+                }
             },
         ];
     }
 
+
     public function startCell(): string
     {
         return 'A3';
+    }
+
+    private function formatDate($date): string
+    {
+        return \Carbon\Carbon::parse($date)->format('d M Y');
     }
 }

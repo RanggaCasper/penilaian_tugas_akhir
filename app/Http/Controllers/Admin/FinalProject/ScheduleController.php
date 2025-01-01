@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\FinalProject;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
@@ -38,13 +39,13 @@ class ScheduleController extends Controller
             $data = User::where('role_id', 4)
                 ->where('name', 'like', '%' . $search . '%')
                 ->orderBy('name', 'asc')
-                ->get(['id', 'name', 'nim']);
+                ->get(['id', 'name', 'identity']);
 
             return response()->json(
                 $data->map(function ($data) {
                     return [
                         'id' => $data->id,
-                        'name' => $data->name . ' - ' . $data->nim
+                        'name' => $data->name . ' - ' . $data->identity
                     ];
                 })
             );                
@@ -90,16 +91,32 @@ class ScheduleController extends Controller
 
             $request->validate([
                 'exam_date' => 'required|date',
-                'start_time' => 'required',
-                'end_time' => 'required',
+                'start_time' => 'required|date_format:H:i',
                 'room' => 'required',
                 'status' => 'required',
-                'student_id' => 'required|exists:users,id',
+                'student_id' => 'required|exists:users,id|unique:exam_schedule',
                 'primary_examiner_id' => 'required|exists:users,id',
                 'secondary_examiner_id' => 'required|exists:users,id',
                 'tertiary_examiner_id' => 'required|exists:users,id',
             ]);
-        
+            
+            $examiner = [
+                $request->primary_examiner_id,
+                $request->secondary_examiner_id,
+                $request->tertiary_examiner_id,
+            ];
+            
+            if (count($examiner) !== count(array_unique($examiner))) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak boleh ada penguji yang sama.',
+                ], 422);
+            }
+
+            $request->merge([
+                'end_time' => Carbon::createFromFormat('H:i', $request->start_time)->addHour()->format('H:i'),
+            ]);
+            
             Schedule::create($request->all());
         
             return response()->json([

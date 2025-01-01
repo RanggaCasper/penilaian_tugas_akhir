@@ -16,11 +16,16 @@
             margin-bottom: 10px;
             font-size: 12px;
         }
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 10px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
-            table-layout: fixed;
+            margin: 0 auto;
+            table-layout: auto;
         }
         th, td {
             border: 1px solid black;
@@ -37,43 +42,51 @@
             background-color: #f5f5f5;
             font-size: 9px;
         }
+        
+        @media (max-width: 768px) {
+            body {
+                font-size: 9px;
+            }
+            th, td {
+                font-size: 8px;
+                padding: 3px;
+            }
+        }
     </style>
 </head>
 <body>
     <h2>{{ $title }}</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>NIM</th>
-                <th>Mahasiswa</th>
-                <th>Penguji 1</th>
-                <th>Penguji 2</th>
-                <th>Penguji 3</th>
-                <th>Tanggal Ujian</th>
-                <th>Waktu Mulai</th>
-                <th>Waktu Berakhir</th>
-                <th>Ruangan</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($data as $index => $schedule)
+    <div class="table-container">
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $schedule->student->nim }}</td>
-                    <td>{{ $schedule->student->name }}</td>
-                    <td>{{ $schedule->primary_examiner->name ?? '-' }}</td>
-                    <td>{{ $schedule->secondary_examiner->name ?? '-' }}</td>
-                    <td>{{ $schedule->tertiary_examiner->name ?? '-' }}</td>
-                    <td>{{ $schedule->exam_date }}</td>
-                    <td>{{ $schedule->start_time }}</td>
-                    <td>{{ $schedule->end_time }}</td>
-                    <td>{{ $schedule->room }}</td>
-                    <td>{{ $schedule->status ? 'Active' : 'Locked' }}</td>
+                    <th>No</th>
+                    <th>Identity</th>
+                    <th>Mahasiswa</th>
+                    <th>Penguji 1</th>
+                    <th>Penguji 2</th>
+                    <th>Penguji 3</th>
+                    <th>Waktu Mulai</th>
+                    <th>Waktu Berakhir</th>
+                    <th>Ruangan</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($data as $index => $schedule)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $schedule->student->identity }}</td>
+                        <td>{{ $schedule->student->name }}</td>
+                        <td>{{ $schedule->primary_examiner->name ?? '-' }}</td>
+                        <td>{{ $schedule->secondary_examiner->name ?? '-' }}</td>
+                        <td>{{ $schedule->tertiary_examiner->name ?? '-' }}</td>
+                        <td>{{ $schedule->start_time }}</td>
+                        <td>{{ $schedule->end_time }}</td>
+                        <td>{{ $schedule->room }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
