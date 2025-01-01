@@ -146,12 +146,10 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function (
     Route::get('/dashboard', [App\Http\Controllers\Lecturer\DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('final-project')->as('final_project.')->group(function () {
-        Route::middleware('check.final_project')->group(function () {
-            Route::prefix('schedule')->as('schedule.')->group(function () {
-                Route::controller(\App\Http\Controllers\Student\FinalProject\ScheduleController::class)->group(function () {
-                    Route::get('/', 'index')->name('index');
-                    Route::get('/download', 'download')->name('download');
-                });
+        Route::prefix('schedule')->as('schedule.')->group(function () {
+            Route::controller(\App\Http\Controllers\Lecturer\FinalProject\ScheduleController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/get', 'get')->name('get');  
             });
         });
     });

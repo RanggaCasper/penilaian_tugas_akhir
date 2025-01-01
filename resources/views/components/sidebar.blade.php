@@ -30,6 +30,11 @@
                         <x-navlink icon="ri-calendar-event-line" title="Penilaian" href="{{ route('admin.evaluation.index') }}" active="{{ request()->routeIs('admin.evaluation.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Sub Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.sub.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.sub.index') }}" />
+                @elseif (auth()->user()->role->name == "Lecturer")
+                    <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('lecturer.dashboard') }}" active="{{ request()->routeIs('lecturer.dashboard') }}" />
+                    <x-menu-title title="Tugas Akhir" />
+                        <x-navlink icon="ri-calendar-event-line" title="Jadwal Tugas Akhir" href="{{ route('lecturer.final_project.schedule.index') }}" active="{{ request()->routeIs('lecturer.final_project.schedule.index') }}" />
+                            
                 @elseif (auth()->user()->role->name == "Student")
                     @php
                         $checkFinalProject = App\Models\FinalProject\FinalProject::where('user_id', Auth::id())
