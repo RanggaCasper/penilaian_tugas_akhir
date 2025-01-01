@@ -122,12 +122,36 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
 Route::prefix('student')->as('student.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('register')->as('register.')->group(function () {
-        Route::prefix('final-project')->as('final_project.')->group(function () {
+    Route::prefix('final-project')->as('final_project.')->group(function () {
+        Route::prefix('register')->as('register.')->group(function () {
             Route::controller(\App\Http\Controllers\Student\FinalProject\RegisterController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::put('/', 'update')->name('update');
+            });
+        });
+        
+        Route::middleware('check.final_project')->group(function () {
+            Route::prefix('schedule')->as('schedule.')->group(function () {
+                Route::controller(\App\Http\Controllers\Student\FinalProject\ScheduleController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::get('/download', 'download')->name('download');
+                });
+            });
+        });
+    });
+});
+
+Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Lecturer\DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('final-project')->as('final_project.')->group(function () {
+        Route::middleware('check.final_project')->group(function () {
+            Route::prefix('schedule')->as('schedule.')->group(function () {
+                Route::controller(\App\Http\Controllers\Student\FinalProject\ScheduleController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::get('/download', 'download')->name('download');
+                });
             });
         });
     });

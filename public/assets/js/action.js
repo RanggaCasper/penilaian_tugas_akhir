@@ -25,6 +25,11 @@ $(document).on('submit', 'form', function(e) {
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 `);
+
+                const modal = $(e.target).closest('.modal');
+                if (modal.length > 0) {
+                    modal.modal('hide');
+                }
             }
 
             if (response.redirect_url) {
@@ -39,9 +44,16 @@ $(document).on('submit', 'form', function(e) {
                 });
             }
 
+            
             if (!$(e.target).attr('id')?.endsWith('_update')) {
                 if ($(e.target).data('reset') !== false) {
                     $(e.target).trigger('reset');
+                }
+
+                if ($.fn.select2) {
+                    $('.select2').each(function() {
+                        $(this).val(null).trigger('change');
+                    });
                 }
             }
 

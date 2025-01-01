@@ -31,9 +31,18 @@
                         <x-navlink icon="ri-calendar-event-line" title="Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Sub Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.sub.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.sub.index') }}" />
                 @elseif (auth()->user()->role->name == "Student")
+                    @php
+                        $checkFinalProject = App\Models\FinalProject\FinalProject::where('user_id', Auth::id())
+                            ->where('status', 'approved')
+                            ->exists();
+                    @endphp
+                            
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('student.dashboard') }}" active="{{ request()->routeIs('student.dashboard') }}" />
                     <x-menu-title title="Tugas Akhir" />
-                        <x-navlink icon="ri-user-line" title="Daftar Tugas Akhir" href="{{ route('student.register.final_project.index') }}" active="{{ request()->routeIs('student.register.final_project.index') }}" />
+                        <x-navlink icon="ri-user-line" title="Daftar Tugas Akhir" href="{{ route('student.final_project.register.index') }}" active="{{ request()->routeIs('student.final_project.register.index') }}" />
+                        @if ($checkFinalProject)  
+                            <x-navlink icon="ri-calendar-event-line" title="Jadwal Tugas Akhir" href="{{ route('student.final_project.schedule.index') }}" active="{{ request()->routeIs('student.final_project.schedule.index') }}" />
+                        @endif
                 @endif
             </ul>
         </div>

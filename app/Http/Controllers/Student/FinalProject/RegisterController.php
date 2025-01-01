@@ -35,7 +35,7 @@ class RegisterController extends Controller
             ->first();
 
         $data = $existingFinalProject ?? $this->active_period;
-        return view('student.register.final_project', compact('data'));
+        return view('student.final_project.register', compact('data'));
     }
 
     /**
