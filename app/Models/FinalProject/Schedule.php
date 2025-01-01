@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Schedule extends Model
 {
-    protected $table = 'exam_schedule';
+    protected $table = 'exam_schedules';
 
     protected $guarded = [
         'id'
