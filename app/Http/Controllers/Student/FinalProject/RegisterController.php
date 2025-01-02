@@ -15,12 +15,13 @@ class RegisterController extends Controller
 
     public function __construct()
     {
-        $this->active_period = Period::where([
-            ['generation_id', '=', Auth::user()->generation_id],
-            ['start_date', '<=', now()],
-            ['end_date', '>=', now()],
-            ['is_active', '=', 1],
-        ])->first();
+        $this->active_period = Period::whereHas('generation', function ($query) {
+            $query->where('name', '>=', Auth::user()->generation->name);
+        })
+        ->where('start_date', '<=', now())
+        ->where('end_date', '>=', now())
+        ->where('is_active', '=', 1)
+        ->first();
     }
 
     /**

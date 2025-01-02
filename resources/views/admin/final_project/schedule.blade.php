@@ -73,6 +73,7 @@
                     <th>Jam Mulai</th>
                     <th>Jam Berakhir</th>
                     <th>Mahasiswa</th>
+                    <th>Judul TA</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -289,6 +290,7 @@
             { data: 'start_time', name: 'start_time' },
             { data: 'end_time', name: 'end_time' },
             { data: 'student.name', name: 'student.name' },
+            { data: 'student.final_project.title', name: 'student.final_project.title' },
             { data: 'status', name: 'status' },
             { data: 'action', name: 'action' },
         ],

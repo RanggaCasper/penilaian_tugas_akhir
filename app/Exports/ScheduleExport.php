@@ -43,6 +43,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                 'Penguji 1' => $schedule->primary_examiner->name ?? '-',
                 'Penguji 2' => $schedule->secondary_examiner->name ?? '-',
                 'Penguji 3' => $schedule->tertiary_examiner->name ?? '-',
+                'Judul Tugas Akhir' => $schedule->student->final_project->title,
                 'Waktu Mulai' => $schedule->start_time,
                 'Waktu Berakhir' => $schedule->end_time,
                 'Ruangan' => $schedule->room,
@@ -52,7 +53,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
 
     public function headings(): array
     {
-        return ['No', 'NIM', 'Mahasiswa', 'Penguji 1', 'Penguji 2', 'Penguji 3', 'Waktu Mulai', 'Waktu Berakhir', 'Ruangan'];
+        return ['No', 'NIM', 'Mahasiswa', 'Penguji 1', 'Penguji 2', 'Penguji 3', 'Judul Tugas Akhir', 'Waktu Mulai', 'Waktu Berakhir', 'Ruangan'];
     }
 
     public function styles(Worksheet $sheet)
@@ -68,7 +69,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 
-                $sheet->mergeCells('A1:I1');
+                $sheet->mergeCells('A1:J1');
                 $sheet->setCellValue('A1', $this->title);
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => [
@@ -80,7 +81,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                     ],
                 ]);
 
-                $sheet->getStyle('A3:I3')->applyFromArray([
+                $sheet->getStyle('A3:J3')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['argb' => 'FFFFFF'],
@@ -103,7 +104,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
 
                 $rowCount = 3 + $this->data->count();
 
-                $sheet->getStyle("A4:I{$rowCount}")->applyFromArray([
+                $sheet->getStyle("A4:J{$rowCount}")->applyFromArray([
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
                         'startColor' => ['argb' => 'F5F5F5'],
@@ -120,9 +121,9 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                     ],
                 ]);
 
-                $sheet->setAutoFilter('A3:I3');
+                $sheet->setAutoFilter('A3:J3');
 
-                foreach (range('A', 'I') as $column) {
+                foreach (range('A', 'J') as $column) {
                     $sheet->getColumnDimension($column)->setAutoSize(true);
                 }
             },

@@ -36,10 +36,17 @@ class ScheduleController extends Controller
         if($request->ajax()) {
             $search = $request->get('q');
 
-            $data = User::where('role_id', 4)
-                ->where('name', 'like', '%' . $search . '%')
-                ->orderBy('name', 'asc')
-                ->get(['id', 'name', 'identity']);
+            $data = User::with(['final_project' => function ($query) {
+                $query->where('status', 'Approved');
+            }])
+            ->where('role_id', 4)
+            ->where('name', 'like', '%' . $search . '%')
+            ->whereHas('final_project', function ($query) {
+                $query->where('status', 'Approved');
+            })
+            ->whereDoesntHave('schedule')
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name', 'identity']);            
 
             return response()->json(
                 $data->map(function ($data) {
@@ -94,7 +101,7 @@ class ScheduleController extends Controller
                 'start_time' => 'required|date_format:H:i',
                 'room' => 'required',
                 'status' => 'required',
-                'student_id' => 'required|exists:users,id|unique:exam_schedule',
+                'student_id' => 'required|exists:users,id|unique:exam_schedules',
                 'primary_examiner_id' => 'required|exists:users,id',
                 'secondary_examiner_id' => 'required|exists:users,id',
                 'tertiary_examiner_id' => 'required|exists:users,id',
@@ -183,7 +190,7 @@ class ScheduleController extends Controller
             
         if ($request->ajax()) {
             try {
-                $data = Schedule::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->get();
+                $data = Schedule::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -196,7 +203,7 @@ class ScheduleController extends Controller
                     })                    
                     ->addColumn('action', function ($row) {  
                         return '  
-                            <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Lihat</button>  
+                            <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Edit</button>  
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
                         ';  
                     })  

@@ -47,7 +47,7 @@ Table sub_evaluation_criteria {
   evaluation_criteria_id int [ref: > evaluation_criteria.id]
 }
 
-Table final_project_register {
+Table final_project {
   id int [pk]
   title varchar
   document varchar
@@ -66,4 +66,9 @@ Table exam_schedule {
   primary_examiner_id int [ref: > users.id]
   secondary_examiner_id int [ref: > users.id]
   tertiary_examiner_id int [ref: > users.id]
+}
+
+Table exam {
+  id int [pk]
+  evaluation int [ref: > evaluation.id]
 }
