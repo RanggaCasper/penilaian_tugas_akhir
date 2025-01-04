@@ -6,10 +6,8 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Excel;
 use App\Exports\ScheduleExport;
 use App\Http\Controllers\Controller;
+use App\Models\FinalProject\Exam;
 use Illuminate\Support\Facades\Auth;
-use App\Models\FinalProject\Schedule;
-use App\Models\FinalProject\FinalProject;
-
 class ScheduleController extends Controller
 {
     /**
@@ -19,14 +17,14 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        $schedule = Schedule::where('student_id', Auth::user()->id)->first();
+        $schedule = Exam::where('student_id', Auth::user()->id)->first();
         return view('student.final_project.schedule', compact('schedule'));
     }
 
     public function download(Excel $excel)
     {
         try {
-            $query = Schedule::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('student_id', Auth::user()->id);
+            $query = Exam::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('student_id', Auth::user()->id);
 
             $data = $query->get();
 

@@ -5,9 +5,9 @@ namespace App\Models\FinalProject;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Schedule extends Model
+class Exam extends Model
 {
-    protected $table = 'exam_schedules';
+    protected $table = 'exams';
 
     protected $guarded = [
         'id'

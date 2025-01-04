@@ -70,5 +70,5 @@ Table exam_schedule {
 
 Table exam {
   id int [pk]
-  evaluation int [ref: > evaluation.id]
+  evaluation_id int [ref: > evaluation.id]
 }

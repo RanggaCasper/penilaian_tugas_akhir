@@ -11,7 +11,7 @@ use App\Exports\ScheduleExport;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Models\FinalProject\Schedule;
+use App\Models\FinalProject\Exam;
 
 class ScheduleController extends Controller
 {
@@ -124,7 +124,7 @@ class ScheduleController extends Controller
                 'end_time' => Carbon::createFromFormat('H:i', $request->start_time)->addHour()->format('H:i'),
             ]);
             
-            Schedule::create($request->all());
+            Exam::create($request->all());
         
             return response()->json([
                 'status' => true,
@@ -156,7 +156,7 @@ class ScheduleController extends Controller
     {
         if ($request->has('export')) {
             try {
-                $query = Schedule::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner');
+                $query = Exam::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner');
 
                 if ($request->has('exam_date')) {
                     $query->whereDate('exam_date', $request->input('exam_date'));
@@ -190,7 +190,7 @@ class ScheduleController extends Controller
             
         if ($request->ajax()) {
             try {
-                $data = Schedule::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->get();
+                $data = Exam::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -231,7 +231,7 @@ class ScheduleController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Schedule::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->findOrFail($id);
+                $data = Exam::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -262,7 +262,7 @@ class ScheduleController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $schedule = Schedule::findOrFail($id);
+                $schedule = Exam::findOrFail($id);
 
                 $request->merge([
                     'status' => $request->has('status') ? 1 : 0,
@@ -314,7 +314,7 @@ class ScheduleController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = Schedule::findOrFail($id);
+                $periode = Exam::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([
