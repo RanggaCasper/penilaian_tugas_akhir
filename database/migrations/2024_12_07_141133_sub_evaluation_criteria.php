@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->double('score');
-            $table->foreignId('evaluation_criteria_id')->constrained('evaluation_criterias')->onDelete('cascade');
+            $table->foreignId('evaluation_criteria_id')->constrained('evaluation_criterias');
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->double('score');
-            $table->foreignId('evaluation_id')->constrained('evaluations')->onDelete('cascade');
+            $table->foreignId('evaluation_id')->constrained('evaluations');
             $table->boolean('has_sub')->default(false);
             $table->timestamps();
         });

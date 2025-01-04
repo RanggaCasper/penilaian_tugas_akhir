@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('document');
             $table->string('support_document');
-            $table->foreignId('final_project_period_id')->constrained('final_project_periods')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('final_project_period_id')->constrained('final_project_periods');
+            $table->foreignId('user_id')->constrained('users');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->boolean('is_editable')->default(false);
             $table->timestamps();

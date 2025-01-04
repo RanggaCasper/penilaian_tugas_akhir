@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('profile_image')->nullable();
-            $table->foreignId('generation_id')->nullable()->constrained('generations')->onDelete('cascade');
+            $table->foreignId('generation_id')->nullable()->constrained('generations');
             $table->rememberToken();
             $table->timestamps();
         });

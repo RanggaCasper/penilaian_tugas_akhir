@@ -28,7 +28,7 @@ return new class extends Migration
         
         // Tambah relasi ke table users
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
+            $table->foreignId('role_id')->constrained('roles');
         });
     }
 

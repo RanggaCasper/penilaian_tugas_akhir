@@ -18,10 +18,10 @@ return new class extends Migration
             $table->time('end_time');
             $table->string('room');
             $table->boolean('status')->default(false);
-            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('primary_examiner_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('secondary_examiner_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('tertiary_examiner_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('users');
+            $table->foreignId('primary_examiner_id')->constrained('users');
+            $table->foreignId('secondary_examiner_id')->constrained('users');
+            $table->foreignId('tertiary_examiner_id')->constrained('users');
             $table->timestamps();  
         });
     }
