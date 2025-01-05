@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Excel;
 use App\Exports\ScheduleExport;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use App\Models\FinalProject\Exam;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FinalProject\Schedule;
 
@@ -35,7 +36,7 @@ class ScheduleController extends Controller
     {
         if ($request->has('export')) {
             try {
-                $query = Schedule::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where(function ($query) {
+                $query = Exam::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where(function ($query) {
                     $query->where('primary_examiner_id', Auth::id())
                         ->orWhere('secondary_examiner_id', Auth::id())
                         ->orWhere('tertiary_examiner_id', Auth::id());
@@ -73,7 +74,7 @@ class ScheduleController extends Controller
             
         if ($request->ajax()) {
             try {
-                $data = Schedule::with(['student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner'])
+                $data = Exam::with(['student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner'])
                             ->where(function ($query) {
                                 $query->where('primary_examiner_id', Auth::id())
                                     ->orWhere('secondary_examiner_id', Auth::id())

@@ -34,6 +34,7 @@
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('lecturer.dashboard') }}" active="{{ request()->routeIs('lecturer.dashboard') }}" />
                     <x-menu-title title="Tugas Akhir" />
                         <x-navlink icon="ri-calendar-event-line" title="Jadwal Tugas Akhir" href="{{ route('lecturer.final_project.schedule.index') }}" active="{{ request()->routeIs('lecturer.final_project.schedule.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Penilaian Tugas Akhir" href="{{ route('lecturer.final_project.exam.index') }}" active="{{ request()->routeIs('lecturer.final_project.exam.index') }}" />
                             
                 @elseif (auth()->user()->role->name == "Student")
                     @php

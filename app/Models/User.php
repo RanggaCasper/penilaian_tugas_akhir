@@ -4,8 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\FinalProject\Exam;
 use App\Models\FinalProject\FinalProject;
-use App\Models\FinalProject\Schedule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,6 +49,6 @@ class User extends Authenticatable
 
     public function schedule()
     {
-        return $this->hasOne(Schedule::class, 'student_id');
+        return $this->hasOne(Exam::class, 'student_id');
     }
 }

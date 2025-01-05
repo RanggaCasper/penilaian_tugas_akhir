@@ -3,6 +3,7 @@
 namespace App\Models\FinalProject;
 
 use App\Models\User;
+use App\Models\Exam\Evaluation;
 use Illuminate\Database\Eloquent\Model;
 
 class Exam extends Model
@@ -51,5 +52,10 @@ class Exam extends Model
     public function tertiary_examiner()
     {
         return $this->belongsTo(User::class, 'tertiary_examiner_id');
+    }
+
+    public function evaluations()
+    {
+        return $this->hasMany(Evaluation::class, 'exam_id');
     }
 }

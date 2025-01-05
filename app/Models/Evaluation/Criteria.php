@@ -42,6 +42,6 @@ class Criteria extends Model
      */
     public function sub_evaluation_criterias()
     {
-        return $this->hasMany(SubCriteria::class);
+        return $this->hasMany(SubCriteria::class, 'evaluation_criteria_id');
     }
 }

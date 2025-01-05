@@ -101,7 +101,7 @@ class ScheduleController extends Controller
                 'start_time' => 'required|date_format:H:i',
                 'room' => 'required',
                 'status' => 'required',
-                'student_id' => 'required|exists:users,id|unique:exam_schedules',
+                'student_id' => 'required|exists:users,id|unique:exams',
                 'primary_examiner_id' => 'required|exists:users,id',
                 'secondary_examiner_id' => 'required|exists:users,id',
                 'tertiary_examiner_id' => 'required|exists:users,id',

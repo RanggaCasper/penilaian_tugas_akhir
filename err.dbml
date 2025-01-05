@@ -55,7 +55,7 @@ Table final_project {
   final_project_period_id int [ref: > final_project_period.id]
 }
 
-Table exam_schedule {
+Table exams {
   id int [pk]
   exam_date date
   start_time time
@@ -68,7 +68,17 @@ Table exam_schedule {
   tertiary_examiner_id int [ref: > users.id]
 }
 
-Table exam {
+Table exam_evaluations {
   id int [pk]
+  student_id int [ref: > users.id]
+  examiner_id int [ref: > users.id]
   evaluation_id int [ref: > evaluation.id]
+  exam_id int [ref: > exams.id]
+}
+
+Table evaluation_scores {
+  id int [pk, increment]
+  exam_evaluation_id int [ref: > exam_evaluation.id]
+  evaluation_criteria_id int [ref: > evaluation_criteria.id]
+  score decimal
 }

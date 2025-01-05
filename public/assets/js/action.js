@@ -73,7 +73,10 @@ $(document).on('submit', 'form', function(e) {
 
             if (errors && Object.keys(errors).length > 0) {
                 $.each(errors, function(field, message) {
-                    let input = $(`[name="${field}"]`);
+                    let inputName = field.replace(/\.(\d+)/g, '[$1]');
+                    inputName = inputName.replace(/\./g, '\\.').replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+                    let input = $(`[name="${inputName}"]`);
+
                     input.addClass('is-invalid');
 
                     input.after(`

@@ -20,6 +20,6 @@ class SubCriteria extends Model
      */
     public function evaluation_criteria()
     {
-        return $this->belongsTo(Criteria::class);
+        return $this->belongsTo(Criteria::class, 'evaluation_criteria_id');
     }
 }

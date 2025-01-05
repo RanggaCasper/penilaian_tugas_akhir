@@ -152,5 +152,14 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function (
                 Route::get('/get', 'get')->name('get');  
             });
         });
+
+        Route::prefix('exam')->as('exam.')->group(function () {
+            Route::controller(\App\Http\Controllers\Lecturer\FinalProject\ExamController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/get/{id}', 'getEvaluation')->name('getEvaluation');  
+                Route::get('/download/pdf/{id}', 'generatePDF')->name('generatePDF');  
+                Route::post('/', 'store')->name('store');
+            });
+        });
     });
 });
