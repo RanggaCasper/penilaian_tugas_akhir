@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models\FinalProject;
+namespace App\Models;
 
 use App\Models\Generation;
 use Illuminate\Database\Eloquent\Model;
 
 class Period extends Model
 {
-    protected $table = 'final_project_periods';
+    protected $table = 'periods';
 
     protected $guarded = [
         'id'

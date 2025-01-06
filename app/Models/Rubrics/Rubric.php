@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Models\Evaluation;
+namespace App\Models\Rubrics;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Evaluation extends Model
+class Rubric extends Model
 {
-    protected $table = 'evaluations';
+    protected $table = 'rubrics';
 
     protected $guarded = [
         'id'
     ];
 
     /**
-     * Get all of the evaluation criteria for the evaluation.
+     * Get all of the rubrics criteria for the rubrics.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function evaluation_criterias()
+    public function criterias()
     {  
         return $this->hasMany(Criteria::class);  
     }

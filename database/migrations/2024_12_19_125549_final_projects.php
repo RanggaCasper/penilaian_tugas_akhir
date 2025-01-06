@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('document');
             $table->string('support_document');
-            $table->foreignId('user_id')->constrained('users');
             $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
             $table->boolean('is_editable')->default(false);
+            $table->foreignId('student_id')->constrained('users');
             $table->foreignId('period_id')->constrained('periods');
             $table->timestamps();
         });

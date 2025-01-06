@@ -3,6 +3,7 @@
 namespace App\Models\FinalProject;
 
 use App\Models\User;
+use App\Models\Period;
 use Illuminate\Database\Eloquent\Model;
 
 class FinalProject extends Model
@@ -20,7 +21,7 @@ class FinalProject extends Model
      */
     public function period()
     {
-        return $this->belongsTo(Period::class, 'final_project_period_id');
+        return $this->belongsTo(Period::class, 'period_id');
     }
 
     /**

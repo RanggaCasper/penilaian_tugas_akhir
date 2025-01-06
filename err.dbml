@@ -67,7 +67,7 @@ Table proposals {
   support_document longtext
   is_editable boolean
   status enum('menunggu', 'disetujui', 'ditolak')
-  user_id int [ref: > users.id]
+  student_id int [ref: > users.id]
   primary_mentor_id int [ref: > users.id]
   secondary_mentor_id int [ref: > users.id]
   period_id int [ref: > periods.id]
@@ -80,7 +80,7 @@ Table final_projects {
   document longtext
   support_document longtext
   is_editable boolean
-  user_id int [ref: > users.id]
+  student_id int [ref: > users.id]
   status enum('menunggu', 'disetujui', 'ditolak')
   period_id int [ref: > periods.id]
 }

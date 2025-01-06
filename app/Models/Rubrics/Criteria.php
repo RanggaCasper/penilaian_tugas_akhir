@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Models\Evaluation;
+namespace App\Models\Rubrics;
 
-use App\Models\Evaluation\Evaluation;
 use Illuminate\Database\Eloquent\Model;
 
 class Criteria extends Model
 {
-    protected $table = 'evaluation_criterias';
+    protected $table = 'criterias';
 
     protected $guarded = [
         'id'
@@ -26,13 +25,13 @@ class Criteria extends Model
     }
 
     /**
-     * Belongs to an evaluation.
+     * Belongs to an rubric.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function evaluation()  
+    public function rubric()  
     {  
-        return $this->belongsTo(Evaluation::class);  
+        return $this->belongsTo(Rubric::class);  
     }  
 
     /**
@@ -40,8 +39,8 @@ class Criteria extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function sub_evaluation_criterias()
+    public function sub_criterias()
     {
-        return $this->hasMany(SubCriteria::class, 'evaluation_criteria_id');
+        return $this->hasMany(SubCriteria::class, 'sub_criteria_id');
     }
 }
