@@ -19,7 +19,7 @@
     @else
     @foreach ($exams as $list)
         <div class="col-lg-4">
-            <x-card title="{{ $list->student->name }}">
+            <x-card title="{{ $list->student->name }} - {{ $list->student->identity }}">
                 <div>
                     <ul class="list-group">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -57,12 +57,14 @@
                             </span>
                         </li>
                         <li class="list-group-item">
-                            @if ($list->evaluations)
+                            @if ($list->evaluations->first())
                                 <a href="{{ route('lecturer.final_project.exam.generatePDF', $list->id) }}" class="mb-3 w-100 btn btn-success">
-                                    Download Penilaian
+                                    Download Hasil
                                 </a>
                             @endif
-                            <button type="button" class="w-100 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-id="{{ $list->id }}">
+                            <button type="button" class="w-100 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-id="{{ $list->id }}" @if (!$list->status)
+                                disabled
+                            @endif>
                                 Nilai
                             </button>
                         </li>
@@ -170,6 +172,5 @@
             }
         });
     });
-
 </script>
 @endpush

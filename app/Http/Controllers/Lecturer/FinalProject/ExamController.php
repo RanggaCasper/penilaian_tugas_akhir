@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Lecturer\FinalProject;
 
+use Carbon\Carbon;
 use App\Models\Exam\Score;
 use Illuminate\Http\Request;
 use App\Models\Exam\SubScore;
@@ -21,7 +22,7 @@ class ExamController extends Controller
             $query->where('primary_examiner_id', Auth::id())
                 ->orWhere('secondary_examiner_id', Auth::id())
                 ->orWhere('tertiary_examiner_id', Auth::id());
-        })->orderBy('start_time', 'asc')->get();
+        })->where('exam_date', '=', Carbon::today())->orderBy('start_time', 'asc')->get();
 
         return view('lecturer.final_project.exam', compact('exams'));
     }
@@ -31,7 +32,7 @@ class ExamController extends Controller
         try {
             $data = $request->validate([
                 'exam_id' => 'required|exists:exams,id',
-                'exam_evaluation_id' => 'required|exists:evaluations,id',
+                'exam_evaluation_id' => 'nullable|exists:evaluations,id',
                 'scores' => 'nullable|array',
                 'scores.*' => 'numeric|min:0|max:100',
                 'sub_scores' => 'nullable|array',
@@ -39,7 +40,17 @@ class ExamController extends Controller
             ]);
 
             $exam = Exam::findOrFail($data['exam_id']);
-            
+
+            if (!empty($data['exam_evaluation_id'])) {
+                $previousEvaluation = ExamEvaluation::find($data['exam_evaluation_id']);
+                
+                if ($previousEvaluation) {
+                    $previousEvaluation->scores()->delete();
+                    $previousEvaluation->subScores()->delete();
+                    $previousEvaluation->delete();
+                }
+            }
+
             $evaluation = ExamEvaluation::updateOrCreate(
                 [
                     'exam_id' => $exam->id,
@@ -108,7 +119,6 @@ class ExamController extends Controller
             ], 500);
         }
     }
-
 
     public function getEvaluation($id, Request $request)
     {

@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('final_projects', function (Blueprint $table) {
+        Schema::create('proposals', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
             $table->string('document');
             $table->string('support_document');
-            $table->foreignId('user_id')->constrained('users');
-            $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
             $table->boolean('is_editable')->default(false);
+            $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('primary_mentor_id')->constrained('users');
+            $table->foreignId('secondary_mentor_id')->constrained('users')->nullable();
             $table->foreignId('period_id')->constrained('periods');
             $table->timestamps();
         });
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('final_projects');
+        Schema::dropIfExists('proposals');
     }
 };

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('identity')->unique();
+            $table->string('secondary_identity')->nullable()->unique();
             $table->string('password')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
@@ -45,7 +46,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('study_programs');
         Schema::dropIfExists('generations');
         Schema::dropIfExists('users');
         Schema::dropIfExists('sessions');

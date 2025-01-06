@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('evaluation_criterias', function (Blueprint $table) {
+        Schema::create('rubrics', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->double('score');
-            $table->foreignId('evaluation_id')->constrained('evaluations');
-            $table->boolean('has_sub')->default(false);
+            $table->enum('type', ['proposal', 'final_project']);
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('evaluation_criterias');
+        Schema::dropIfExists('rubrics');
     }
 };

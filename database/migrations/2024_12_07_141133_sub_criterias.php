@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proposal_periods', function (Blueprint $table) {
+        Schema::create('sub_criterias', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->boolean('is_active')->default(true);
-            $table->foreignId('generation_id')->constrained('generations');
+            $table->double('weight');
+            $table->foreignId('criteria_id')->constrained('criterias');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proposal_periods');
+        Schema::dropIfExists('sub_criterias');
     }
 };

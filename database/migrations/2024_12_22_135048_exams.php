@@ -17,11 +17,13 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->string('room');
-            $table->boolean('status')->default(false);
+            $table->boolean('is_editable')->default(false);
+            $table->enum('type', ['proposal', 'final_project']);
             $table->foreignId('student_id')->constrained('users');
             $table->foreignId('primary_examiner_id')->constrained('users');
             $table->foreignId('secondary_examiner_id')->constrained('users');
             $table->foreignId('tertiary_examiner_id')->constrained('users');
+            $table->foreignId('rubric_id')->constrained('rubrics');
             $table->timestamps();  
         });
     }
@@ -31,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('exam_schedule');
+        Schema::dropIfExists('exams');
     }
 };

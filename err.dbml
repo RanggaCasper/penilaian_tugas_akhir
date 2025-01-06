@@ -1,84 +1,128 @@
-Table roles {
-  id int [pk]
+// Tabel Angkatan
+Table generations {  
+  id int [pk]  
+  name varchar     
+}  
+
+// Tabel Pengguna 
+Table users {  
+  id int [pk]  
+  name varchar  
+  identity varchar  
+  secondary_identitiy varchar
+  password varchar  
+  email varchar  
+  phone varchar  
+  profile_image varchar  
+  generation_id int [ref: > generations.id]  
+  role_id int [ref: > roles.id]     
+}  
+
+// Tabel Role 
+Table roles {  
+  id int [pk]  
+  name varchar     
+}  
+
+// Tabel Periode
+Table periods {  
+  id int [pk]  
+  name varchar  
+  start_date date  
+  end_date date  
+  is_active boolean [default: true]  
+  generation_id int [ref: > generations.id]  
+  type enum('proposal', 'final_project')    
+}  
+
+// Tabel Rubrik 
+Table rubrics {  
+  id int [pk]  
   name varchar
+  type enum('proposal', 'final_project')
+}  
+
+// Tabel Unsur Rubrik
+Table criterias {  
+  id int [pk]  
+  name varchar  
+  weight double   
+  has_sub boolean 
+  rubric_id int [ref: > rubrics.id]
 }
 
-Table generations {
-  id int [pk]
-  name varchar
+// Tabel Sub Unsur Rubrik
+Table sub_criterias {  
+  id int [pk]  
+  name varchar  
+  weight double   
+  criteria_id int [ref: > criterias.id]
 }
 
-Table users {
-  id int [pk]
-  identity varchar
-  password varchar
-  email varchar
-  phone varchar
-  profile_image varchar
-  generation_id int [ref: > generations.id]
-  role_id int [ref: > roles.id]
+// Tabel Proposal
+Table proposals {  
+  id int [pk]  
+  title varchar  
+  document longtext
+  support_document longtext
+  is_editable boolean
+  status enum('menunggu', 'disetujui', 'ditolak')
+  user_id int [ref: > users.id]
+  primary_mentor_id int [ref: > users.id]
+  secondary_mentor_id int [ref: > users.id]
+  period_id int [ref: > periods.id]
 }
 
-Table final_project_period {
-  id int [pk]
-  name varchar
-  start_date date
-  end_date date
-  is_active bool
-  generation_id int [ref: > generations.id]
+// Tabel Tugas Akhir
+Table final_projects {
+  id int [pk]  
+  title varchar  
+  document longtext
+  support_document longtext
+  is_editable boolean
+  user_id int [ref: > users.id]
+  status enum('menunggu', 'disetujui', 'ditolak')
+  period_id int [ref: > periods.id]
 }
 
-Table evaluation {
-  id int [pk]
-  name varchar
-}
-
-Table evaluation_criteria {
-  id int [pk]
-  name varchar
-  score decimal
-  evaluation_id int [ref: > evaluation.id]
-}
-
-Table sub_evaluation_criteria {
-  id int [pk]
-  name varchar
-  score decimal
-  evaluation_criteria_id int [ref: > evaluation_criteria.id]
-}
-
-Table final_project {
-  id int [pk]
-  title varchar
-  document varchar
-  support_document varchar
-  final_project_period_id int [ref: > final_project_period.id]
-}
-
+// Tabel Ujian
 Table exams {
   id int [pk]
   exam_date date
-  start_time time
-  end_time time
+  start_time datetime
+  end_time datetime
   room varchar
-  status bool
+  is_editable boolean
+  type enum('proposal', 'final_project')
   student_id int [ref: > users.id]
   primary_examiner_id int [ref: > users.id]
   secondary_examiner_id int [ref: > users.id]
   tertiary_examiner_id int [ref: > users.id]
+  rubric_id int [ref: > rubrics.id]
 }
 
-Table exam_evaluations {
+// Tabel Penilaian Ujian
+Table assessments {
   id int [pk]
+  exam_id int [ref: > exams.id]
   student_id int [ref: > users.id]
   examiner_id int [ref: > users.id]
-  evaluation_id int [ref: > evaluation.id]
-  exam_id int [ref: > exams.id]
+  feedback text
 }
 
-Table evaluation_scores {
-  id int [pk, increment]
-  exam_evaluation_id int [ref: > exam_evaluation.id]
-  evaluation_criteria_id int [ref: > evaluation_criteria.id]
-  score decimal
+// Table Nilai Ujian
+Table scores {
+  id int [pk]
+  score double
+  has_sub boolean
+  assessments_id int [ref: > assessments.id]
+  criteria_id int [ref: > criterias.id]
+}
+
+// Table Nilai Ujian (Sub)
+Table sub_scores {
+  id int [pk]
+  score double
+  score_id int [ref: > scores.id]
+  sub_criteria_id int [ref: > sub_criterias.id]
 }

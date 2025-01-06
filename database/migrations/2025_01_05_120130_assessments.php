@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exam_evaluations', function (Blueprint $table) {
+        Schema::create('assessments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('exam_id')->constrained('exams');
             $table->foreignId('student_id')->constrained('users');
             $table->foreignId('examiner_id')->constrained('users');
+            $table->string('feedback')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('exam_evaluations');
+        Schema::dropIfExists('assessments');
     }
 };
