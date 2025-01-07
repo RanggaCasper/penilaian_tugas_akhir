@@ -37,6 +37,21 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
                 Route::delete('{id}', 'destroy')->name('destroy');
             });
         });
+
+        // Jadwal
+        Route::prefix('schedule')->as('schedule.')->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Proposal\ScheduleController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::get('/get', 'get')->name('get');
+                Route::get('/get/student', 'getStudent')->name('getStudent');
+                Route::get('/get/rubric', 'getRubric')->name('getRubric');
+                Route::get('/get/examiner', 'getExaminer')->name('getExaminer');
+                Route::get('/get/{id}', 'getById')->name('getById');
+                Route::put('{id}', 'update')->name('update');
+                Route::delete('{id}', 'destroy')->name('destroy');
+            });
+        });
     });
 
     // Tugas Akhir

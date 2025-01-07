@@ -46,7 +46,7 @@
                         <x-navlink icon="ri-calendar-event-line" title="Periode Ujian" href="{{ route('admin.period.index') }}" active="{{ request()->routeIs('admin.period.index') }}" />
                     <x-menu-title title="Proposal" />
                         <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.proposal.register.index') }}" active="{{ request()->routeIs('admin.proposal.register.index') }}" />
-                        {{-- <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('admin.proposal.schedule.index') }}" active="{{ request()->routeIs('admin.proposal.schedule.index') }}" /> --}}
+                        <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('admin.proposal.schedule.index') }}" active="{{ request()->routeIs('admin.proposal.schedule.index') }}" />
                     <x-menu-title title="Tugas Akhir" />
                         <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.final_project.register.index') }}" active="{{ request()->routeIs('admin.final_project.register.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('admin.final_project.schedule.index') }}" active="{{ request()->routeIs('admin.final_project.schedule.index') }}" />
