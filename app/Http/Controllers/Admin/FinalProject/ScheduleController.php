@@ -133,7 +133,7 @@ class ScheduleController extends Controller
             if (count($examiner) !== count(array_unique($examiner))) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Tidak boleh ada penguji yang sama.',
+                    'message' => 'Penguji 1, Penguji 2, dan Penguji 3 tidak boleh sama.',
                 ], 422);
             }
 

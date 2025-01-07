@@ -12,20 +12,7 @@ Route::post('auth/logout', [\App\Http\Controllers\Auth\LoginController::class, '
 Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('periode')->as('periode.')->group(function () {
-        Route::prefix('proposal')->as('proposal.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\Proposal\PeriodController::class)->group(function () {
-                Route::get('/', 'index')->name('index');
-                Route::post('/', 'store')->name('store');
-                Route::get('/get', 'get')->name('get');
-                Route::get('/get/{id}', 'getById')->name('getById');
-                Route::put('{id}', 'update')->name('update');
-                Route::delete('{id}', 'destroy')->name('destroy');
-            });
-        });
-    });
-    
-    // Period
+    // Periode Ujian
     Route::prefix('period')->as('period.')->group(function () {
         Route::controller(\App\Http\Controllers\Admin\Period\PeriodController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -37,9 +24,24 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
 
-    // Final Project
-    Route::prefix('final-project')->as('final_project.')->group(function () {
+    // Proposal
+    Route::prefix('proposal')->as('proposal.')->group(function () {
+        // Pendaftaran
+        Route::prefix('register')->as('register.')->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Proposal\RegisterController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/get', 'get')->name('get');
+                Route::get('/get/{id}', 'getById')->name('getById');
+                Route::get('/mentor/get', 'getMentor')->name('getMentor');
+                Route::put('{id}', 'update')->name('update');
+                Route::delete('{id}', 'destroy')->name('destroy');
+            });
+        });
+    });
 
+    // Tugas Akhir
+    Route::prefix('final-project')->as('final_project.')->group(function () {
+        // Pendaftaran
         Route::prefix('register')->as('register.')->group(function () {
             Route::controller(\App\Http\Controllers\Admin\FinalProject\RegisterController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
@@ -50,6 +52,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
             });
         });
 
+        // Jadwal
         Route::prefix('schedule')->as('schedule.')->group(function () {
             Route::controller(\App\Http\Controllers\Admin\FinalProject\ScheduleController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
@@ -65,8 +68,9 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
 
-    // Rubric
+    // Rubrik Penilaian
     Route::prefix('rubric')->as('rubric.')->group(function () {
+        // Rubrik Penilaian
         Route::controller(\App\Http\Controllers\Admin\Rubric\RubricController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
@@ -76,7 +80,9 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
             Route::delete('{id}', 'destroy')->name('destroy');
         });
 
+        // Kriteria Penilaian
         Route::prefix('criteria')->as('criteria.')->group(function () {
+            // Kriteria
             Route::controller(\App\Http\Controllers\Admin\Rubric\CriteriaController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
@@ -86,6 +92,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
                 Route::delete('{id}', 'destroy')->name('destroy');
             });
 
+            // Sub Kriteria
             Route::prefix('sub')->as('sub.')->group(function () {
                 Route::controller(\App\Http\Controllers\Admin\Rubric\SubCriteriaController::class)->group(function () {
                     Route::get('/', 'index')->name('index');
@@ -99,7 +106,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
 
-    // Student
+    // Mahasiswa
     Route::prefix('student')->as('student.')->group(function () {
         Route::controller(\App\Http\Controllers\Admin\Student\StudentController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -108,7 +115,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
 
-    // Lecturer
+    // Dosen
     Route::prefix('lecturer')->as('lecturer.')->group(function () {
         Route::controller(\App\Http\Controllers\Admin\Lecturer\LecturerController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -125,7 +132,9 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
 Route::prefix('student')->as('student.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
 
+    // Tugas Akhir
     Route::prefix('final-project')->as('final_project.')->group(function () {
+        // Pendaftaran
         Route::prefix('register')->as('register.')->group(function () {
             Route::controller(\App\Http\Controllers\Student\FinalProject\RegisterController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
@@ -134,6 +143,7 @@ Route::prefix('student')->as('student.')->middleware('auth')->group(function () 
             });
         });
         
+        // Jadwal
         Route::middleware('check.final_project')->group(function () {
             Route::prefix('schedule')->as('schedule.')->group(function () {
                 Route::controller(\App\Http\Controllers\Student\FinalProject\ScheduleController::class)->group(function () {
@@ -148,7 +158,9 @@ Route::prefix('student')->as('student.')->middleware('auth')->group(function () 
 Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Lecturer\DashboardController::class, 'index'])->name('dashboard');
 
+    // Tugas Akhir
     Route::prefix('final-project')->as('final_project.')->group(function () {
+        // Jadwal
         Route::prefix('schedule')->as('schedule.')->group(function () {
             Route::controller(\App\Http\Controllers\Lecturer\FinalProject\ScheduleController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
@@ -156,6 +168,7 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function (
             });
         });
 
+        // Ujian
         Route::prefix('exam')->as('exam.')->group(function () {
             Route::controller(\App\Http\Controllers\Lecturer\FinalProject\ExamController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
