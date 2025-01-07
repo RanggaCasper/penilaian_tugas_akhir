@@ -16,7 +16,10 @@
                 <x-input-field label="No. Ponsel" type="text" name="phone" id="phone" />
             </div>
             <div class="mb-3">
-                <x-input-field label="NIP" type="text" name="identity" id="identity" />
+                <x-input-field label="NIDN" type="text" name="identity" id="identity" />
+            </div>
+            <div class="mb-3">
+                <x-input-field label="NIP" type="text" name="secondary_identity" id="secondary_identity" />
             </div>
             <x-button type="submit" class="btn btn-primary" label="Submit" />
             <x-button type="reset" class="btn btn-danger" label="Reset" />
@@ -36,6 +39,7 @@
                     <th>Email</th>
                     <th>No. Ponsel</th>
                     <th>NIDN</th>
+                    <th>NIP</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -46,7 +50,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editPeriodeModalLabel">Edit Periode</h5>
+                    <h5 class="modal-title" id="editPeriodeModalLabel">Edit</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -64,6 +68,9 @@
                         </div>
                         <div class="mb-3">
                             <x-input-field label="NIP" type="text" name="identity" id="identity_update" />
+                        </div>
+                        <div class="mb-3">
+                            <x-input-field label="NIP" type="text" name="secondary_identity" id="secondary_identity_update" />
                         </div>
                         <x-button type="submit" class="btn btn-primary" label="Submit" />
                         <x-button type="reset" class="btn btn-danger" label="Reset" />
@@ -87,6 +94,7 @@
             { data: 'email', name: 'email' },
             { data: 'phone', name: 'phone' },
             { data: 'identity', name: 'identity' },
+            { data: 'secondary_identity', name: 'secondary_identity' },
             { data: 'action', name: 'action' },
         ],
     });
@@ -149,6 +157,7 @@
                 $('#email_update').val(data.email);
                 $('#phone_update').val(data.phone);
                 $('#identity_update').val(data.identity);
+                $('#secondary_identity_update').val(data.secondary_identity);
             },
             error: function(error) {
                 console.error(error);

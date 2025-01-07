@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Rubrics;
+namespace App\Models\Rubric;
 
 use Illuminate\Database\Eloquent\Model;
 

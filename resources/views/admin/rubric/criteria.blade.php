@@ -1,24 +1,46 @@
 @extends('layouts.app')
 
-@section('title', 'Penilaian')
+@section('title', 'Kriteria Penilaian')
 
 @section('content')
-<x-card title="Tambah Penilaian">
-    <form action="{{ route('admin.evaluation.store') }}" method="POST">
+<x-card title="Tambah Kriteria Penilaian">
+    <form action="{{ route('admin.rubric.criteria.store') }}" method="POST">
         @csrf
         <div class="mb-3">
             <x-input-field label="Nama" type="text" name="name" id="nama" />
+        </div>
+        <div class="mb-3">
+            <x-input-field label="Bobot" type="number" name="weight" id="weight" />
+        </div>
+        <div class="mb-3">
+            <label for="evaluation">Penilaian</label>
+            <select name="rubric_id" id="evaluation" class="form-control form-select">
+                <option selected disabled>-- Pilih Kriteria Penilaian --</option>
+                @foreach (App\Models\Rubric\Rubric::orderBy('name', 'desc')->get() as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="has_sub">Sub Kriteria</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" name="has_sub" type="checkbox" role="switch" id="has_sub">
+                <label class="form-check-label" for="has_sub">Aktif</label>
+            </div>
         </div>
         <x-button type="submit" class="btn btn-primary" label="Submit" />
         <x-button type="reset" class="btn btn-danger" label="Reset" />
     </form>
 </x-card>
-<x-card title="Data Penilaian">   
+<x-card title="Data Kriteria Penilaian">   
     <table id="datatables" class="table align-middle nowrap">
         <thead>
             <tr>
                 <th>No</th>
                 <th>Nama</th>
+                <th>Bobot</th>
+                <th>Penilaian</th>
+                <th>Sub Kriteria</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -29,7 +51,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPeriodeModalLabel">Edit</h5>
+                <h5 class="modal-title" id="editPeriodeModalLabel">Edit Kriteria</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -38,6 +60,25 @@
                     @method("PUT")
                     <div class="mb-3">
                         <x-input-field label="Nama" type="text" name="name" id="name_update" />
+                    </div>
+                    <div class="mb-3">
+                        <x-input-field label="Bobot" type="number" name="weight" id="weight_update" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="rubric_update">Penilaian</label>
+                        <select name="rubric_id" id="rubric_update" class="form-control form-select">
+                            <option selected disabled>-- Pilih Kriteria Penilaian --</option>
+                            @foreach (App\Models\Rubric\Rubric::orderBy('name', 'desc')->get() as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="has_sub_update">Sub Kriteria</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" name="has_sub" type="checkbox" role="switch" id="has_sub_update">
+                            <label class="form-check-label" for="has_sub_update">Aktif</label>
+                        </div>
                     </div>
                     <x-button type="submit" class="btn btn-primary" label="Submit" />
                     <x-button type="reset" class="btn btn-danger" label="Reset" />
@@ -54,10 +95,13 @@
             processing: true,
             serverSide: false,
             scrollX: true,
-            ajax: '{{ route('admin.evaluation.get') }}',
+            ajax: '{{ route('admin.rubric.criteria.get') }}',
             columns: [
                 { data: 'no', name: 'no' },
                 { data: 'name', name: 'name' },
+                { data: 'weight', name: 'weight' },
+                { data: 'rubric.name', name: 'rubric.name' },
+                { data: 'has_sub', name: 'has_sub' },
                 { data: 'action', name: 'action' },
             ],
         });
@@ -65,11 +109,14 @@
         $('#datatables').on('click', '.edit-btn', function() {
             var id = $(this).data('id');
             $.ajax({
-                url: '{{ route("admin.evaluation.getById", ["id" => ":id"]) }}'.replace(':id', id),
+                url: '{{ route("admin.rubric.criteria.getById", ["id" => ":id"]) }}'.replace(':id', id),
                 type: 'GET',
                 success: function(data) {
-                    $('#form_update').attr('action', '{{ route("admin.evaluation.update", ["id" => ":id"]) }}'.replace(':id', id));
+                    $('#form_update').attr('action', '{{ route("admin.rubric.criteria.update", ["id" => ":id"]) }}'.replace(':id', id));
                     $('#name_update').val(data.name);
+                    $('#weight_update').val(data.weight);
+                    $('#rubric_update').val(data.rubric.id);
+                    $('#has_sub_update').prop('checked', !!data.has_sub);
                 },
                 error: function(error) {
                     console.error(error);
@@ -97,7 +144,7 @@
             }).then(function(t) {
                 if(t.value) {
                     $.ajax({
-                        url: '{{ route("admin.evaluation.destroy", ["id" => ":id"]) }}'.replace(':id', id),
+                        url: '{{ route("admin.rubric.criteria.destroy", ["id" => ":id"]) }}'.replace(':id', id),
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}',

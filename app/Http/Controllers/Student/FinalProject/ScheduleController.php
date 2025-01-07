@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Student\FinalProject;
 
+use App\Models\Exam\Exam;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Excel;
 use App\Exports\ScheduleExport;
 use App\Http\Controllers\Controller;
-use App\Models\FinalProject\Exam;
 use Illuminate\Support\Facades\Auth;
+
 class ScheduleController extends Controller
 {
     /**

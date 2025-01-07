@@ -2,7 +2,7 @@
 
 namespace App\Models\Exam;
 
-use App\Models\Rubrics\Criteria;
+use App\Models\Rubric\Criteria;
 use Illuminate\Database\Eloquent\Model;
 
 class Score extends Model
@@ -19,7 +19,7 @@ class Score extends Model
 
     public function assessment()
     {
-        return $this->belongsTo(Assesment::class, 'assessment_id');
+        return $this->belongsTo(Assessment::class, 'assessment_id');
     }
 
     public function criteria()

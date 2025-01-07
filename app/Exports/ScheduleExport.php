@@ -18,7 +18,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
     protected $data;
     protected $title;
 
-    public function __construct($data, $title = 'JADWAL UJIAN TUGAS AKHIR')
+    public function __construct($data, $title = 'JADWAL UJIAN')
     {
         $this->data = $data;
 
@@ -40,20 +40,24 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                 'No' => $key + 1,
                 'NIM' => $schedule->student->identity,
                 'Mahasiswa' => $schedule->student->name,
+                'Judul' => $schedule->student->final_project->title ?? '-',
                 'Penguji 1' => $schedule->primary_examiner->name ?? '-',
                 'Penguji 2' => $schedule->secondary_examiner->name ?? '-',
                 'Penguji 3' => $schedule->tertiary_examiner->name ?? '-',
-                'Judul Tugas Akhir' => $schedule->student->final_project->title,
-                'Waktu Mulai' => $schedule->start_time,
-                'Waktu Berakhir' => $schedule->end_time,
+                'Waktu' => $this->formatDateTime($schedule->start_time) . ' - ' . $this->formatDateTime($schedule->end_time),
                 'Ruangan' => $schedule->room,
             ];
         });
     }
 
+    private function formatDateTime($dateTime)
+    {
+        return \Carbon\Carbon::parse($dateTime)->format('H:i');
+    }
+
     public function headings(): array
     {
-        return ['No', 'NIM', 'Mahasiswa', 'Penguji 1', 'Penguji 2', 'Penguji 3', 'Judul Tugas Akhir', 'Waktu Mulai', 'Waktu Berakhir', 'Ruangan'];
+        return ['No', 'NIM', 'Mahasiswa', 'Judul', 'Penguji 1', 'Penguji 2', 'Penguji 3', 'Waktu', 'Ruangan'];
     }
 
     public function styles(Worksheet $sheet)
@@ -69,7 +73,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 
-                $sheet->mergeCells('A1:J1');
+                $sheet->mergeCells('A1:I1');
                 $sheet->setCellValue('A1', $this->title);
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => [
@@ -81,7 +85,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                     ],
                 ]);
 
-                $sheet->getStyle('A3:J3')->applyFromArray([
+                $sheet->getStyle('A3:I3')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['argb' => 'FFFFFF'],
@@ -104,7 +108,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
 
                 $rowCount = 3 + $this->data->count();
 
-                $sheet->getStyle("A4:J{$rowCount}")->applyFromArray([
+                $sheet->getStyle("A4:I{$rowCount}")->applyFromArray([
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
                         'startColor' => ['argb' => 'F5F5F5'],
@@ -121,9 +125,9 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                     ],
                 ]);
 
-                $sheet->setAutoFilter('A3:J3');
+                $sheet->setAutoFilter('A3:I3');
 
-                foreach (range('A', 'J') as $column) {
+                foreach (range('A', 'I') as $column) {
                     $sheet->getColumnDimension($column)->setAutoSize(true);
                 }
             },

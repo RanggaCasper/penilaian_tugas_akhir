@@ -25,7 +25,7 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = FinalProject::with('user','user.generation')->get();
+                $data = FinalProject::with('student','student.generation')->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -33,21 +33,26 @@ class RegisterController extends Controller
                     })
                     ->editColumn('status', function ($row) {  
                         $badgeClass = match ($row->status) {
-                            'pending' => 'bg-warning',
-                            'approved' => 'bg-success',
-                            'rejected' => 'bg-danger',
+                            'menunggu' => 'bg-warning',
+                            'disetujui' => 'bg-success',
+                            'ditolak' => 'bg-danger',
                             default => 'bg-secondary',
                         };
                     
                         return '<span class="badge ' . $badgeClass . '">' . ucfirst($row->status ?? 'Unknown') . '</span>';
-                    })                    
+                    })  
+                    ->editColumn('is_editable', function ($row) {  
+                        return $row->is_editable   
+                            ? '<span class="badge bg-success">Aktif</span>'   
+                            : '<span class="badge bg-danger">Dikunci</span>';  
+                    })               
                     ->addColumn('action', function ($row) {  
                         return '  
                             <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Lihat</button>  
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
                         ';  
                     })  
-                    ->rawColumns(['action', 'status'])
+                    ->rawColumns(['action', 'is_editable', 'status'])
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json([
@@ -71,7 +76,7 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = FinalProject::with('user','user.generation')->findOrFail($id);
+                $data = FinalProject::with('student','student.generation')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -102,7 +107,7 @@ class RegisterController extends Controller
         if ($request->ajax()) {
             try {
                 $request->validate([
-                   'status' => 'required|in:pending,approved,rejected',
+                   'status' => 'required|in:menunggu,disetujui,ditolak',
                    'is_editable' => 'required|boolean',
                 ]);
                 

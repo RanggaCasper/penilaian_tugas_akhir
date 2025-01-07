@@ -5,9 +5,9 @@ namespace App\Models\Exam;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Assesment extends Model
+class Assessment extends Model
 {
-    protected $table = 'assesments';
+    protected $table = 'assessments';
 
     protected $guarded = [
         'id'
@@ -26,5 +26,10 @@ class Assesment extends Model
     public function examiner()
     {
         return $this->belongsTo(User::class, 'examiner_id');
+    }
+
+    public function scores()
+    {
+        return $this->hasMany(Score::class);
     }
 }

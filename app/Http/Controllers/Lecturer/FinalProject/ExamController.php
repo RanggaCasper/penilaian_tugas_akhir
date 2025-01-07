@@ -2,109 +2,119 @@
 
 namespace App\Http\Controllers\Lecturer\FinalProject;
 
-use Carbon\Carbon;
+use App\Models\Exam\Exam;
 use App\Models\Exam\Score;
 use Illuminate\Http\Request;
 use App\Models\Exam\SubScore;
+use App\Models\Exam\Assesment;
+use App\Models\Exam\Assessment;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\FinalProject\Exam;
+use App\Models\Rubric\SubCriteria;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Evaluation\Evaluation;
-use App\Models\Evaluation\SubCriteria;
-use App\Models\Exam\Evaluation as ExamEvaluation;
+use Illuminate\Http\JsonResponse;
 
 class ExamController extends Controller
 {
     public function index()
     {
-        $exams = Exam::with('student.final_project', 'evaluations','student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where(function ($query) {
-            $query->where('primary_examiner_id', Auth::id())
-                ->orWhere('secondary_examiner_id', Auth::id())
-                ->orWhere('tertiary_examiner_id', Auth::id());
-        })->where('exam_date', '=', Carbon::today())->orderBy('start_time', 'asc')->get();
-
-        return view('lecturer.final_project.exam', compact('exams'));
+        return view('lecturer.final_project.exam');
     }
+
+    public function get(Request $request)
+    {
+        try {
+            $exams = Exam::with(
+                'student.final_project',
+                'rubric',
+                'assessments',
+                'student',
+                'primary_examiner',
+                'secondary_examiner',
+                'tertiary_examiner'
+            )
+            ->where(function ($query) {
+                $query->where('primary_examiner_id', Auth::id())
+                    ->orWhere('secondary_examiner_id', Auth::id())
+                    ->orWhere('tertiary_examiner_id', Auth::id());
+            })
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+            return response()->json([
+                'status' => true,
+                'html' => view('lecturer.final_project.exam_ajax', compact('exams'))->render(),
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat memuat data, silakan coba lagi dengan menekan tombol "Muat Ulang". Jika masalah berlanjut, hubungi pengembang untuk bantuan lebih lanjut.',
+            ], 500);
+        }
+    }
+
 
     public function store(Request $request)
     {
         try {
-            $data = $request->validate([
-                'exam_id' => 'required|exists:exams,id',
-                'exam_evaluation_id' => 'nullable|exists:evaluations,id',
-                'scores' => 'nullable|array',
-                'scores.*' => 'numeric|min:0|max:100',
-                'sub_scores' => 'nullable|array',
-                'sub_scores.*' => 'numeric|min:0|max:100',
+            $request->validate([
+                'exam_id' => 'required|integer|exists:exams,id',
+                'scores' => 'required|array',
+                'scores.*' => 'required|integer|min:0|max:100',
+                'sub_scores' => 'required|array',
+                'sub_scores.*' => 'required|array',
+                'sub_scores.*.*' => 'required|integer|min:0|max:100',
+            ]); 
+
+            $exam = Exam::find($request->exam_id);
+
+            if (!$exam) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data ujian tidak ditemukan.',
+                ], 404);
+            }
+
+            if (!$exam->is_editable) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Penilaian tidak dapat diedit.',
+                ], 403);
+            }            
+
+            $assessment = Assessment::firstOrCreate([
+                'exam_id' => $request->exam_id,
+                'student_id' => $exam->student_id,
+                'examiner_id' => Auth::id(),
             ]);
 
-            $exam = Exam::findOrFail($data['exam_id']);
-
-            if (!empty($data['exam_evaluation_id'])) {
-                $previousEvaluation = ExamEvaluation::find($data['exam_evaluation_id']);
-                
-                if ($previousEvaluation) {
-                    $previousEvaluation->scores()->delete();
-                    $previousEvaluation->subScores()->delete();
-                    $previousEvaluation->delete();
-                }
+            foreach ($request->scores as $criteriaId => $score) {
+                $assessment->scores()->updateOrCreate(
+                    ['criteria_id' => $criteriaId],
+                    ['score' => $score]
+                );
             }
 
-            $evaluation = ExamEvaluation::updateOrCreate(
-                [
-                    'exam_id' => $exam->id,
-                    'student_id' => $exam->student->id,
-                    'examiner_id' => Auth::id(),
-                ],
-                []
-            );
+            foreach ($request->sub_scores as $subCriteriaId => $subScores) {  
+                $subScoresRecord = $assessment->scores()->updateOrCreate(  
+                    ['criteria_id' => $subCriteriaId],  
+                    ['score' => null, 'has_sub' => 1]  
+                );  
 
-            if (!empty($data['scores'])) {
-                foreach ($data['scores'] as $criteriaId => $score) {
-                    Score::updateOrCreate(
-                        [
-                            'exam_evaluation_id' => $evaluation->id,
-                            'evaluation_criteria_id' => $criteriaId,
-                        ],
-                        ['score' => $score]
-                    );
-                }
-            }
-
-            if (!empty($data['sub_scores'])) {
-                foreach ($data['sub_scores'] as $subCriteriaId => $score) {
-                    $evaluationCriteriaId = SubCriteria::where('id', $subCriteriaId)
-                        ->value('evaluation_criteria_id');
-
-                    if (!$evaluationCriteriaId) {
-                        continue;
-                    }
-
-                    $evaluationScore = Score::firstOrCreate(
-                        [
-                            'exam_evaluation_id' => $evaluation->id,
-                            'evaluation_criteria_id' => $evaluationCriteriaId,
-                        ],
-                        ['has_sub' => true]
-                    );
-
+                foreach ($subScores as $subScoreId => $subScore) {
                     SubScore::updateOrCreate(
-                        [
-                            'score_id' => $evaluationScore->id,
-                            'sub_evaluation_criteria_id' => $subCriteriaId,
-                        ],
-                        ['score' => $score]
+                        ['score_id' => $subScoresRecord->id, 'sub_criteria_id' => $subScoreId],
+                        ['score' => $subScore]
                     );
-
-                    $evaluationScore->update(['has_sub' => true]);
-                }
-            }
+                } 
+            }  
 
             return response()->json([
                 'status' => true,
-                'message' => 'Data berhasil disimpan',
+                'message' => 'Data berhasil disimpan.',
             ]);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => false,
@@ -120,33 +130,55 @@ class ExamController extends Controller
         }
     }
 
-    public function getEvaluation($id, Request $request)
+    public function getRubric($id, Request $request)
     {
-        $examId = $request->query('exam_id');
-        $evaluation = Evaluation::with('evaluation_criterias.sub_evaluation_criterias')->findOrFail($id);
-
-        $scores = [
-            'scores' => Score::where('exam_evaluation_id', $examId)->pluck('score', 'evaluation_criteria_id'),
-            'sub_scores' => SubScore::whereIn('score_id', Score::where('exam_evaluation_id', $examId)->pluck('id'))
-                ->pluck('score', 'sub_evaluation_criteria_id'),
-        ];
-
-        return response()->json([
-            'evaluation_criterias' => $evaluation->evaluation_criterias,
-            'scores' => $scores,
-        ]);
+        try {  
+            $rubric = Exam::with('rubric', 'rubric.criterias', 'rubric.criterias.sub_criterias')  
+                ->where('id', $id)  
+                ->first();  
+            
+            if (!$rubric) {  
+                return response()->json([  
+                    'status' => false,  
+                    'message' => 'Data tidak ditemukan.'  
+                ], 404);  
+            }  
+    
+            $assessment = Assessment::with('scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')  
+                ->where('exam_id', $id)  
+                ->where('examiner_id', Auth::id())
+                ->first();  
+    
+            return response()->json([  
+                'rubric' => $rubric->rubric,  
+                'assessment' => $assessment  
+            ]);  
+        } catch (\Exception $e) {
+            return response()->json([  
+                'status' => false,  
+                'message' => 'Terjadi kesalahan saat mengambil data. Harap coba lagi nanti.'  
+            ], 500);  
+        }  
     }
 
-    public function generatePdf($examEvaluationId)
+    public function generatePdf($id)
     {
-        $data = ExamEvaluation::with('student', 'exam', 'examiner', 'scores', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')->findOrFail($examEvaluationId);
+        try {
+            $data = Assessment::with('student', 'student.final_project', 'examiner', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')
+                ->where('exam_id', $id)
+                ->where('examiner_id', Auth::id())
+                ->firstOrFail();
 
-        $data = $data->toArray();
-        // dd($data);
-        // return response()->json($evaluation);    
-        // dd($data);
-        $pdf = Pdf::loadView('exports.evaluation_pdf', compact('data'));
-        return $pdf->download('penilaian_ujian.pdf');
+            $data = $data->toArray();
+
+            $pdf = Pdf::loadView('exports.assessment_pdf', compact('data'));
+            return $pdf->download('penilaian_ujian.pdf');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak dapat membuat PDF.',
+            ], 500);
+        }
     }
 
 }

@@ -36,6 +36,7 @@ class LecturerController extends Controller
                 'email' => 'required|email|unique:users',
                 'phone' => 'required|unique:users',
                 'identity' => 'required|unique:users',
+                'secondary_identity' => 'required|unique:users',
             ]);
         
             User::create([
@@ -43,6 +44,7 @@ class LecturerController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'identity' => $request->identity,
+                'secondary_identity' => $request->secondary_identity,
                 'password' => bcrypt("dosen123"),
                 'role_id' => 3
             ]);
@@ -95,6 +97,7 @@ class LecturerController extends Controller
                 User::create([
                     'name' => $data['nama'],
                     'identity' => $data['nidn'],
+                    'secondary_identity' => $data['nip'],
                     'email' => strtolower(substr(explode(' ', $data['nama'])[0] ?? '', 0, 4)) . strtolower(substr(explode(' ', $data['nama'])[1] ?? '', 0, 4)) . rand(10, 99) . '@pnb.ac.id',
                     'phone' => '08' . $faker->numerify('##########'),
                     'role_id' => 3,
@@ -127,7 +130,7 @@ class LecturerController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = User::select(['id', 'name', 'email', 'phone', 'identity'])->where('role_id', 3)->orderBy('identity', 'asc');
+                $data = User::select(['id', 'name', 'email', 'phone', 'identity','secondary_identity'])->where('role_id', 3)->orderBy('identity', 'asc');
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -198,6 +201,7 @@ class LecturerController extends Controller
                     'email' => 'required|email|unique:users,email,' . $id,
                     'phone' => 'required|unique:users,phone,' . $id,
                     'identity' => 'required|unique:users,identity,' . $id,
+                    'secondary_identity' => 'required|unique:users,secondary_identity,' . $id,
                 ]);
             
                 $data = User::findOrFail($id);

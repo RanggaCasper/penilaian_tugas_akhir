@@ -55,23 +55,31 @@
     <h2>LEMBAR NILAI UJIAN</h2>
     <div style="margin-bottom: 20px; font-size: 12px; display: flex; flex-direction: column;">  
         <div style="display: flex; margin-bottom: 5px;">  
-            <span class="fw-bold" style="width: 30%;">Nama</span>  
+            <span class="fw-bold" style="width: 30%; margin-right: 10.5px;">Nama</span>  
             <span style="width: 70%;">: {{ $data['student']['name'] }}</span>  
         </div>  
         <div style="display: flex; margin-bottom: 5px;">  
-            <span class="fw-bold" style="width: 30%; margin-right: 7px;">NIM</span>  
+            <span class="fw-bold" style="width: 30%; margin-right: 17.5px;">NIM</span>  
             <span style="width: 70%;">   : {{ $data['student']['identity'] }}</span>  
         </div>  
+        <div style="display: flex; margin-bottom: 5px;">  
+            <span class="fw-bold" style="width: 30%;">Penguji</span>  
+            <span style="width: 70%;">: {{ $data['examiner']['name'] }}</span>  
+        </div> 
+        <div style="display: flex; margin-bottom: 5px;">  
+            <span class="fw-bold" style="width: 30%; margin-right: 11px;">Judul</span>  
+            <span style="width: 70%;">: {{ $data['student']['final_project']['title'] }}</span>  
+        </div> 
     </div>
 
     <table>
         <thead>  
-            <tr>  
-                <th scope="col">No</th>  
-                <th scope="col">Unsur Penilaian</th>  
-                <th scope="col">Bobot</th>  
-                <th scope="col">Skor</th>  
-                <th scope="col">Bobot x Skor</th>  
+            <tr> 
+                <th scope="col">NO</th>  
+                <th scope="col">UNSUR PENILAIAN</th>  
+                <th scope="col">BOBOT</th>  
+                <th scope="col">SKOR</th>  
+                <th scope="col">BOBOT x SKOR</th>  
             </tr>  
         </thead>  
         <tbody>  
@@ -79,9 +87,9 @@
                 <tr>  
                     <td>{{ $index + 1 }}</td>  
                     <td class="text-left">{{ $score['criteria']['name'] ?? '-' }}</td>  
-                    <td>{{ $score['has_sub'] ? '-' : ($score['criteria']['score'] . '%') }}</td>  
-                    <td>{{ $score['score'] ?? '-' }}</td>  
-                    <td>{{ $score['score'] && !$score['has_sub'] ? $score['score'] * ($score['criteria']['score'] / 100) : '-' }}</td>  
+                    <td>{{ $score['has_sub'] ? '-' : ($score['criteria']['weight'] . '%') }}</td>  
+                    <td>{{ $score['score'] ?? '-' }}</td> 
+                    <td>{{ $score['score'] && !$score['has_sub'] ? $score['score'] * ($score['criteria']['weight'] / 100) : '-' }}</td>  
                 </tr>  
         
                 @if (!empty($score['sub_scores']))  
@@ -89,9 +97,9 @@
                         <tr>  
                             <td></td>  
                             <td class="text-left">&nbsp;&nbsp;- {{ $subScore['sub_criteria']['name'] ?? '-' }}</td>  
-                            <td>{{ $subScore['sub_criteria']['score'] ?? '-' }}%</td>  
+                            <td>{{ $subScore['sub_criteria']['weight'] ?? '-' }}%</td>  
                             <td>{{ $subScore['score'] ?? '-' }}</td>  
-                            <td>{{ $subScore['score'] ? $subScore['score'] * ($subScore['sub_criteria']['score'] / 100) : '-' }}</td>  
+                            <td>{{ $subScore['score'] ? $subScore['score'] * ($subScore['sub_criteria']['weight'] / 100) : '-' }}</td>  
                         </tr>  
                     @endforeach  
                 @endif  
@@ -101,9 +109,9 @@
                 <td>  
                     {{  
                         array_reduce($data['scores'], function ($total, $score) {  
-                            $mainScore = $score['score'] ? $score['score'] * ($score['criteria']['score'] / 100) : 0;  
+                            $mainScore = $score['score'] ? $score['score'] * ($score['criteria']['weight'] / 100) : 0;  
                             $subTotal = array_reduce($score['sub_scores'], function ($subTotal, $subScore) {  
-                                return $subTotal + ($subScore['score'] * ($subScore['sub_criteria']['score'] / 100) ?? 0);  
+                                return $subTotal + ($subScore['score'] * ($subScore['sub_criteria']['weight'] / 100) ?? 0);  
                             }, 0);  
                             return $total + $mainScore + $subTotal;  
                         }, 0)  
@@ -113,9 +121,9 @@
             <tr>  
                 <td colspan="5" class="fw-bold">Jumlah Skor (Huruf): {{ ucwords(\NumberFormatter::create('id_ID', \NumberFormatter::SPELLOUT)->format(  
                     array_reduce($data['scores'], function ($total, $score) {  
-                        $mainScore = $score['score'] ? $score['score'] * ($score['criteria']['score'] / 100) : 0;  
+                        $mainScore = $score['score'] ? $score['score'] * ($score['criteria']['weight'] / 100) : 0;  
                         $subTotal = array_reduce($score['sub_scores'], function ($subTotal, $subScore) {  
-                            return $subTotal + ($subScore['score'] * ($subScore['sub_criteria']['score'] / 100) ?? 0);  
+                            return $subTotal + ($subScore['score'] * ($subScore['sub_criteria']['weight'] / 100) ?? 0);  
                         }, 0);  
                         return $total + $mainScore + $subTotal;  
                     }, 0)  

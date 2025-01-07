@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Lecturer\FinalProject;
 
 use Barryvdh\DomPDF\PDF;
+use App\Models\Exam\Exam;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Excel;
 use App\Exports\ScheduleExport;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\FinalProject\Exam;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FinalProject\Schedule;
 
@@ -89,9 +89,9 @@ class ScheduleController extends Controller
                         return ++$counter;  
                     })
                     ->editColumn('status', function ($row) {  
-                        return $row->status   
-                        ? '<span class="badge bg-success">Active</span>'   
-                        : '<span class="badge bg-danger">Locked</span>';  
+                        return $row->is_editable   
+                        ? '<span class="badge bg-success">Aktif</span>'   
+                        : '<span class="badge bg-danger">Dikunci</span>';  
                     }) 
                     ->addColumn('position', function ($row) {  
                         if ($row->primary_examiner_id == Auth::id()) {

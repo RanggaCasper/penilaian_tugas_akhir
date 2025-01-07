@@ -17,6 +17,13 @@
                     <div class="mb-3">
                         <x-input-field label="Ruangan" type="text" name="room" id="room" />
                     </div>
+                    <div class="mb-3">
+                        <label for="rubric" class="form-label">Rubrik Penilaian</label>
+                        <select id="rubric" name="rubric_id" class="form-control select2" 
+                                data-placeholder="-- Pilih Rubrik --" 
+                                data-ajax-url="{{ route('admin.final_project.schedule.getRubric') }}" 
+                                data-type="rubric"></select>
+                    </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="mb-3">
@@ -50,10 +57,10 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="status_checkbox">Status</label>
+                <label for="is_editable_checkbox">Status</label>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" name="status" type="checkbox" role="switch" id="status_checkbox" checked>
-                    <label class="form-check-label" for="status_checkbox">Aktif</label>
+                    <input class="form-check-input" name="is_editable" type="checkbox" role="switch" id="is_editable_checkbox" checked>
+                    <label class="form-check-label" for="is_editable_checkbox">Aktif</label>
                 </div>
             </div>
             <x-button type="submit" class="btn btn-primary" label="Submit" />
@@ -154,10 +161,10 @@
                                     data-type="examiner"></select>
                         </div>
                         <div class="mb-3">
-                            <label for="status_checkbox">Status</label>
+                            <label for="is_editable_checkbox">Status</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" name="status" type="checkbox" role="switch" id="status_checkbox_update" checked>
-                                <label class="form-check-label" for="status_checkbox">Aktif</label>
+                                <input class="form-check-input" name="is_editable" type="checkbox" role="switch" id="is_editable_checkbox_update" checked>
+                                <label class="form-check-label" for="is_editable_checkbox">Aktif</label>
                             </div>
                         </div>
                         
@@ -263,6 +270,8 @@
                         query.role = 'student';
                     } else if (type === 'examiner') {
                         query.role = 'examiner';
+                    } else if (type === 'rubric') {
+                        query.role = 'rubric';
                     }
 
                     return query;
@@ -291,7 +300,7 @@
             { data: 'end_time', name: 'end_time' },
             { data: 'student.name', name: 'student.name' },
             { data: 'student.final_project.title', name: 'student.final_project.title' },
-            { data: 'status', name: 'status' },
+            { data: 'is_editable', name: 'is_editable' },
             { data: 'action', name: 'action' },
         ],
     });
@@ -307,7 +316,7 @@
                 $('#start_time_update').val(data.start_time);
                 $('#end_time_update').val(data.end_time);
                 $('#room_update').val(data.room);
-                $('#status_checkbox_update').prop('checked', !!data.status);
+                $('#is_editable_checkbox_update').prop('checked', !!data.is_editable);
 
                 var studentOption = new Option(data.student.name, data.student.id, true, true);
                 $('#student_update').append(studentOption).trigger('change');

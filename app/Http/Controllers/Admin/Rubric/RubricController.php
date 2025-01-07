@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Evaluation;
+namespace App\Http\Controllers\Admin\Rubric;
 
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use App\Models\Evaluation\Criteria;
-use Illuminate\Routing\Controller;
+use App\Models\Rubric\Rubric;
+use App\Http\Controllers\Controller;
 
-class CriteriaController extends Controller
+class RubricController extends Controller
 {
     /**
-     * Show the list of evaluation criteria.
+     * Show the list of Rubric.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('admin.evaluation.criteria');
+        return view('admin.rubric.rubric');
     }
 
     /**
@@ -28,26 +28,11 @@ class CriteriaController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->merge([
-                'has_sub' => $request->has('has_sub') ? 1 : 0,
-            ]);
-            
             $request->validate([
                 'name' => 'required',
-                'score' => 'required|numeric|min:0|max:100',
-                'evaluation_id' => 'required'
             ]);
             
-            $evaluation = Criteria::where('evaluation_id', $request->evaluation_id)->sum('score');  
-
-            if ($evaluation + $request->score > 100) {  
-                return response()->json([  
-                    'status' => false,  
-                    'message' => 'Total bobot kriteria tidak boleh lebih dari 100%',  
-                ], 422);  
-            }  
-
-            Criteria::create($request->all());
+            Rubric::create($request->all());
         
             return response()->json([
                 'status' => true,
@@ -78,16 +63,11 @@ class CriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Criteria::with('evaluation')->select(['id', 'name', 'score', 'evaluation_id', 'has_sub']);
+                $data = Rubric::select(['id', 'name']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
-                    })
-                    ->editColumn('has_sub', function ($row) {  
-                        return $row->has_sub   
-                            ? '<span class="badge bg-success">Active</span>'   
-                            : '<span class="badge bg-danger">Inactive</span>';  
                     })  
                     ->addColumn('action', function ($row) {  
                         return '  
@@ -95,7 +75,7 @@ class CriteriaController extends Controller
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
                         ';  
                     })  
-                    ->rawColumns(['has_sub','action'])
+                    ->rawColumns(['action'])
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json([
@@ -109,7 +89,7 @@ class CriteriaController extends Controller
     }
 
     /**
-     * Retrieve the specified Evaluation Criteria by ID.
+     * Retrieve the specified Rubric Criteria by ID.
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
@@ -119,7 +99,7 @@ class CriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Criteria::with('evaluation')->findOrFail($id);
+                $data = Rubric::findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -139,7 +119,7 @@ class CriteriaController extends Controller
     }
 
     /**
-     * Update the specified Evaluation Criteria in database.
+     * Update the specified Rubric Criteria in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -149,28 +129,13 @@ class CriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $request->merge([
-                    'has_sub' => $request->has('has_sub') ? 1 : 0,
-                ]);
-                
                 $request->validate([
                     'name' => 'required',
-                    'score' => 'required|numeric|min:0|max:100',
-                    'evaluation_id' => 'required'
                 ]);
             
-                $data = Criteria::findOrFail($id);  
-
-                $evaluation = Criteria::where('evaluation_id', $request->evaluation_id)->where('id', '!=', $id)->sum('score');  
-
-                if ($evaluation + $request->score > 100) {  
-                    return response()->json([  
-                        'status' => false,  
-                        'message' => 'Total bobot kriteria tidak boleh lebih dari 100%',  
-                    ], 422);  
-                }  
+                $data = Rubric::findOrFail($id);
             
-                $data->update($request->only(['name', 'score', 'evaluation_id', 'has_sub']));
+                $data->update($request->all());
             
                 return response()->json([
                     'status' => true,
@@ -209,7 +174,7 @@ class CriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = Criteria::findOrFail($id);
+                $periode = Rubric::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([

@@ -18,8 +18,8 @@ class CheckFinalProjectStatus
     public function handle(Request $request, Closure $next): Response
     {
         $finalProject = FinalProject::with('period')
-            ->where('user_id', Auth::id())
-            ->where('status', 'approved')
+            ->where('student_id', Auth::id())
+            ->where('status', 'disetujui')
             ->first();
 
         if (!$finalProject) {

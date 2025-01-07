@@ -25,18 +25,20 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
     
+    // Period
+    Route::prefix('period')->as('period.')->group(function () {
+        Route::controller(\App\Http\Controllers\Admin\Period\PeriodController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/get', 'get')->name('get');
+            Route::get('/get/{id}', 'getById')->name('getById');
+            Route::put('{id}', 'update')->name('update');
+            Route::delete('{id}', 'destroy')->name('destroy');
+        });
+    });
+
     // Final Project
     Route::prefix('final-project')->as('final_project.')->group(function () {
-        Route::prefix('period')->as('period.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\FinalProject\PeriodController::class)->group(function () {
-                Route::get('/', 'index')->name('index');
-                Route::post('/', 'store')->name('store');
-                Route::get('/get', 'get')->name('get');
-                Route::get('/get/{id}', 'getById')->name('getById');
-                Route::put('{id}', 'update')->name('update');
-                Route::delete('{id}', 'destroy')->name('destroy');
-            });
-        });
 
         Route::prefix('register')->as('register.')->group(function () {
             Route::controller(\App\Http\Controllers\Admin\FinalProject\RegisterController::class)->group(function () {
@@ -54,6 +56,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
                 Route::post('/', 'store')->name('store');
                 Route::get('/get', 'get')->name('get');
                 Route::get('/get/student', 'getStudent')->name('getStudent');
+                Route::get('/get/rubric', 'getRubric')->name('getRubric');
                 Route::get('/get/examiner', 'getExaminer')->name('getExaminer');
                 Route::get('/get/{id}', 'getById')->name('getById');
                 Route::put('{id}', 'update')->name('update');
@@ -62,9 +65,9 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
     });
 
-    // Evaluation
-    Route::prefix('evaluation')->as('evaluation.')->group(function () {
-        Route::controller(\App\Http\Controllers\Admin\Evaluation\EvaluationController::class)->group(function () {
+    // Rubric
+    Route::prefix('rubric')->as('rubric.')->group(function () {
+        Route::controller(\App\Http\Controllers\Admin\Rubric\RubricController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::get('/get', 'get')->name('get');
@@ -74,7 +77,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         });
 
         Route::prefix('criteria')->as('criteria.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\Evaluation\CriteriaController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Rubric\CriteriaController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::get('/get', 'get')->name('get');
@@ -84,7 +87,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
             });
 
             Route::prefix('sub')->as('sub.')->group(function () {
-                Route::controller(\App\Http\Controllers\Admin\Evaluation\SubCriteriaController::class)->group(function () {
+                Route::controller(\App\Http\Controllers\Admin\Rubric\SubCriteriaController::class)->group(function () {
                     Route::get('/', 'index')->name('index');
                     Route::post('/', 'store')->name('store');
                     Route::get('/get', 'get')->name('get');
@@ -156,7 +159,9 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function (
         Route::prefix('exam')->as('exam.')->group(function () {
             Route::controller(\App\Http\Controllers\Lecturer\FinalProject\ExamController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
-                Route::get('/get/{id}', 'getEvaluation')->name('getEvaluation');  
+                Route::get('/get', 'get')->name('get'); 
+                Route::get('/get/rubric/{id}', 'getRubric')->name('getRubric');  
+                Route::get('/get/assessment/{id}', 'getAssessment')->name('getAssessment');  
                 Route::get('/download/pdf/{id}', 'generatePDF')->name('generatePDF');  
                 Route::post('/', 'store')->name('store');
             });

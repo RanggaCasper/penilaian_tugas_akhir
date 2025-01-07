@@ -3,7 +3,7 @@
 namespace App\Models\Exam;
 
 use App\Models\User;
-use App\Models\Rubrics\Rubric;
+use App\Models\Rubric\Rubric;
 use Illuminate\Database\Eloquent\Model;
 
 class Exam extends Model
@@ -37,5 +37,10 @@ class Exam extends Model
     public function rubric()
     {
         return $this->belongsTo(Rubric::class, 'rubric_id');
+    }
+
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class, 'exam_id');
     }
 }

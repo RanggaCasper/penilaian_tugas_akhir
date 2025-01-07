@@ -1,80 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<h5 class="mb-3">
-    Daftar Ujian Tugas Akhir - {{ now()->locale('id')->translatedFormat('d F Y') }}
-</h5>
-<div class="row">
-    @if ($exams->isEmpty())
-        <div class="text-center d-flex flex-column justify-content-center align-items-center">
-            <div>
-                <img src="{{ asset('assets/undraw/no-data.svg') }}" class="img-fluid" width="50%" height="50%" alt="No Data">
-            </div>
-            <div>
-                <p class="mt-3">
-                    Belum ada ujian yang tersedia.
-                </p>
-            </div>
-        </div>
-    @else
-    @foreach ($exams as $list)
-        <div class="col-lg-4">
-            <x-card title="{{ $list->student->name }} - {{ $list->student->identity }}">
-                <div>
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold w-50">Judul Tugas Akhir</span>
-                            <span class="line-break w-50 text-end">{{ $list->student->final_project->title }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold">Link Dokumen</span>
-                            <a href="{{ $list->student->final_project->document }}" class="btn btn-sm btn-primary" target="_blank">Lihat Dokumen</a>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold">Link Dokumen Tambahan</span>
-                            <a href="{{ $list->student->final_project->support_document }}" class="btn btn-sm btn-primary" target="_blank">Lihat Dokumen</a>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold">Waktu</span>
-                            <span>{{ \Carbon\Carbon::parse($list->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($list->end_time)->format('H:i') }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold">Ruangan</span>
-                            <span>{{ $list->room }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold">Posisi</span>
-                            <span>
-                                @if ($list->primary_examiner_id == Auth::id())
-                                    Penguji 1
-                                @elseif ($list->secondary_examiner_id == Auth::id())
-                                    Penguji 2
-                                @elseif ($list->tertiary_examiner_id == Auth::id())
-                                    Penguji 3
-                                @else
-                                    -
-                                @endif
-                            </span>
-                        </li>
-                        <li class="list-group-item">
-                            @if ($list->evaluations->first())
-                                <a href="{{ route('lecturer.final_project.exam.generatePDF', $list->id) }}" class="mb-3 w-100 btn btn-success">
-                                    Download Hasil
-                                </a>
-                            @endif
-                            <button type="button" class="w-100 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-id="{{ $list->id }}" @if (!$list->status)
-                                disabled
-                            @endif>
-                                Nilai
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </x-card>
-        </div>
-    @endforeach
+<div class="mb-3 d-flex justify-content-between">
+    <h5>
+        Daftar Ujian Tugas Akhir - {{ now()->locale('id')->translatedFormat('d F Y') }}
+    </h5>
+    <button class="btn btn-primary" id="reload">Muat Ulang</button>
+</div>
 
-    @endif
+<div id="exam_display">
+    <p class="text-muted">Sedang memuat data ...</p>
 </div>
 
 <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
@@ -85,16 +20,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('lecturer.final_project.exam.store') }}" method="POST" id="form">
+                <form action="{{ route('lecturer.final_project.exam.store') }}" data-success="fetchData" method="POST" id="form">
                     @csrf
-                    <select class="form-select" name="exam_evaluation_id" id="evaluation" aria-label="Pilih Form Penilaian">
-                        <option value="">-- Pilih Form --</option>
-                        @foreach (\App\Models\Evaluation\Evaluation::all() as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                        @endforeach
-                    </select>
                     <div id="form-display" class="mt-3">
-                        
+                        <p class="text-muted">Sedang memuat data ...</p>
                     </div>
                     <x-button type="reset" class="btn btn-danger" label="Reset" />
                     <x-button type="submit" class="btn btn-primary" label="Submit" />
@@ -107,70 +36,100 @@
 
 @push('scripts')
 <script>
-    $(document).ready(function () {
-        $('#modal').on('show.bs.modal', function (event) {
-            const button = $(event.relatedTarget);
-            const examId = button.data('id');
-            const form = $('#form');
-            form.find('input[name="exam_id"]').remove();
-            form.prepend(`<input type="hidden" name="exam_id" value="${examId}">`);
-            $('#evaluation').val('').trigger('change');
-            $('#form-display').html('<p class="text-muted">Silakan pilih form terlebih dahulu.</p>');
-        });
+$(document).ready(function () {
+    fetchData();
+    
+    $('#reload').on('click', function () {
+        fetchData();
+    });
 
-        $('#evaluation').on('change', function () {
-            const evaluationId = $(this).val();
-            const examId = $('input[name="exam_id"]').val();
+    $('#modal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget);
+        const examId = button.data('id');
+        const form = $('#form');
+        const formContainer = $('#form-display');
+        form.find('input[name="exam_id"]').remove();
+        form.prepend(`<input type="hidden" name="exam_id" value="${examId}">`);
+        
+        $.ajax({
+            url: '{{ route("lecturer.final_project.exam.getRubric", ":id") }}'.replace(':id', examId),
+            method: 'GET',
+            beforeSend: function () {
+                $('#form-display').html('<p class="text-muted">Sedang memuat data...</p>');
+            },
+            success: function (data) {
+                formContainer.empty();
+                
+                if (data.rubric && Array.isArray(data.rubric.criterias)) {
+                    const assessment = data.assessment || {};
+                    const assessmentScores = assessment.scores || [];
+                    const assessmentSubScores = assessment.scores ? assessment.scores.flatMap(s => s.sub_scores || []) : [];
 
-            if (evaluationId) {
-                $.ajax({
-                    url: '{{ route("lecturer.final_project.exam.getEvaluation", ":id") }}'.replace(':id', evaluationId),
-                    method: 'GET',
-                    data: { exam_id: examId },
-                    success: function (data) {
-                        const formContainer = $('#form-display');
-                        formContainer.empty();
+                    
+                    data.rubric.criterias.forEach(function (criteria) {
+                        if (criteria.has_sub && Array.isArray(criteria.sub_criterias) && criteria.sub_criterias.length > 0) {
+                            formContainer.append(`<h5 class="mt-3">${criteria.name}</h5>`);
+                            
+                            const subCriteriaContainer = $('<div></div>');
+                            
+                            
+                            criteria.sub_criterias.forEach(function (subCriteria) {
+                                const subScore = assessmentSubScores.find(sub => sub.sub_criteria_id === subCriteria.id);
+                                const subValue = subScore ? subScore.score : '';  
 
-                        if (Array.isArray(data.evaluation_criterias)) {
-                            data.evaluation_criterias.forEach(function (criteria) {
-                                if (criteria.has_sub && Array.isArray(criteria.sub_evaluation_criterias) && criteria.sub_evaluation_criterias.length > 0) {
-                                    formContainer.append(`
-                                        <h5 class="mt-3">${criteria.name}</h5>
-                                    `);
-
-                                    const subCriteriaContainer = $('<div></div>');
-                                    criteria.sub_evaluation_criterias.forEach(function (subCriteria) {
-                                        const subValue = data.scores?.sub_scores?.[subCriteria.id] || '';
-                                        subCriteriaContainer.append(`
-                                            <div class="mb-2">
-                                                <label for="sub_criteria_${subCriteria.id}" class="form-label">${subCriteria.name} (Bobot: ${subCriteria.score}%)</label>
-                                                <input type="number" class="form-control" id="sub_criteria_${subCriteria.id}" name="sub_scores[${subCriteria.id}]" min="0" max="100" value="${subValue}">
-                                            </div>
-                                        `);
-                                    });
-                                    formContainer.append(subCriteriaContainer);
-                                } else {
-                                    const value = data.scores?.scores?.[criteria.id] || '';
-                                    formContainer.append(`
-                                        <div class="mb-3">
-                                            <label for="criteria_${criteria.id}" class="form-label">${criteria.name} (Bobot: ${criteria.score}%)</label>
-                                            <input type="number" class="form-control" id="criteria_${criteria.id}" name="scores[${criteria.id}]" min="0" max="100" value="${value}">
-                                        </div>
-                                    `);
-                                }
+                                subCriteriaContainer.append(`
+                                    <div class="mb-2">
+                                        <label for="sub_criteria_${subCriteria.id}" class="form-label">
+                                            ${subCriteria.name} (Bobot: ${subCriteria.weight}%)
+                                        </label>
+                                        <input type="number" class="form-control" id="sub_criteria_${subCriteria.id}" 
+                                            name="sub_scores[${criteria.id}][${subCriteria.id}]" min="0" max="100" value="${subValue}">
+                                    </div>
+                                `);
                             });
+
+                            formContainer.append(subCriteriaContainer);
                         } else {
-                            formContainer.html('<p class="text-muted">Tidak ada kriteria untuk form ini.</p>');
+                            const score = assessmentScores.find(s => s.criteria_id === criteria.id)?.score || ''; 
+                            
+                            formContainer.append(`
+                                <div class="mb-3">
+                                    <label for="criteria_${criteria.id}" class="form-label">
+                                        ${criteria.name} (Bobot: ${criteria.weight}%)
+                                    </label>
+                                    <input type="number" class="form-control" id="criteria_${criteria.id}" 
+                                           name="scores[${criteria.id}]" min="0" max="100" value="${score}">
+                                </div>
+                            `);
                         }
-                    },
-                    error: function () {
-                        $('#form-display').html('<p class="text-muted">Gagal mengambil data.</p>');
-                    }
-                });
-            } else {
-                $('#form-display').html('<p class="text-muted">Silakan pilih form terlebih dahulu.</p>');
+                    });
+                } else {
+                    formContainer.html('<p class="text-muted">Tidak ada rubrik untuk form ini.</p>');
+                }
+            },
+            error: function () {
+                formContainer.html('<p class="text-muted">Gagal mengambil data.</p>');
             }
         });
     });
+});
+
+function fetchData() {
+    $.ajax({
+        url: `{{ route('lecturer.final_project.exam.get') }}`,
+        type: 'GET',
+        beforeSend: function () {
+            $('#exam_display').html('<p class="text-muted">Sedang memuat data...</p>');
+        },
+        success: function (response) {
+            if (response) {
+                $('#exam_display').html(response.html);
+            }
+        },
+        error: function (error) {
+            $('#exam_display').html('<p class="text-muted">'+error.responseJSON.message+'</p>');
+        }
+    });
+}
 </script>
 @endpush

@@ -20,16 +20,16 @@
                         <x-navlink icon="ri-user-line" title="Kelola Mahasiswa" href="{{ route('admin.student.index') }}" active="{{ request()->routeIs('admin.student.index') }}" />
                     <x-menu-title title="Dosen" />
                         <x-navlink icon="ri-user-line" title="Kelola Dosen" href="{{ route('admin.lecturer.index') }}" active="{{ request()->routeIs('admin.lecturer.index') }}" />
-                    <x-menu-title title="Proposal" />
+                    <x-menu-title title="Periode" />
+                        <x-navlink icon="ri-calendar-event-line" title="Periode Tugas Akhir" href="{{ route('admin.period.index') }}" active="{{ request()->routeIs('admin.period.index') }}" />
                         {{-- <x-navlink icon="ri-calendar-event-line" title="Periode Ujian Proposal" href="{{ route('admin.periode.proposal.index') }}" active="{{ request()->routeIs('admin.periode.proposal.index') }}" /> --}}
                     <x-menu-title title="Tugas Akhir" />
-                        <x-navlink icon="ri-calendar-event-line" title="Periode Tugas Akhir" href="{{ route('admin.final_project.period.index') }}" active="{{ request()->routeIs('admin.final_project.period.index') }}" />
                         <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.final_project.register.index') }}" active="{{ request()->routeIs('admin.final_project.register.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Jadwal Tugas Akhir" href="{{ route('admin.final_project.schedule.index') }}" active="{{ request()->routeIs('admin.final_project.schedule.index') }}" />
                     <x-menu-title title="Penilaian" />
-                        <x-navlink icon="ri-calendar-event-line" title="Penilaian" href="{{ route('admin.evaluation.index') }}" active="{{ request()->routeIs('admin.evaluation.index') }}" />
-                        <x-navlink icon="ri-calendar-event-line" title="Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.index') }}" />
-                        <x-navlink icon="ri-calendar-event-line" title="Sub Kriteria Penilaian" href="{{ route('admin.evaluation.criteria.sub.index') }}" active="{{ request()->routeIs('admin.evaluation.criteria.sub.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Penilaian" href="{{ route('admin.rubric.index') }}" active="{{ request()->routeIs('admin.rubric.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Kriteria Penilaian" href="{{ route('admin.rubric.criteria.index') }}" active="{{ request()->routeIs('admin.rubric.criteria.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Sub Kriteria Penilaian" href="{{ route('admin.rubric.criteria.sub.index') }}" active="{{ request()->routeIs('admin.rubric.criteria.sub.index') }}" />
                 @elseif (auth()->user()->role->name == "Lecturer")
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('lecturer.dashboard') }}" active="{{ request()->routeIs('lecturer.dashboard') }}" />
                     <x-menu-title title="Tugas Akhir" />
@@ -38,8 +38,8 @@
                             
                 @elseif (auth()->user()->role->name == "Student")
                     @php
-                        $checkFinalProject = App\Models\FinalProject\FinalProject::where('user_id', Auth::id())
-                            ->where('status', 'approved')
+                        $checkFinalProject = App\Models\FinalProject\FinalProject::where('student_id', Auth::id())
+                            ->where('status', 'disetujui')
                             ->exists();
                     @endphp
                             

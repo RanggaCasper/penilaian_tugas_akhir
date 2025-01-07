@@ -61,13 +61,13 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Identity</th>
+                    <th>NIM</th>
                     <th>Mahasiswa</th>
+                    <th>Judul</th>
                     <th>Penguji 1</th>
                     <th>Penguji 2</th>
                     <th>Penguji 3</th>
-                    <th>Waktu Mulai</th>
-                    <th>Waktu Berakhir</th>
+                    <th>Waktu</th>
                     <th>Ruangan</th>
                 </tr>
             </thead>
@@ -77,11 +77,11 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $schedule->student->identity }}</td>
                         <td>{{ $schedule->student->name }}</td>
+                        <td>{{ $schedule->student->final_project->title ?? '-' }}</td>
                         <td>{{ $schedule->primary_examiner->name ?? '-' }}</td>
                         <td>{{ $schedule->secondary_examiner->name ?? '-' }}</td>
                         <td>{{ $schedule->tertiary_examiner->name ?? '-' }}</td>
-                        <td>{{ $schedule->start_time }}</td>
-                        <td>{{ $schedule->end_time }}</td>
+                        <td>{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}</td>
                         <td>{{ $schedule->room }}</td>
                     </tr>
                 @endforeach

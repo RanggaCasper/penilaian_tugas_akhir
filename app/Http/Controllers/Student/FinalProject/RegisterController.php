@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Student\FinalProject;
 
+use App\Models\Period;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FinalProject\FinalProject;
-use App\Models\FinalProject\Period;
-use Illuminate\Http\JsonResponse;
 
 class RegisterController extends Controller
 {
@@ -31,8 +31,8 @@ class RegisterController extends Controller
      */
     public function index()
     {
-        $existingFinalProject = FinalProject::with('period')->where('user_id', Auth::user()->id)
-            ->where('final_project_period_id', $this->active_period->id ?? null)
+        $existingFinalProject = FinalProject::with('period')->where('student_id', Auth::user()->id)
+            ->where('period_id', $this->active_period->id ?? null)
             ->first();
 
         $data = $existingFinalProject ?? $this->active_period;
@@ -64,11 +64,11 @@ class RegisterController extends Controller
             ]);
 
             $data = FinalProject::create([
-                'user_id' => Auth::user()->id,
+                'student_id' => Auth::user()->id,
                 'title' => $request['title'],
                 'document' => $request['document'],
                 'support_document' => $request['support_document'],
-                'final_project_period_id' => $this->active_period->id,
+                'period_id' => $this->active_period->id,
             ]);
 
             return response()->json([
@@ -102,7 +102,7 @@ class RegisterController extends Controller
     public function update(Request $request): JsonResponse
     {
         try {
-            $data = FinalProject::where('user_id', Auth::user()->id)->first();
+            $data = FinalProject::where('student_id', Auth::user()->id)->first();
 
             if (!$data) {
                 return response()->json([

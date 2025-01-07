@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Evaluation;
+namespace App\Http\Controllers\Admin\Rubric;
 
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use App\Models\Evaluation\Evaluation;
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
+use App\Models\Rubric\Criteria;
+use App\Models\Rubric\SubCriteria;
 
-class EvaluationController extends Controller
+class SubCriteriaController extends Controller
 {
     /**
-     * Show the list of evaluation criteria.
+     * Show the list of rubric criteria.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('admin.evaluation.evaluation');
+        return view('admin.rubric.sub_criteria');
     }
 
     /**
@@ -28,11 +29,27 @@ class EvaluationController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
+            $request->validate([  
                 'name' => 'required',
-            ]);
+                'weight' => 'required|numeric',
+                'criteria_id' => 'required'
+            ]);   
             
-            Evaluation::create($request->all());
+            $subCriteria = SubCriteria::where('criteria_id', $request->criteria_id)->sum('weight');  
+        
+            $criteria = Criteria::findOrFail($request->criteria_id); 
+            $maxweight = $criteria->weight; 
+            
+            $remainingweight = $maxweight - $subCriteria;  
+            
+            if ($request->weight > $remainingweight) {  
+                return response()->json([  
+                    'status' => false,  
+                    'message' => 'Total bobot sub penilaian tidak boleh lebih dari ' . $remainingweight . '.',  
+                ], 422);  
+            }  
+           
+            SubCriteria::create($request->all());
         
             return response()->json([
                 'status' => true,
@@ -63,12 +80,12 @@ class EvaluationController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Evaluation::select(['id', 'name']);
+                $data = SubCriteria::with('criteria')->select(['id', 'name', 'weight', 'criteria_id']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
-                    })  
+                    })
                     ->addColumn('action', function ($row) {  
                         return '  
                             <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Edit</button>  
@@ -89,7 +106,7 @@ class EvaluationController extends Controller
     }
 
     /**
-     * Retrieve the specified Evaluation Criteria by ID.
+     * Retrieve the specified rubric Criteria by ID.
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
@@ -99,7 +116,7 @@ class EvaluationController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Evaluation::findOrFail($id);
+                $data = SubCriteria::with('criteria')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -119,7 +136,7 @@ class EvaluationController extends Controller
     }
 
     /**
-     * Update the specified Evaluation Criteria in database.
+     * Update the specified rubric Criteria in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -129,14 +146,31 @@ class EvaluationController extends Controller
     {
         if ($request->ajax()) {
             try {
+                
                 $request->validate([
                     'name' => 'required',
+                    'weight' => 'required|numeric|min:0',
+                    'criteria_id' => 'required'
                 ]);
-            
-                $data = Evaluation::findOrFail($id);
-            
-                $data->update($request->all());
-            
+
+                $data = SubCriteria::findOrFail($id);
+
+                $subCriteria = SubCriteria::where('criteria_id', $request->criteria_id)->where('id', '!=', $id)->sum('weight');
+
+                $criteria = Criteria::findOrFail($request->criteria_id);
+                $maxweight = $criteria->weight;
+
+                $remainingweight = $maxweight - $subCriteria;
+
+                if ($request->weight > $remainingweight) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Total bobot sub penilaian tidak boleh lebih dari ' . $remainingweight . '.',
+                    ], 422);
+                }
+
+                $data->update($request->only(['name', 'weight', 'criteria_id']));
+
                 return response()->json([
                     'status' => true,
                     'message' => 'Kriteria Penilaian berhasil diubah',
@@ -157,11 +191,12 @@ class EvaluationController extends Controller
                     'status' => false,
                     'message' => 'Terjadi kesalahan saat memperbarui data',
                 ], 500);
-            }            
+            }
         }
 
         abort(401);
     }
+
 
     /**
      * Remove the specified data from database.
@@ -174,7 +209,7 @@ class EvaluationController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = Evaluation::findOrFail($id);
+                $periode = SubCriteria::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([

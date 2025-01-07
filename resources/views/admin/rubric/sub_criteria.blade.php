@@ -4,20 +4,20 @@
 
 @section('content')
 <x-card title="Tambah Sub Kriteria Penilaian">
-    <form action="{{ route('admin.evaluation.criteria.sub.store') }}" method="POST">
+    <form action="{{ route('admin.rubric.criteria.sub.store') }}" method="POST">
         @csrf
         <div class="mb-3">
             <x-input-field label="Nama" type="text" name="name" id="nama" />
         </div>
         <div class="mb-3">
-            <x-input-field label="Bobot" type="number" name="score" id="score" />
+            <x-input-field label="Bobot" type="number" name="weight" id="weight" />
         </div>
         <div class="mb-3">
-            <label for="evaluation">Penilaian</label>
-            <select name="evaluation_criteria_id" id="evaluation" class="form-control form-select">
+            <label for="rubric">Penilaian</label>
+            <select name="criteria_id" id="rubric" class="form-control form-select">
                 <option selected disabled>-- Pilih Kriteria Penilaian --</option>
-                @foreach (App\Models\Evaluation\Criteria::with('evaluation')->where('has_sub', true)->orderBy('name', 'desc')->get() as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }} - [ {{ $item->evaluation->name }} ]</option>
+                @foreach (App\Models\Rubric\Criteria::with('rubric')->where('has_sub', true)->orderBy('name', 'desc')->get() as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }} - [ {{ $item->rubric->name }} ]</option>
                 @endforeach
             </select>
         </div>
@@ -32,7 +32,7 @@
                 <th>No</th>
                 <th>Nama</th>
                 <th>Bobot</th>
-                <th>Penilaian</th>
+                <th>Kriteria</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -54,14 +54,14 @@
                         <x-input-field label="Nama" type="text" name="name" id="name_update" />
                     </div>
                     <div class="mb-3">
-                        <x-input-field label="Bobot" type="number" name="score" id="score_update" />
+                        <x-input-field label="Bobot" type="number" name="weight" id="weight_update" />
                     </div>
                     <div class="mb-3">
-                        <label for="evaluation_criteria_update">Penilaian</label>
-                        <select name="evaluation_criteria_id" id="evaluation_criteria_update" class="form-control form-select">
+                        <label for="criteria_update">Penilaian</label>
+                        <select name="criteria_id" id="criteria_update" class="form-control form-select">
                             <option selected disabled>-- Pilih Kriteria Penilaian --</option>
-                            @foreach (App\Models\Evaluation\Criteria::where('has_sub', true)->orderBy('name', 'desc')->get() as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }} - [ {{ $item->evaluation->name }} ]</option>
+                            @foreach (App\Models\Rubric\Criteria::where('has_sub', true)->orderBy('name', 'desc')->get() as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }} - [ {{ $item->rubric->name }} ]</option>
                             @endforeach
                         </select>
                     </div>
@@ -80,12 +80,12 @@
             processing: true,
             serverSide: false,
             scrollX: true,
-            ajax: '{{ route('admin.evaluation.criteria.sub.get') }}',
+            ajax: '{{ route('admin.rubric.criteria.sub.get') }}',
             columns: [
                 { data: 'no', name: 'no' },
                 { data: 'name', name: 'name' },
-                { data: 'score', name: 'score' },
-                { data: 'evaluation_criteria.name', name: 'evaluation_criteria.name' },
+                { data: 'weight', name: 'weight' },
+                { data: 'criteria.name', name: 'criteria.name' },
                 { data: 'action', name: 'action' },
             ],
         });
@@ -93,13 +93,13 @@
         $('#datatables').on('click', '.edit-btn', function() {
             var id = $(this).data('id');
             $.ajax({
-                url: '{{ route("admin.evaluation.criteria.sub.getById", ["id" => ":id"]) }}'.replace(':id', id),
+                url: '{{ route("admin.rubric.criteria.sub.getById", ["id" => ":id"]) }}'.replace(':id', id),
                 type: 'GET',
                 success: function(data) {
-                    $('#form_update').attr('action', '{{ route("admin.evaluation.criteria.sub.update", ["id" => ":id"]) }}'.replace(':id', id));
+                    $('#form_update').attr('action', '{{ route("admin.rubric.criteria.sub.update", ["id" => ":id"]) }}'.replace(':id', id));
                     $('#name_update').val(data.name);
-                    $('#score_update').val(data.score);
-                    $('#evaluation_criteria_update').val(data.evaluation_criteria.id);
+                    $('#weight_update').val(data.weight);
+                    $('#criteria_update').val(data.criteria.id);
                 },
                 error: function(error) {
                     console.error(error);
@@ -127,7 +127,7 @@
             }).then(function(t) {
                 if(t.value) {
                     $.ajax({
-                        url: '{{ route("admin.evaluation.criteria.sub.destroy", ["id" => ":id"]) }}'.replace(':id', id),
+                        url: '{{ route("admin.rubric.criteria.sub.destroy", ["id" => ":id"]) }}'.replace(':id', id),
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}',

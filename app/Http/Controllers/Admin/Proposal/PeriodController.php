@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Proposal;
 
+use App\Models\Period;
 use Illuminate\Http\Request;
-use App\Models\Proposal\ProposalPeriod;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use App\Models\Proposal\ProposalPeriod;
 
 class PeriodController extends Controller
 {
@@ -38,7 +39,7 @@ class PeriodController extends Controller
                 'end_date' => 'required|date|after_or_equal:start_date',
             ]);
         
-            ProposalPeriod::create($request->all());
+            Period::create($request->all());
         
             return response()->json([
                 'status' => true,

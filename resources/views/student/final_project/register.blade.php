@@ -39,9 +39,9 @@
                     <p class="p-0 mb-2">Status</p>
                     @php
                         $statusClass = match(strtolower($data->status)) {
-                            'pending' => 'btn-warning',
-                            'approved' => 'btn-success',
-                            'rejected' => 'btn-danger',
+                            'menunggu' => 'btn-warning',
+                            'disetujui' => 'btn-success',
+                            'ditolak    ' => 'btn-danger',
                             default => 'btn-secondary',
                         };
                     @endphp

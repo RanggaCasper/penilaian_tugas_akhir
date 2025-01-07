@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Admin\FinalProject;
+namespace App\Http\Controllers\Admin\Rubric;
 
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use App\Http\Controllers\Controller;
-use App\Models\FinalProject\Period;
+use App\Models\Rubric\Criteria;
+use Illuminate\Routing\Controller;
 
-class PeriodController extends Controller
+class CriteriaController extends Controller
 {
     /**
-     * Display the periode proposal view.
+     * Show the list of rubric criteria.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('admin.final_project.period');
+        return view('admin.rubric.criteria');
     }
 
     /**
@@ -29,21 +29,29 @@ class PeriodController extends Controller
     {
         try {
             $request->merge([
-                'is_active' => $request->has('is_active') ? 1 : 0,
+                'has_sub' => $request->has('has_sub') ? 1 : 0,
             ]);
-
+            
             $request->validate([
                 'name' => 'required',
-                'start_date' => 'required|date|before_or_equal:end_date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-                'generation_id' => 'required|exists:generations,id',    
+                'weight' => 'required|numeric|min:0|max:100',
+                'rubric_id' => 'required'
             ]);
-        
-            Period::create($request->all());
+            
+            $Rubric = Criteria::where('rubric_id', $request->rubric_id)->sum('weight');  
+
+            if ($Rubric + $request->weight > 100) {  
+                return response()->json([  
+                    'status' => false,  
+                    'message' => 'Total bobot kriteria tidak boleh lebih dari 100%',  
+                ], 422);  
+            }  
+
+            Criteria::create($request->all());
         
             return response()->json([
                 'status' => true,
-                'message' => 'Data berhasil ditambahkan',
+                'message' => 'Kriteria Penilaian berhasil ditambahkan',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -54,6 +62,7 @@ class PeriodController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
+                'errors' => $e->getMessage(),
                 'message' => 'Terjadi kesalahan saat menyimpan data',
             ], 500);
         }        
@@ -69,19 +78,16 @@ class PeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Period::with('generation')->select(['id', 'name', 'start_date', 'end_date', 'generation_id', 'is_active']);
+                $data = Criteria::with('Rubric')->select(['id', 'name', 'weight', 'rubric_id', 'has_sub']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
-                    }) 
-                    ->addColumn('generation', function ($row) {  
-                        return $row->generation->name;
-                    })  
-                    ->editColumn('is_active', function ($row) {  
-                        return $row->is_active   
-                            ? '<span class="badge bg-success">Active</span>'   
-                            : '<span class="badge bg-danger">Inactive</span>';  
+                    })
+                    ->editColumn('has_sub', function ($row) {  
+                        return $row->has_sub   
+                            ? '<span class="badge bg-success">Aktif</span>'   
+                            : '<span class="badge bg-danger">Tidak Aktif</span>';  
                     })  
                     ->addColumn('action', function ($row) {  
                         return '  
@@ -89,7 +95,7 @@ class PeriodController extends Controller
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
                         ';  
                     })  
-                    ->rawColumns(['action', 'is_active'])
+                    ->rawColumns(['has_sub','action'])
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json([
@@ -99,21 +105,21 @@ class PeriodController extends Controller
             }
         }
 
-        abort(403);
+        abort(401);
     }
 
     /**
-     * Display the specified data.
+     * Retrieve the specified Rubric Criteria by ID.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getById(Request $request, $id)
     {
         if ($request->ajax()) {
             try {
-                $data = Period::findOrFail($id);
+                $data = Criteria::with('rubric')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -129,11 +135,11 @@ class PeriodController extends Controller
             }
         }
 
-        abort(403);
+        abort(401);
     }
 
     /**
-     * Update the specified data in database.
+     * Update the specified Rubric Criteria in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -144,23 +150,31 @@ class PeriodController extends Controller
         if ($request->ajax()) {
             try {
                 $request->merge([
-                    'is_active' => $request->has('is_active') ? 1 : 0,
+                    'has_sub' => $request->has('has_sub') ? 1 : 0,
                 ]);
                 
                 $request->validate([
                     'name' => 'required',
-                    'start_date' => 'required|date|before_or_equal:end_date',
-                    'end_date' => 'required|date|after_or_equal:start_date',
-                    'generation_id' => 'required|exists:generations,id',
+                    'weight' => 'required|numeric|min:0|max:100',
+                    'rubric_id' => 'required'
                 ]);
             
-                $data = Period::findOrFail($id);
+                $data = Criteria::findOrFail($id);  
+
+                $Rubric = Criteria::where('rubric_id', $request->rubric_id)->where('id', '!=', $id)->sum('weight');  
+
+                if ($Rubric + $request->weight > 100) {  
+                    return response()->json([  
+                        'status' => false,  
+                        'message' => 'Total bobot kriteria tidak boleh lebih dari 100%',  
+                    ], 422);  
+                }  
             
-                $data->update($request->all());
+                $data->update($request->only(['name', 'weight', 'rubric_id', 'has_sub']));
             
                 return response()->json([
                     'status' => true,
-                    'message' => 'Data berhasil diubah',
+                    'message' => 'Kriteria Penilaian berhasil diubah',
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 return response()->json([
@@ -181,7 +195,7 @@ class PeriodController extends Controller
             }            
         }
 
-        abort(403);
+        abort(401);
     }
 
     /**
@@ -195,12 +209,12 @@ class PeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = Period::findOrFail($id);
+                $periode = Criteria::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'Data berhasil dihapus',
+                    'message' => 'Kriteria Penilaian berhasil dihapus',
                 ]);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 return response()->json([
@@ -215,6 +229,6 @@ class PeriodController extends Controller
             }
         }
 
-        abort(403);
+        abort(401);
     }
 }

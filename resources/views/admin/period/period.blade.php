@@ -4,7 +4,7 @@
 
 @section('content')
     <x-card title="Tambah Periode">
-        <form action="{{ route('admin.final_project.period.store') }}" method="POST">
+        <form action="{{ route('admin.period.store') }}" method="POST">
             @csrf
             <div class="mb-3">
                 <x-input-field label="Judul" type="text" name="name" id="judul" />
@@ -22,6 +22,14 @@
                     @foreach (App\Models\Generation::orderBy('name', 'desc')->get() as $item)
                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                     @endforeach
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="generation">Tipe</label>
+                <select name="type" class="form-control form-select" id="type">
+                    <option selected disabled>-- Pilih Tipe --</option>
+                    <option value="proposal">Proposal</option>
+                    <option value="final_project">Tugas Akhir</option>
                 </select>
             </div>
             <div class="mb-3">
@@ -45,6 +53,7 @@
                     <th>Tanggal Mulai</th>
                     <th>Tanggal Berakhir</th>
                     <th>Angkatan</th>
+                    <th>Tipe</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -82,6 +91,14 @@
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label for="generation">Tipe</label>
+                            <select name="type" class="form-control form-select" id="type_update">
+                                <option selected disabled>-- Pilih Tipe --</option>
+                                <option value="proposal">Proposal</option>
+                                <option value="final_project">Tugas Akhir</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="is_active_update">Status</label>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" name="is_active" type="checkbox" role="switch" id="is_active_update" checked>
@@ -103,13 +120,14 @@
         processing: true,
         serverSide: false,
         scrollX: true,
-        ajax: '{{ route('admin.final_project.period.get') }}',
+        ajax: '{{ route('admin.period.get') }}',
         columns: [
             { data: 'no', name: 'no' },
             { data: 'name', name: 'name' },
             { data: 'start_date', name: 'start_date' },
             { data: 'end_date', name: 'end_date' },
             { data: 'generation', name: 'generation' },
+            { data: 'type', name: 'type' },
             { data: 'is_active', name: 'is_active' },
             { data: 'action', name: 'action' },
         ],
@@ -118,14 +136,15 @@
     $('#datatables').on('click', '.edit-btn', function() {
         var id = $(this).data('id');
         $.ajax({
-            url: '{{ route("admin.final_project.period.getById", ["id" => ":id"]) }}'.replace(':id', id),
+            url: '{{ route("admin.period.getById", ["id" => ":id"]) }}'.replace(':id', id),
             type: 'GET',
             success: function(data) {
-                $('#form_update').attr('action', '{{ route("admin.final_project.period.update", ["id" => ":id"]) }}'.replace(':id', id));
+                $('#form_update').attr('action', '{{ route("admin.period.update", ["id" => ":id"]) }}'.replace(':id', id));
                 $('#judul_update').val(data.name);
                 $('#start_date_update').val(data.start_date);
                 $('#end_date_update').val(data.end_date);
                 $('#generation_update').val(data.generation_id);
+                $('#type_update').val(data.type);
                 $('#is_active_update').prop('checked', !!data.is_active);
             },
             error: function(error) {
@@ -154,7 +173,7 @@
         }).then(function(t) {
             if(t.value) {
                 $.ajax({
-                    url: '{{ route("admin.final_project.period.destroy", ["id" => ":id"]) }}'.replace(':id', id),
+                    url: '{{ route("admin.period.destroy", ["id" => ":id"]) }}'.replace(':id', id),
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',

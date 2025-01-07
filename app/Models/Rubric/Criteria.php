@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Rubrics;
+namespace App\Models\Rubric;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -41,6 +41,6 @@ class Criteria extends Model
      */
     public function sub_criterias()
     {
-        return $this->hasMany(SubCriteria::class, 'sub_criteria_id');
+        return $this->hasMany(SubCriteria::class, 'criteria_id');
     }
 }

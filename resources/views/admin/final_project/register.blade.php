@@ -13,6 +13,7 @@
                     <th>Judul</th>
                     <th>Angkatan</th>
                     <th>Status</th>
+                    <th>Perubahan</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -61,9 +62,9 @@
                         @method('PUT')
                         <label for="status_update">Edit Status</label>
                         <select class="mb-3 form-control form-select" name="status" id="status_update">
-                            <option value="pending">Pending</option>
-                            <option value="approved">Setuju</option>
-                            <option value="rejected">Tolak</option>
+                            <option value="menunggu">Menunggu</option>
+                            <option value="disetujui">Disetujui</option>
+                            <option value="ditolak">Ditolak</option>
                         </select>
                         <label for="is_editable_update">Izin Perubahan Data</label>
                         <select class="mb-3 form-control form-select" name="is_editable" id="is_editable_update">
@@ -88,11 +89,12 @@
         ajax: '{{ route('admin.final_project.register.get') }}',
         columns: [
             { data: 'no', name: 'no' },
-            { data: 'user.name', name: 'user.name' },
-            { data: 'user.identity', name: 'user.identity' },
+            { data: 'student.name', name: 'student.name' },
+            { data: 'student.identity', name: 'student.identity' },
             { data: 'title', name: 'title' },
-            { data: 'user.generation.name', name: 'user.generation.name' },
+            { data: 'student.generation.name', name: 'student.generation.name' },
             { data: 'status', name: 'status' },
+            { data: 'is_editable', name: 'is_editable' },
             { data: 'action', name: 'action' },
         ],
     });
@@ -104,12 +106,12 @@
             type: 'GET',
             success: function(data) {
                 $('#form_update').attr('action', '{{ route("admin.final_project.register.update", ["id" => ":id"]) }}'.replace(':id', id));
-                $('#detail-student').text(data.user.name);
-                $('#detail-identity').text(data.user.identity);
+                $('#detail-student').text(data.student.name);
+                $('#detail-identity').text(data.student.identity);
                 $('#detail-title').text(data.title);
                 $('#detail-document').attr('href', data.document);
                 $('#detail-support-document').attr('href', data.support_document);
-                $('#detail-generation').text(data.user.generation.name);
+                $('#detail-generation').text(data.student.generation.name);
                 $('#detail-status').text(data.status);
                 $('#status_update').val(data.status);
                 $('#is_editable_update').val(data.is_editable);
@@ -161,7 +163,6 @@
                         $('#datatables').DataTable().ajax.reload();
                     },
                     error: function(error) {
-                        console.error(error);
                         Swal.fire({
                             html: '<div class="mt-3"><lord-icon src="https://cdn.lordicon.com/tdrtiskw.json" trigger="loop" colors="primary:#f06548,secondary:#f7b84b" style="width:120px;height:120px"></lord-icon><div class="pt-2 mt-4 fs-15"><h4>Terjadi Kesalahan !</h4><p class="mx-4 mb-0 text-muted">' +error.responseJSON.message+ '</p></div></div>',
                             showCancelButton: !0,

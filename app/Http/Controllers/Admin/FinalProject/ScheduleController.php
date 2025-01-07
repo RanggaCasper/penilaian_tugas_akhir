@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Admin\FinalProject;
 use Carbon\Carbon;
 use App\Models\User;
 use Barryvdh\DomPDF\PDF;
+use App\Models\Exam\Exam;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Excel;
+use App\Models\Rubric\Rubric;
 use App\Exports\ScheduleExport;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Models\FinalProject\Exam;
 
 class ScheduleController extends Controller
 {
@@ -37,14 +38,14 @@ class ScheduleController extends Controller
             $search = $request->get('q');
 
             $data = User::with(['final_project' => function ($query) {
-                $query->where('status', 'Approved');
+                $query->where('is_editable', 'disetujui');
             }])
             ->where('role_id', 4)
             ->where('name', 'like', '%' . $search . '%')
             ->whereHas('final_project', function ($query) {
-                $query->where('status', 'Approved');
+                $query->where('is_editable', 'disetujui');
             })
-            ->whereDoesntHave('schedule')
+            ->whereDoesntHave('exam')
             ->orderBy('name', 'asc')
             ->get(['id', 'name', 'identity']);            
 
@@ -83,6 +84,21 @@ class ScheduleController extends Controller
         abort(403);
     }
 
+    public function getRubric(Request $request): JsonResponse
+    {
+        if($request->ajax()) {
+            $search = $request->get('q');
+
+            $data = Rubric::where('name', 'like', '%' . $search . '%')
+                ->orderBy('name', 'asc')
+                ->get(['id', 'name']);
+
+            return response()->json($data);
+        }
+
+        abort(403);
+    }
+
     /**
      * Store a newly created schedule in the database.
      *
@@ -93,18 +109,19 @@ class ScheduleController extends Controller
     {
         try {
             $request->merge([
-                'status' => $request->has('status') ? 1 : 0,
+                'is_editable' => $request->has('is_editable') ? 1 : 0,
             ]);
 
             $request->validate([
                 'exam_date' => 'required|date',
                 'start_time' => 'required|date_format:H:i',
                 'room' => 'required',
-                'status' => 'required',
+                'is_editable' => 'required',
                 'student_id' => 'required|exists:users,id|unique:exams',
                 'primary_examiner_id' => 'required|exists:users,id',
                 'secondary_examiner_id' => 'required|exists:users,id',
                 'tertiary_examiner_id' => 'required|exists:users,id',
+                'rubric_id' => 'required|exists:rubrics,id',
             ]);
             
             $examiner = [
@@ -122,6 +139,7 @@ class ScheduleController extends Controller
 
             $request->merge([
                 'end_time' => Carbon::createFromFormat('H:i', $request->start_time)->addHour()->format('H:i'),
+                'type' => 'final_project',
             ]);
             
             Exam::create($request->all());
@@ -156,7 +174,7 @@ class ScheduleController extends Controller
     {
         if ($request->has('export')) {
             try {
-                $query = Exam::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner');
+                $query = Exam::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('type','final_project');
 
                 if ($request->has('exam_date')) {
                     $query->whereDate('exam_date', $request->input('exam_date'));
@@ -172,7 +190,7 @@ class ScheduleController extends Controller
                 if ($request->export === 'pdf') {
                     $title = "Jadwal Ujian - {$date}";
 
-                    $pdf = $pdf->loadView('exports.schedule_pdf', [
+                    $pdf = $pdf->loadView('exports.final_project.schedule_pdf', [
                         'data' => $data,
                         'title' => $title,
                     ]);
@@ -190,24 +208,27 @@ class ScheduleController extends Controller
             
         if ($request->ajax()) {
             try {
-                $data = Exam::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->get();
+                $data = Exam::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('type','final_project')->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
                     })
-                    ->editColumn('status', function ($row) {  
-                        return $row->status   
-                        ? '<span class="badge bg-success">Active</span>'   
-                        : '<span class="badge bg-danger">Locked</span>';  
-                    })                    
+                    ->editColumn('is_editable', function ($row) {  
+                        return $row->is_editable   
+                        ? '<span class="badge bg-success">Aktif</span>'   
+                        : '<span class="badge bg-danger">Dikunci</span>';  
+                    })         
+                    ->addColumn('type', function ($row) {
+                        return $row->type == 'proposal' ? 'Proposal' : 'Tugas Akhir';
+                    })   
                     ->addColumn('action', function ($row) {  
                         return '  
                             <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Edit</button>  
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
                         ';  
                     })  
-                    ->rawColumns(['action', 'status'])
+                    ->rawColumns(['action', 'is_editable'])
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json([
@@ -265,7 +286,7 @@ class ScheduleController extends Controller
                 $schedule = Exam::findOrFail($id);
 
                 $request->merge([
-                    'status' => $request->has('status') ? 1 : 0,
+                    'is_editable' => $request->has('is_editable') ? 1 : 0,
                 ]);
 
                 $request->validate([
@@ -273,7 +294,7 @@ class ScheduleController extends Controller
                     'start_time' => 'required',
                     'end_time' => 'required',
                     'room' => 'required',
-                    'status' => 'required',
+                    'is_editable' => 'required',
                     'student_id' => 'required|exists:users,id',
                     'primary_examiner_id' => 'required|exists:users,id',
                     'secondary_examiner_id' => 'required|exists:users,id',
