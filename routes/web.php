@@ -170,8 +170,32 @@ Route::prefix('student')->as('student.')->middleware('auth')->group(function () 
     });
 });
 
+// Dosen
 Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Lecturer\DashboardController::class, 'index'])->name('dashboard');
+
+    // Proposal
+    Route::prefix('proposal')->as('proposal.')->group(function () {
+        // Jadwal
+        Route::prefix('schedule')->as('schedule.')->group(function () {
+            Route::controller(\App\Http\Controllers\Lecturer\Proposal\ScheduleController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/get', 'get')->name('get');  
+            });
+        });
+
+        // Ujian
+        Route::prefix('exam')->as('exam.')->group(function () {
+            Route::controller(\App\Http\Controllers\Lecturer\Proposal\ExamController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/get', 'get')->name('get'); 
+                Route::get('/get/rubric/{id}', 'getRubric')->name('getRubric');  
+                Route::get('/get/assessment/{id}', 'getAssessment')->name('getAssessment');  
+                Route::get('/download/pdf/{id}', 'generatePDF')->name('generatePDF');  
+                Route::post('/', 'store')->name('store');
+            });
+        });
+    });
 
     // Tugas Akhir
     Route::prefix('final-project')->as('final_project.')->group(function () {

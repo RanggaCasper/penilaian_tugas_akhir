@@ -45,17 +45,21 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        $fields = ['email', 'identity', 'secondary_identity'];
 
-            $user = Auth::user();
-            $role = strtolower($user->role->name);
-            
-            return response()->json([
-                'status' => true,
-                'message' => "Welcome, {$user->username}",
-                'redirect_url' => route("{$role}.dashboard"),
-            ]);
+        foreach ($fields as $field) {
+            if (Auth::attempt([$field => $credentials['identity'], 'password' => $credentials['password']])) {
+                $request->session()->regenerate();
+
+                $user = Auth::user();
+                $role = strtolower($user->role->name);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => "Welcome, {$user->username}",
+                    'redirect_url' => route("{$role}.dashboard"),
+                ]);
+            }
         }
 
         return response()->json([

@@ -1,32 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\Lecturer\FinalProject;
+namespace App\Http\Controllers\Lecturer\Proposal;
 
 use App\Models\Exam\Exam;
-use App\Models\Exam\Score;
 use Illuminate\Http\Request;
 use App\Models\Exam\SubScore;
-use App\Models\Exam\Assesment;
 use App\Models\Exam\Assessment;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Rubric\SubCriteria;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Evaluation\Evaluation;
-use Illuminate\Http\JsonResponse;
 
 class ExamController extends Controller
 {
     public function index()
     {
-        return view('lecturer.final_project.exam');
+        return view('lecturer.proposal.exam');
     }
 
     public function get(Request $request)
     {
         try {
             $exams = Exam::with(
-                'student.final_project',
+                'student.proposal',
                 'rubric',
                 'assessments',
                 'student',
@@ -39,13 +34,13 @@ class ExamController extends Controller
                     ->orWhere('secondary_examiner_id', Auth::id())
                     ->orWhere('tertiary_examiner_id', Auth::id());
             })
-            ->where('type', 'final_project')
+            ->where('type', 'proposal')
             ->orderBy('start_time', 'asc')
             ->get();
 
             return response()->json([
                 'status' => true,
-                'html' => view('lecturer.final_project.exam_ajax', compact('exams'))->render(),
+                'html' => view('lecturer.proposal.exam_ajax', compact('exams'))->render(),
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -170,7 +165,7 @@ class ExamController extends Controller
     public function generatePdf($id)
     {
         try {
-            $data = Assessment::with('student', 'student.final_project', 'examiner', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')
+            $data = Assessment::with('student', 'student.proposal', 'examiner', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')
                 ->where('exam_id', $id)
                 ->where('examiner_id', Auth::id())
                 ->firstOrFail();

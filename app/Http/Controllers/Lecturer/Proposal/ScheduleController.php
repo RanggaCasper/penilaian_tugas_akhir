@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Lecturer\FinalProject;
+namespace App\Http\Controllers\Lecturer\Proposal;
 
 use Carbon\Carbon;
 use Barryvdh\DomPDF\PDF;
@@ -15,13 +15,13 @@ use Illuminate\Support\Facades\Auth;
 class ScheduleController extends Controller
 {
     /**
-     * Display the final project schedule view.
+     * Display the proposal schedule view.
      *
      * @return \Illuminate\View\View
      */
     public function index()
     {
-        return view('lecturer.final_project.schedule');
+        return view('lecturer.proposal.schedule');
     }
 
     /**
@@ -40,16 +40,16 @@ class ScheduleController extends Controller
                     $query->where('primary_examiner_id', Auth::id())
                         ->orWhere('secondary_examiner_id', Auth::id())
                         ->orWhere('tertiary_examiner_id', Auth::id());
-                })->where('type', 'final_project')->orderBy('start_time', 'asc');
+                })->where('type', 'proposal')->orderBy('start_time', 'asc');
 
                 if ($request->has('exam_date')) {
                     $query->whereDate('exam_date', $request->input('exam_date'));
                 }
-    
+                
                 $data = $query->get();
                 $date = $request->input('exam_date');
                 $data = $data->map(function ($item) {
-                    $item->type = 'TUGAS AKHIR';
+                    $item->type = 'PROPOSAL';
                     return $item;
                 });
     
@@ -60,9 +60,9 @@ class ScheduleController extends Controller
                 if ($request->export === 'pdf') {
                     $date = Carbon::parse($date)->locale('id')->isoFormat('DD MMMM YYYY');
 
-                    $title = "JADWAL UJIAN TUGAS AKHIR - {$date}";
+                    $title = "JADWAL UJIAN PROPOSAL - {$date}";
 
-                    $pdf = $pdf->loadView('exports.final_project.schedule_pdf', [
+                    $pdf = $pdf->loadView('exports.proposal.schedule_pdf', [
                         'data' => $data,
                         'title' => $title,
                     ]);
@@ -70,6 +70,7 @@ class ScheduleController extends Controller
                     $fileName = "schedule_{$date}.pdf";
                     return $pdf->download($fileName);
                 }
+
             } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
@@ -86,7 +87,7 @@ class ScheduleController extends Controller
                                     ->orWhere('secondary_examiner_id', Auth::id())
                                     ->orWhere('tertiary_examiner_id', Auth::id());
                             })
-                            ->where('type', 'final_project')
+                            ->where('type', 'proposal')
                             ->orderBy('exam_date', 'desc')
                             ->orderBy('start_time', 'asc')
                             ->get();
@@ -99,7 +100,7 @@ class ScheduleController extends Controller
                         return $row->is_editable   
                         ? '<span class="badge bg-success">Aktif</span>'   
                         : '<span class="badge bg-danger">Dikunci</span>';  
-                    })
+                    }) 
                     ->addColumn('position', function ($row) {  
                         if ($row->primary_examiner_id == Auth::id()) {
                             return 'Penguji 1';

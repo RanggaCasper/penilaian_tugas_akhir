@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Jadwal Ujian Tugas Akhir')
+@section('title', 'Jadwal Ujian Proposal')
 
 @section('content')
-<x-card title="Data Jadwal Ujian Tugas Akhir">   
+<x-card title="Data Jadwal Ujian Proposal">   
     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal">
         Download
     </button>
@@ -62,7 +62,7 @@
             const fileExtension = format === 'excel' ? 'xlsx' : 'pdf';
 
             $.ajax({
-                url: '{{ route("lecturer.final_project.schedule.get") }}',
+                url: '{{ route("lecturer.proposal.schedule.get") }}',
                 type: 'GET',
                 data: {
                     export: format,
@@ -120,7 +120,7 @@
         processing: true,
         serverSide: false,
         scrollX: true,
-        ajax: '{{ route('lecturer.final_project.schedule.get') }}',
+        ajax: '{{ route('lecturer.proposal.schedule.get') }}',
         columns: [
             { data: 'no', name: 'no' },
             { data: 'exam_date', name: 'exam_date' },

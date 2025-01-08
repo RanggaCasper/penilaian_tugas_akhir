@@ -67,7 +67,7 @@
                             <x-input-field label="No. Ponsel" type="text" name="phone" id="phone_update" />
                         </div>
                         <div class="mb-3">
-                            <x-input-field label="NIP" type="text" name="identity" id="identity_update" />
+                            <x-input-field label="NIDN" type="text" name="identity" id="identity_update" />
                         </div>
                         <div class="mb-3">
                             <x-input-field label="NIP" type="text" name="secondary_identity" id="secondary_identity_update" />

@@ -2,16 +2,17 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithCustomStartCell;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
 class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEvents, WithCustomStartCell
 {
@@ -21,15 +22,15 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
     public function __construct($data, $title = 'JADWAL UJIAN')
     {
         $this->data = $data;
-
         $examDates = $this->data->pluck('exam_date')->unique()->sort();
+        $type = $this->data->pluck('type')->unique()->implode(', ');
 
         if ($examDates->count() === 1) {
-            $this->title = $title . ' - ' . $this->formatDate($examDates->first());
+            $this->title = $title . ' ' . $type . ' - ' . $this->formatDate($examDates->first());
         } elseif ($examDates->count() > 1) {
-            $this->title = $title . ' - ' . $this->formatDate($examDates->first()) . ' s/d ' . $this->formatDate($examDates->last());
+            $this->title = $title . ' ' . $type . ' - ' . $this->formatDate($examDates->first()) . ' s/d ' . $this->formatDate($examDates->last());
         } else {
-            $this->title = $title;
+            $this->title = $title . ' ' . $type;
         }
     }
 
@@ -142,6 +143,6 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
 
     private function formatDate($date): string
     {
-        return \Carbon\Carbon::parse($date)->format('d M Y');
+        return Carbon::parse($date)->locale('id')->isoFormat('DD MMMM YYYY');
     }
 }
