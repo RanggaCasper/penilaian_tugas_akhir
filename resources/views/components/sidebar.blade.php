@@ -68,9 +68,17 @@
                         $checkFinalProject = App\Models\FinalProject\FinalProject::where('student_id', Auth::id())
                             ->where('status', 'disetujui')
                             ->exists();
+                        $checkProposal = App\Models\Proposal\Proposal::where('student_id', Auth::id())
+                            ->where('status', 'disetujui')
+                            ->exists();
                     @endphp
                             
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('student.dashboard') }}" active="{{ request()->routeIs('student.dashboard') }}" />
+                    <x-menu-title title="Proposal" />
+                        <x-navlink icon="ri-user-add-line" title="Pendaftaran" href="{{ route('student.proposal.register.index') }}" active="{{ request()->routeIs('student.proposal.register.index') }}" />
+                        @if ($checkProposal)  
+                            <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('student.proposal.schedule.index') }}" active="{{ request()->routeIs('student.proposal.schedule.index') }}" />
+                        @endif
                     <x-menu-title title="Tugas Akhir" />
                         <x-navlink icon="ri-user-add-line" title="Pendaftaran" href="{{ route('student.final_project.register.index') }}" active="{{ request()->routeIs('student.final_project.register.index') }}" />
                         @if ($checkFinalProject)  

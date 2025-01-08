@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Student\FinalProject;
+namespace App\Http\Controllers\Student\Proposal;
 
+use App\Models\User;
 use App\Models\Period;
 use Illuminate\Http\Request;
+use App\Models\Proposal\Proposal;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\FinalProject\FinalProject;
 
 class RegisterController extends Controller
 {
     private $period;
-
-    /**
+    
+     /**
      * Construct a new controller instance.
      * 
      * This method is used to get the active period of final project for the current
@@ -25,7 +26,7 @@ class RegisterController extends Controller
         $this->period = Period::whereHas('generation', function ($query) {
                                     $query->where('name', '>=', Auth::user()->generation->name);
                                 })
-                                ->where('type', 'final_project')
+                                ->where('type', 'proposal')
                                 ->where('start_date', '<=', now())
                                 ->where('end_date', '>=', now())
                                 ->where('is_active', '=', 1)
@@ -39,12 +40,12 @@ class RegisterController extends Controller
      */
     public function index()
     {
-        $existingFinalProject = FinalProject::with('period')->where('student_id', Auth::user()->id)
+        $exsiting = Proposal::with('period')->where('student_id', Auth::user()->id)
             ->where('period_id', $this->period->id ?? null)
             ->first();
 
-        $data = $existingFinalProject ?? $this->period;
-        return view('student.final_project.register', compact('data'));
+        $data = $exsiting ?? $this->period;
+        return view('student.proposal.register', compact('data'));
     }
 
     /**
@@ -60,7 +61,7 @@ class RegisterController extends Controller
     {
         try {
             $request->validate([
-                'title' => 'required|unique:final_projects,title',
+                'title' => 'required|unique:proposals,title',
                 'document' => [
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
@@ -69,20 +70,22 @@ class RegisterController extends Controller
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
                 ],
+                'primary_mentor_id' => 'required|exists:users,id',
             ]);
 
-            FinalProject::create([
+            Proposal::create([
                 'student_id' => Auth::user()->id,
                 'title' => $request['title'],
                 'document' => $request['document'],
                 'support_document' => $request['support_document'],
                 'period_id' => $this->period->id,
+                'primary_mentor_id' => $request['primary_mentor_id']
             ]);
 
             return response()->json([
                 'status' => true,
                 'message' => 'Anda berhasil mendaftar. Jika ingin memperbaharui data, hubungi administrator.',
-                'redirect_url' => route('student.final_project|.register.index'),
+                'redirect_url' => route('student.proposal.register.index'),
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -110,7 +113,7 @@ class RegisterController extends Controller
     public function update(Request $request): JsonResponse
     {
         try {
-            $data = FinalProject::where('student_id', Auth::user()->id)->first();
+            $data = Proposal::where('student_id', Auth::user()->id)->first();
 
             if (!$data) {
                 return response()->json([
@@ -120,7 +123,7 @@ class RegisterController extends Controller
             }
 
             $request->validate([
-                'title' => 'required|unique:final_projects,title,' . $data->id,
+                'title' => 'required|unique:proposals,title,' . $data->id,
                 'document' => [
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
@@ -129,19 +132,21 @@ class RegisterController extends Controller
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
                 ],
+                'primary_mentor_id' => 'required|exists:users,id',
             ]);
 
             $data->update([
                 'title' => $request->title,
                 'document' => $request->document,
                 'support_document' => $request->support_document,
+                'primary_mentor_id' => $request->primary_mentor_id,
                 'is_editable' => false
             ]);
 
             return response()->json([
                 'status' => true,
                 'message' => 'Anda berhasil mendaftar. Jika ingin memperbaharui data, hubungi administrator.',
-                'redirect_url' => route('student.final_project|.register.index'),
+                'redirect_url' => route('student.proposal.register.index'),
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -155,5 +160,35 @@ class RegisterController extends Controller
                 'message' => 'Terjadi kesalahan saat memperbarui data.',
             ], 500);
         }
+    }
+
+    /**
+     * Retrieve a list of mentors based on a search query.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMentor(Request $request): JsonResponse
+    {
+        if($request->ajax()) {
+            $search = $request->get('q');
+
+            $data = User::where('role_id', 3)
+                ->where('name', 'like', '%' . $search . '%')
+                ->orWhere('secondary_identity', 'like', '%' . $search . '%')
+                ->orderBy('name', 'asc')
+                ->get(['id', 'name', 'secondary_identity']);
+
+                return response()->json(
+                    $data->map(function ($data) {
+                        return [
+                            'id' => $data->id,
+                            'name' => $data->name . ' - ' . $data->secondary_identity
+                        ];
+                    })
+                );  
+        }
+
+        abort(403);
     }
 }

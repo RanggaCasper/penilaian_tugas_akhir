@@ -23,7 +23,14 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
     {
         $this->data = $data;
         $examDates = $this->data->pluck('exam_date')->unique()->sort();
-        $type = $this->data->pluck('type')->unique()->implode(', ');
+        $type = $this->data->pluck('type')->map(function ($type) {
+            if ($type === 'final_project') {
+                return 'TUGAS AKHIR';
+            } elseif ($type === 'proposal') {
+                return 'PROPOSAL';
+            }
+            return $type;
+        })->unique()->implode(', ');
 
         if ($examDates->count() === 1) {
             $this->title = $title . ' ' . $type . ' - ' . $this->formatDate($examDates->first());

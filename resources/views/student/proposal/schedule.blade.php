@@ -6,7 +6,7 @@
         <div class="col-lg-6">
             <div class="mb-3">
                 <x-input-field 
-                    label="Tanggal Pengujian" 
+                    label="Tanggal Ujian" 
                     type="text" 
                     name="exam_date" 
                     id="exam_date" 
@@ -22,7 +22,7 @@
                     id="start_time" 
                     value="{{ $schedule && $schedule->start_time && $schedule->end_time 
                     ? \Carbon\Carbon::parse($schedule->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($schedule->end_time)->format('H:i') 
-                    : 'Tidak Ada' }}"      
+                    : 'Tidak Ada' }}"        
                     attr="disabled" 
                 />
             </div>
@@ -79,11 +79,11 @@
     <script>
         $('#download-schedule').on('click', function () {
             $.ajax({
-                url: '{{ route("student.final_project.schedule.download") }}',
+                url: '{{ route("student.proposal.schedule.download") }}',
                 type: 'GET',
                 success: function (response) {
                     const link = document.createElement('a');
-                    link.href = '{{ route('student.final_project.schedule.download') }}';
+                    link.href = '{{ route('student.proposal.schedule.download') }}';
                     link.style.display = 'none';
                     document.body.appendChild(link);
                     link.click();
@@ -103,6 +103,5 @@
                 }
             });
         });
-
     </script>
 @endpush

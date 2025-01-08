@@ -50,6 +50,10 @@ $(document).on('submit', 'form', function(e) {
                     $(e.target).trigger('reset');
                 }
 
+                if ($(e.target).data('reload')) {
+                    location.reload();
+                }
+
                 if ($.fn.select2) {
                     $('.select2').each(function() {
                         $(this).val(null).trigger('change');

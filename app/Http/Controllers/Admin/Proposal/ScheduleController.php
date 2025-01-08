@@ -279,7 +279,6 @@ class ScheduleController extends Controller
         abort(403);
     }
 
-
     /**
      * Update the specified data in database.
      *

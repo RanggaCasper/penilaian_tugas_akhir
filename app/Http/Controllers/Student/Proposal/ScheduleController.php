@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Student\FinalProject;
+namespace App\Http\Controllers\Student\Proposal;
 
 use App\Models\Exam\Exam;
 use Illuminate\Http\Request;
@@ -12,20 +12,26 @@ use Illuminate\Support\Facades\Auth;
 class ScheduleController extends Controller
 {
     /**
-     * Display the final project registration view.
+     * Display the proposal registration view.
      * 
      * @return \Illuminate\View\View
      */
     public function index()
     {
-        $schedule = Exam::where('student_id', Auth::user()->id)->where('type', 'final_project')->first();
-        return view('student.final_project.schedule', compact('schedule'));
+        $schedule = Exam::where('student_id', Auth::user()->id)->where('type', 'proposal')->first();
+        return view('student.proposal.schedule', compact('schedule'));
     }
 
+    /**
+     * Download the exam schedule as an Excel file.
+     *
+     * @param Excel $excel
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function download(Excel $excel)
     {
         try {
-            $query = Exam::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('student_id', Auth::user()->id)->where('type', 'final_project');
+            $query = Exam::with('student', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('student_id', Auth::user()->id)->where('type', 'proposal');
 
             $data = $query->get();
 

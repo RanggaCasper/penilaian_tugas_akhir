@@ -147,6 +147,29 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
 Route::prefix('student')->as('student.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
 
+    // Proposal
+    Route::prefix('proposal')->as('proposal.')->group(function () {
+        // Pendaftaran
+        Route::prefix('register')->as('register.')->group(function () {
+            Route::controller(\App\Http\Controllers\Student\Proposal\RegisterController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::put('/', 'update')->name('update');
+                Route::get('/get/mentor', 'getMentor')->name('getMentor');
+            });
+        });
+        
+        // Jadwal
+        Route::middleware('check.final_project')->group(function () {
+            Route::prefix('schedule')->as('schedule.')->group(function () {
+                Route::controller(\App\Http\Controllers\Student\Proposal\ScheduleController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::get('/download', 'download')->name('download');
+                });
+            });
+        });
+    });
+
     // Tugas Akhir
     Route::prefix('final-project')->as('final_project.')->group(function () {
         // Pendaftaran
