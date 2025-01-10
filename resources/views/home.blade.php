@@ -10,7 +10,7 @@
     <meta content="Platform digital Politeknik Negeri Bali untuk mengelola penilaian tugas akhir secara efisien dan transparan, dengan fitur pendaftaran, jadwal ujian, penugasan dosen, hingga rekap nilai, mendukung kolaborasi dan standar akademik." name="description" />
     <meta content="RanggaCasper" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ assset('assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
 
     <!--Swiper slider css-->
     <link href="{{ asset('assets/libs/swiper/swiper-bundle.min.css') }}" rel="stylesheet" type="text/css" />
