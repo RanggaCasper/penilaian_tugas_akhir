@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Role;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use App\Models\Generation;
+use App\Models\ProgramStudy;
 use App\Services\SIONService;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +18,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-        // $sion = new SIONService();
+        $sion = new SIONService();
         // $response = $sion->getMahasiswa('20241', '40', '58302');
 
         // foreach ($response as $mahasiswa) {  
@@ -38,6 +39,14 @@ class DatabaseSeeder extends Seeder
         //     ]);  
         // }  
 
+        $response = $sion->getProdi('40');
+        foreach ($response as $prodi) {
+            ProgramStudy::create([
+                'id' => (int) $prodi['kodeProdi'],
+                'name' => $prodi['namaProdi'],
+            ]);
+        }
+
         Generation::create([
             'name' => '2022',
         ]);
@@ -57,7 +66,8 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('admin123'),
             'phone' => '08312345678',
             'email' => 'admin@example.com',
-            'role_id' => Role::where('name', 'Admin')->first()->id
+            'role_id' => Role::where('name', 'Admin')->first()->id,
+            'program_study_id' => ProgramStudy::where('name', 'Teknologi Rekayasa Perangkat Lunak')->first()->id
         ]);
 
         User::create([
@@ -66,7 +76,8 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('dosen123'),
             'phone' => '08312345678',
             'email' => 'dosen@example.com',
-            'role_id' => Role::where('name', 'Lecturer')->first()->id
+            'role_id' => Role::where('name', 'Lecturer')->first()->id,
+            'program_study_id' => ProgramStudy::where('name', 'Teknologi Rekayasa Perangkat Lunak')->first()->id
         ]);
 
         User::create([
@@ -76,7 +87,8 @@ class DatabaseSeeder extends Seeder
             'phone' => '08312345678',
             'email' => 'student@example.com',
             'generation_id' =>  Generation::where('name', '2022')->first()->id,
-            'role_id' => Role::where('name', 'Student')->first()->id
+            'role_id' => Role::where('name', 'Student')->first()->id,
+            'program_study_id' => ProgramStudy::where('name', 'Teknologi Rekayasa Perangkat Lunak')->first()->id
         ]);
     }
 }

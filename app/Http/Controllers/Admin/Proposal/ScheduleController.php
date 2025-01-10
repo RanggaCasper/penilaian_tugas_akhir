@@ -13,6 +13,7 @@ use App\Exports\ScheduleExport;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
@@ -180,9 +181,19 @@ class ScheduleController extends Controller
      */
     public function get(Request $request, Excel $excel, PDF $pdf)
     {
-        if ($request->has('export')) {
+        if (!$request->has('export')) {
             try {
-                $query = Exam::with('student', 'student.proposal', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('type','proposal');
+                $query = Exam::with(
+                    'student',
+                    'student.proposal',
+                    'student.program_study',
+                    'primary_examiner',
+                    'secondary_examiner',
+                    'tertiary_examiner'
+                )->where('type', 'proposal')
+                ->whereHas('student.program_study', function($query) {
+                    $query->where('id', Auth::user()->program_study->id);
+                });
 
                 if ($request->has('exam_date')) {
                     $query->whereDate('exam_date', $request->input('exam_date'));
@@ -216,7 +227,18 @@ class ScheduleController extends Controller
             
         if ($request->ajax()) {
             try {
-                $data = Exam::with('student', 'student.proposal', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('type','proposal')->get();
+                $query = Exam::with(
+                    'student',
+                    'student.proposal',
+                    'student.program_study',
+                    'primary_examiner',
+                    'secondary_examiner',
+                    'tertiary_examiner'
+                )->where('type', 'proposal')
+                ->whereHas('student.program_study', function($query) {
+                    $query->where('id', Auth::user()->program_study->id);
+                });
+                
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

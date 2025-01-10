@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
             $table->foreignId('student_id')->constrained('users');
             $table->foreignId('primary_mentor_id')->constrained('users');
-            $table->foreignId('secondary_mentor_id')->constrained('users')->nullable();
+            $table->foreignId('secondary_mentor_id')->nullable()->constrained('users');
             $table->foreignId('period_id')->constrained('periods');
             $table->timestamps();
         });

@@ -2,12 +2,43 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return view('home');
+})->name('home');
+
 Route::prefix('auth')->middleware('guest')->group(function () {
     Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'index'])->name('login');
     Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.submit');
 });
 
 Route::post('auth/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->middleware('auth')->name('auth.logout');
+
+// Super Admin
+Route::prefix('super')->as('super.')->middleware('auth')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Super\DashboardController::class, 'index'])->name('dashboard');
+
+    // Mahasiswa
+    Route::prefix('student')->as('student.')->group(function () {
+        Route::controller(\App\Http\Controllers\Super\Student\StudentController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/get', 'get')->name('get');
+            Route::post('/get-data', 'getData')->name('getData');
+        });
+    });
+
+    // Dosen
+    Route::prefix('lecturer')->as('lecturer.')->group(function () {
+        Route::controller(\App\Http\Controllers\Super\Lecturer\LecturerController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/get', 'get')->name('get');
+            Route::post('/get-data', 'getData')->name('getData');
+            Route::get('/get/{id}', 'getById')->name('getById');
+            Route::put('{id}', 'update')->name('update');
+            Route::delete('{id}', 'destroy')->name('destroy');
+        });
+    });
+});
 
 Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
@@ -126,7 +157,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
         Route::controller(\App\Http\Controllers\Admin\Student\StudentController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/get', 'get')->name('get');
-            Route::get('/get-data', 'getData')->name('getData');
+            Route::post('/get-data', 'getData')->name('getData');
         });
     });
 
@@ -160,12 +191,10 @@ Route::prefix('student')->as('student.')->middleware('auth')->group(function () 
         });
         
         // Jadwal
-        Route::middleware('check.final_project')->group(function () {
-            Route::prefix('schedule')->as('schedule.')->group(function () {
-                Route::controller(\App\Http\Controllers\Student\Proposal\ScheduleController::class)->group(function () {
-                    Route::get('/', 'index')->name('index');
-                    Route::get('/download', 'download')->name('download');
-                });
+        Route::prefix('schedule')->as('schedule.')->group(function () {
+            Route::controller(\App\Http\Controllers\Student\Proposal\ScheduleController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/download', 'download')->name('download');
             });
         });
     });

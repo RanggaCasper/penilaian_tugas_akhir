@@ -9,7 +9,7 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="mb-3">
-                        <x-input-field label="Tanggal Pengujian" type="date" name="exam_date" id="exam_date" />
+                        <x-input-field label="Tanggal Ujian" type="date" name="exam_date" id="exam_date" />
                     </div>
                     <div class="mb-3">
                         <x-input-field label="Jam Mulai" type="time" name="start_time" id="start_time" />

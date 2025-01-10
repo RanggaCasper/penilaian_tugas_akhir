@@ -68,7 +68,7 @@
         </div> 
         <div style="display: flex; margin-bottom: 5px;">  
             <span class="fw-bold" style="width: 30%; margin-right: 11px;">Judul</span>  
-            <span style="width: 70%;">: {{ $data['student']['final_project']['title'] }}</span>  
+            <span style="width: 70%;">: {{ $data['student']['proposal']['title'] }}</span>  
         </div> 
     </div>
 

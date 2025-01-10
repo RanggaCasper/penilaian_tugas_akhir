@@ -6,7 +6,7 @@
         <div class="col-lg-6">
             <div class="mb-3">
                 <x-input-field 
-                    label="Tanggal Pengujian" 
+                    label="Tanggal Ujian" 
                     type="text" 
                     name="exam_date" 
                     id="exam_date" 

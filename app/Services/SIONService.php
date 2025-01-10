@@ -148,4 +148,44 @@ class SIONService {
             return false;
         }
     }
+
+    /**
+     * Get daftar prodi.
+     *
+     * @param string $jurusan Jurusan
+     *
+     * @return array|false Returns an array of study programs if successful, or false on failure
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getProdi($jurusan)
+    {
+        $hashCode = $this->generateHashCode([$jurusan]);
+
+        $url = $this->apiUrl . '/daftarprogramstudi';
+
+        $request = [
+            'kodeJur' => $jurusan,
+            'HashCode' => $hashCode,
+        ];
+
+        try {
+            $response = $this->client->post($url, [
+                'body' => json_encode($request), 
+                'timeout' => 5,
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            if ($statusCode === 200) {
+                $body = $response->getBody();
+                $data = json_decode($body, true);
+                $data = $data['daftar'];
+                return $data;
+            }
+
+            return false;
+        } catch (GuzzleException $e) {
+            return false;
+        }
+    }
 }

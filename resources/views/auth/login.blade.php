@@ -36,10 +36,6 @@
             <!-- end card body -->
         </div>
         <!-- end card -->
-
-        <div class="mt-4 text-center">
-            <p class="mb-0">Tidak memiliki akun ? <a href="#" class="fw-semibold text-primary text-decoration-underline"> Daftar </a> </p>
-        </div>
     </div>
 </div>
 @endsection

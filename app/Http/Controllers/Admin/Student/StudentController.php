@@ -9,6 +9,7 @@ use App\Services\SIONService;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
@@ -32,7 +33,10 @@ class StudentController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = User::with('generation')->select(['id', 'name', 'email', 'phone', 'identity', 'generation_id'])->where('role_id', 4)->orderBy('identity', 'asc');
+                $data = User::with('generation')->select(['id', 'name', 'email', 'phone', 'identity', 'generation_id'])
+                        ->where('role_id', 4)
+                        ->where('program_study_id', Auth::user()->program_study_id)
+                        ->orderBy('identity', 'asc');
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -52,66 +56,4 @@ class StudentController extends Controller
 
         abort(403);
     }
-
-    /**
-     * Mengambil data mahasiswa dari SION dan menyimpannya ke database,
-     * jika data sudah ada maka akan dilewati.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getData(): JsonResponse  
-    {  
-        try {  
-            set_time_limit(300);
-            $sion = new SIONService();  
-            $response = $sion->getMahasiswa('20241', '40', '58302');  
-            $skipped = [];  
-            $inserted = [];  
-            $updated = [];
-
-            foreach ($response as $mahasiswa) {  
-                $existingUser = User::where('identity', $mahasiswa['nim'])->first();  
-
-                if ($existingUser) {
-                    if (is_null($existingUser->password)) {
-                        $existingUser->update([
-                            'password' => bcrypt($mahasiswa['email']),
-                        ]);
-                        $updated[] = $mahasiswa['nim'];
-                    } else {
-                        $skipped[] = $mahasiswa['nim'];
-                    }
-                    continue;  
-                }  
-
-                $generationYear = '20' . substr($mahasiswa['nim'], 0, 2);  
-                $generation = Generation::firstOrCreate(  
-                    ['name' => $generationYear]  
-                );  
-
-                User::create([  
-                    'name' => $mahasiswa['nama'],  
-                    'identity' => $mahasiswa['nim'],  
-                    'email' => $mahasiswa['email'],  
-                    'phone' => $mahasiswa['telepon'],  
-                    'generation_id' => $generation->id,  
-                    'role_id' => 4,  
-                    'password' => bcrypt($mahasiswa['email']),  
-                ]);  
-
-                $inserted[] = $mahasiswa['nim'];  
-            }  
-
-            return response()->json([  
-                'status' => true,  
-                'message' => count($inserted) > 0 ? 'Data berhasil ditambahkan, berhasil menambahkan '.count($inserted).' data.' : 'Tidak ada data baru yang ditambahkan.',  
-            ]);  
-        } catch (\Exception $e) {  
-            return response()->json([  
-                'status' => false,  
-                'message' => 'Terjadi kesalahan saat mengambil data.',
-            ], 500);  
-        }  
-    }
-
 }

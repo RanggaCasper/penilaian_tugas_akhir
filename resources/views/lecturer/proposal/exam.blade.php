@@ -107,7 +107,7 @@ $(document).ready(function () {
                     formContainer.append(`
                         <div class="mb-3">
                             <label for="feedback" class="form-label">Feedback</label>
-                            <textarea class="form-control" id="feedback" name="feedback" placeholder="Berikan saran atau kritik." rows="4">${data.assessment.feedback || ''}</textarea>
+                            <textarea class="form-control" id="feedback" name="feedback" placeholder="Berikan saran atau kritik." rows="4">${data.assessment ? data.assessment.feedback || '' : ''}</textarea>
                         </div>
                     `);
                 } else {

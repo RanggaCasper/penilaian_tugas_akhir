@@ -13,6 +13,7 @@ use App\Exports\ScheduleExport;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
@@ -37,8 +38,10 @@ class ScheduleController extends Controller
         if($request->ajax()) {
             $search = $request->get('q');
 
-            $data = User::where('role_id', 4)
-            ->where('name', 'like', '%' . $search . '%')
+            $data = User::where('name', 'like', '%' . $search . '%')
+            ->whereHas('role', function ($query) {
+                $query->where('name', 'Student');
+            })
             ->whereHas('final_project', function ($query) {
                 $query->where('status', 'disetujui');
             })
@@ -72,10 +75,14 @@ class ScheduleController extends Controller
         if($request->ajax()) {
             $search = $request->get('q');
 
-            $data = User::where('role_id', 3)
-                ->where('name', 'like', '%' . $search . '%')
-                ->orderBy('name', 'asc')
-                ->get(['id', 'name']);
+            $data = User::where('name', 'like', '%' . $search . '%')
+                        ->where('program_study_id', Auth::user()->program_study_id)
+                        ->whereHas('role', function ($query) {
+                            $query->where('name', 'Dosen');
+                        })
+                        ->orderBy('name', 'asc')
+                        ->get(['id', 'name']);
+
 
             return response()->json($data);
         }
@@ -90,6 +97,7 @@ class ScheduleController extends Controller
 
             $data = Rubric::where('name', 'like', '%' . $search . '%')
                 ->where('type', 'final_project')
+                ->where('program_study_id', Auth::user()->program_study_id)
                 ->orderBy('name', 'asc')
                 ->get(['id', 'name']);
 
@@ -187,7 +195,17 @@ class ScheduleController extends Controller
     {
         if ($request->has('export')) {
             try {
-                $query = Exam::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('type','final_project');
+                $query = Exam::with(
+                    'student',
+                    'student.final_project',
+                    'student.program_study',
+                    'primary_examiner',
+                    'secondary_examiner',
+                    'tertiary_examiner'
+                )->where('type', 'final_project')
+                ->whereHas('student.program_study', function($query) {
+                    $query->where('id', Auth::user()->program_study->id);
+                });
 
                 if ($request->has('exam_date')) {
                     $query->whereDate('exam_date', $request->input('exam_date'));

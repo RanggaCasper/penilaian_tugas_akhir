@@ -38,6 +38,11 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function program_study()
+    {
+        return $this->belongsTo(ProgramStudy::class);
+    }
+
     public function generation()
     {
         return $this->belongsTo(Generation::class);

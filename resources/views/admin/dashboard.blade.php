@@ -10,7 +10,7 @@
                         <lord-icon src="https://cdn.lordicon.com/kdduutaw.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:55px;height:55px"></lord-icon>
                     </div>
                 </div>
-                <h3 class="mb-2"><span>{{ App\Models\User::get()->where('role_id',4)->count() }}</span></h3>
+                <h3 class="mb-2"><span>{{ App\Models\User::get()->where('role_id', 4)->where('program_study_id', auth()->user()->program_study_id)->count() }}</span></h3>
                 <h6 class="mb-0 text-muted">Total Mahasiswa</h6>
             </div>
         </div>
@@ -23,7 +23,7 @@
                         <lord-icon src="https://cdn.lordicon.com/kdduutaw.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:55px;height:55px"></lord-icon>
                     </div>
                 </div>
-                <h3 class="mb-2"><span>{{ App\Models\User::get()->where('role_id', 3)->count() }}</span></h3>
+                <h3 class="mb-2"><span>{{ App\Models\User::get()->where('role_id', 3)->where('program_study_id', auth()->user()->program_study_id)->count() }}</span></h3>
                 <h6 class="mb-0 text-muted">Total Dosen</h6>
             </div>
         </div>
