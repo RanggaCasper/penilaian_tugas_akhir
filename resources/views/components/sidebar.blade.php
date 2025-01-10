@@ -98,6 +98,11 @@
                         @endif
                     <x-menu-title title="Hasil" />
                         <x-navlink icon="ri-user-add-line" title="Hasil Ujian" href="{{ route('student.result.index') }}" active="{{ request()->routeIs('student.result.index') }}" />
+                @elseif (auth()->user()->role->name == "Special")
+                    <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('special.dashboard') }}" active="{{ request()->routeIs('special.dashboard') }}" />
+                    <x-menu-title title="Api" />
+                        <x-navlink icon="ri-key-2-line" title="Pengaturan" href="{{ route('special.api.setting') }}" active="{{ request()->routeIs('special.api.setting') }}" />
+                        <x-navlink icon="ri-file-line" title="Dokumentasi" href="{{ route('special.api.document') }}" active="{{ request()->routeIs('special.api.document') }}" />
                 @endif
             </ul>
         </div>

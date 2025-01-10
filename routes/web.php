@@ -15,7 +15,7 @@ Route::post('auth/logout', [\App\Http\Controllers\Auth\LoginController::class, '
 
 // Super Admin
 Route::prefix('super')->as('super.')->middleware('auth')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Super\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [\App\Http\Controllers\Super\DashboardController::class, 'index'])->name('dashboard');
 
     // Mahasiswa
     Route::prefix('student')->as('student.')->group(function () {
@@ -41,7 +41,7 @@ Route::prefix('super')->as('super.')->middleware('auth')->group(function () {
 });
 
 Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // Periode Ujian
     Route::prefix('period')->as('period.')->group(function () {
@@ -176,7 +176,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
 });
 
 Route::prefix('student')->as('student.')->middleware('auth')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
 
     // Proposal
     Route::prefix('proposal')->as('proposal.')->group(function () {
@@ -231,7 +231,7 @@ Route::prefix('student')->as('student.')->middleware('auth')->group(function () 
 
 // Dosen
 Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Lecturer\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [App\Http\Controllers\Lecturer\DashboardController::class, 'index'])->name('dashboard');
 
     // Proposal
     Route::prefix('proposal')->as('proposal.')->group(function () {
@@ -278,4 +278,13 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function (
             });
         });
     });
+});
+
+// Special
+Route::prefix('special')->as('special.')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\Special\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/api', [App\Http\Controllers\Special\Api\ApiController::class, 'index'])->name('api.setting');
+    Route::post('/api/regenerate', [App\Http\Controllers\Special\Api\ApiController::class, 'regenerate'])->name('api.regenerate');
+    Route::put('/api', [App\Http\Controllers\Special\Api\ApiController::class, 'update'])->name('api.update');
+    Route::get('/api/document', [App\Http\Controllers\Special\Api\DocumentController::class, 'index'])->name('api.document');
 });

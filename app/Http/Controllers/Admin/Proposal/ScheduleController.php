@@ -37,11 +37,11 @@ class ScheduleController extends Controller
             ->whereHas('role', function ($query) {
                 $query->where('name', 'Student');
             })
-            ->whereHas('final_project', function ($query) {
+            ->whereHas('proposal', function ($query) {
                 $query->where('status', 'disetujui');
             })
             ->whereDoesntHave('exam', function ($query) {
-                $query->where('type', 'final_project');
+                $query->where('type', 'proposal');
             })
             ->orderBy('name', 'asc')
             ->get(['id', 'name', 'identity']);            

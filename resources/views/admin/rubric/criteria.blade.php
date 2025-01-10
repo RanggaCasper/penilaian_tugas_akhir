@@ -39,7 +39,7 @@
                 <th>No</th>
                 <th>Nama</th>
                 <th>Bobot</th>
-                <th>Penilaian</th>
+                <th>Rubrik</th>
                 <th>Sub Kriteria</th>
                 <th>Aksi</th>
             </tr>

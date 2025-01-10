@@ -24,6 +24,7 @@ return new class extends Migration
             ['name' => 'Admin', 'created_at' => now()],
             ['name' => 'Lecturer', 'created_at' => now()],
             ['name' => 'Student', 'created_at' => now()],
+            ['name' => 'Special', 'created_at' => now()],
         ]);
         
         // Tambah relasi ke table users
