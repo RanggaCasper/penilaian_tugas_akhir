@@ -33,8 +33,10 @@ class ScheduleController extends Controller
         if($request->ajax()) {
             $search = $request->get('q');
 
-            $data = User::where('role_id', 4)
-            ->where('name', 'like', '%' . $search . '%')
+            $data = User::where('name', 'like', '%' . $search . '%')
+            ->whereHas('role', function ($query) {
+                $query->where('name', 'Student');
+            })
             ->whereHas('proposal', function ($query) {
                 $query->where('status', 'disetujui');
             })
@@ -68,10 +70,13 @@ class ScheduleController extends Controller
         if($request->ajax()) {
             $search = $request->get('q');
 
-            $data = User::where('role_id', 3)
-                ->where('name', 'like', '%' . $search . '%')
-                ->orderBy('name', 'asc')
-                ->get(['id', 'name']);
+            $data = User::where('name', 'like', '%' . $search . '%')
+                            ->where('program_study_id', Auth::user()->program_study_id)
+                            ->whereHas('role', function ($query) {
+                                $query->where('name', 'Lecturer');
+                            })
+                            ->orderBy('name', 'asc')
+                            ->get(['id', 'name']);
 
             return response()->json($data);
         }

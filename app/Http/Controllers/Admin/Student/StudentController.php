@@ -34,7 +34,9 @@ class StudentController extends Controller
         if ($request->ajax()) {
             try {
                 $data = User::with('generation')->select(['id', 'name', 'email', 'phone', 'identity', 'generation_id'])
-                        ->where('role_id', 4)
+                        ->whereHas('role', function ($query) {
+                            $query->where('name', 'Student');
+                        })
                         ->where('program_study_id', Auth::user()->program_study_id)
                         ->orderBy('identity', 'asc');
                 return DataTables::of($data)  

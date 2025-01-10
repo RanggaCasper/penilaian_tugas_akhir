@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Super\Lecturer;
 
+use App\Models\Role;
 use App\Models\User;
 use Faker\Factory as Faker;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ class LecturerController extends Controller
                 'secondary_identity' => $request->secondary_identity,
                 'program_study_id' => $request->program_study_id,
                 'password' => bcrypt("dosen123"),
-                'role_id' => 3
+                'role_id' => Role::where('name', 'Lecturer')->first()->id
             ]);
         
             return response()->json([
@@ -98,7 +99,7 @@ class LecturerController extends Controller
                         'secondary_identity' => $data['nip'],
                         'email' => $email,
                         'phone' => $phone,
-                        'role_id' => 3,
+                        'role_id' => Role::where('name', 'Lecturer')->first()->id,
                         'program_study_id' => $request->program_study_id,
                         'password' => bcrypt($data['nip']),
                     ]
@@ -149,7 +150,11 @@ class LecturerController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = User::with('program_study')->select(['id', 'name', 'email', 'phone', 'identity', 'program_study_id', 'secondary_identity'])->where('role_id', 3)->orderBy('identity', 'asc');
+                $data = User::with('program_study')->select(['id', 'name', 'email', 'phone', 'identity', 'program_study_id', 'secondary_identity'])
+                        ->whereHas('role', function ($query) {
+                            $query->where('name', 'Lecturer');
+                        })
+                        ->orderBy('identity', 'asc');
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

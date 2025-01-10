@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Super\Student;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Generation;
 use Illuminate\Http\Request;
@@ -32,7 +33,11 @@ class StudentController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = User::with('program_study','generation')->select(['id', 'name', 'email', 'phone', 'identity', 'program_study_id', 'generation_id'])->where('role_id', 4)->orderBy('identity', 'asc');
+                $data = User::with('program_study','generation')->select(['id', 'name', 'email', 'phone', 'identity', 'program_study_id', 'generation_id'])
+                        ->whereHas('role', function ($query) {
+                            $query->where('name', 'Student');
+                        })
+                        ->orderBy('identity', 'asc');
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -85,7 +90,7 @@ class StudentController extends Controller
                         'phone' => $mahasiswa['telepon'],
                         'generation_id' => $generation->id,
                         'program_study_id' => $request->program_study_id,
-                        'role_id' => 4,
+                        'role_id' => Role::where('name', 'Student')->first()->id,
                         'password' => bcrypt($mahasiswa['email']),
                     ]
                 );

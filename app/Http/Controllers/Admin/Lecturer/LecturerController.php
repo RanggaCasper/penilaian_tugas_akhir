@@ -35,7 +35,9 @@ class LecturerController extends Controller
         if ($request->ajax()) {
             try {
                 $data = User::select(['id', 'name', 'email', 'phone', 'identity', 'secondary_identity'])
-                        ->where('role_id', 3)
+                        ->whereHas('role', function ($query) {
+                            $query->where('name', 'Lecturer');
+                        })
                         ->where('program_study_id', Auth::user()->program_study_id)
                         ->orderBy('identity', 'asc');
 

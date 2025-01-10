@@ -21,7 +21,9 @@
                         <label for="primary_mentor" class="form-label">Pembimbing 1</label>
                         <select id="primary_mentor" name="primary_mentor_id" class="form-control select2">
                             <option selected disabled>-- Pilih Pembimbing --</option>
-                            @foreach (\App\Models\User::where('role_id', 3)->get() as $item)
+                            @foreach (\App\Models\User::whereHas('role', function ($query) {
+                                    $query->where('name', 'Lecturer');
+                                })->get() as $item)
                                 <option value="{{ $item->id }}" 
                                     {{ $item->id == $data->primary_mentor_id ? 'selected' : '' }}>
                                     {{ $item->name . ' - ' . $item->secondary_identity }}
@@ -84,7 +86,9 @@
                     <label for="primary_mentor" class="form-label">Pembimbing 1</label>
                     <select id="primary_mentor" name="primary_mentor_id" class="form-control select2" >
                         <option selected disabled>-- Pilih Pembimbing --</option>
-                        @foreach (\App\Models\User::where('role_id', 3)->get() as $item)
+                        @foreach (\App\Models\User::whereHas('role', function ($query) {
+                                $query->where('name', 'Lecturer');
+                            })->get() as $item)
                             <option value="{{ $item->id }}">{{ $item->name . ' - ' . $item->secondary_identity }}</option>
                         @endforeach
                     </select>

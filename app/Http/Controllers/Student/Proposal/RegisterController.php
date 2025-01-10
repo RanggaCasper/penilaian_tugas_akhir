@@ -173,8 +173,10 @@ class RegisterController extends Controller
         if($request->ajax()) {
             $search = $request->get('q');
 
-            $data = User::where('role_id', 3)
-                ->where('name', 'like', '%' . $search . '%')
+            $data = User::where('name', 'like', '%' . $search . '%')
+                ->whereHas('role', function ($query) {
+                    $query->where('name', 'Student');
+                })
                 ->orWhere('secondary_identity', 'like', '%' . $search . '%')
                 ->orderBy('name', 'asc')
                 ->get(['id', 'name', 'secondary_identity']);
