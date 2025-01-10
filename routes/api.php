@@ -8,5 +8,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::controller(\App\Http\Controllers\Api\Proposal\ProposalController::class)->group(function () {
-    Route::get('/proposal', 'index')->name('index');
+    Route::get('/proposal', 'get')->name('get');
 });

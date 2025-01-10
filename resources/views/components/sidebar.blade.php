@@ -96,6 +96,8 @@
                         @if ($checkFinalProject)  
                             <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('student.final_project.schedule.index') }}" active="{{ request()->routeIs('student.final_project.schedule.index') }}" />
                         @endif
+                    <x-menu-title title="Hasil" />
+                        <x-navlink icon="ri-user-add-line" title="Hasil Ujian" href="{{ route('student.result.index') }}" active="{{ request()->routeIs('student.result.index') }}" />
                 @endif
             </ul>
         </div>

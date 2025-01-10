@@ -220,6 +220,13 @@ Route::prefix('student')->as('student.')->middleware('auth')->group(function () 
             });
         });
     });
+
+    Route::prefix('result')->as('result.')->group(function () {
+        // Hasil
+        Route::controller(\App\Http\Controllers\Student\Result\ResultController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+        });
+    });
 });
 
 // Dosen
