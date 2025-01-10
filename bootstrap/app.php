@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'check.final_project' => \App\Http\Middleware\CheckFinalProjectStatus::class,
             'checkSignature' => \App\Http\Middleware\CheckSignature::class,
+            'checkRole' => \App\Http\Middleware\CheckRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

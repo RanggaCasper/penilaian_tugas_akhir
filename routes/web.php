@@ -14,7 +14,7 @@ Route::prefix('auth')->middleware('guest')->group(function () {
 Route::post('auth/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->middleware('auth')->name('auth.logout');
 
 // Super Admin
-Route::prefix('super')->as('super.')->middleware('auth')->group(function () {
+Route::prefix('super')->as('super.')->middleware('auth', 'checkRole:Super')->group(function () {
     Route::get('/', [\App\Http\Controllers\Super\DashboardController::class, 'index'])->name('dashboard');
 
     // Mahasiswa
@@ -40,7 +40,8 @@ Route::prefix('super')->as('super.')->middleware('auth')->group(function () {
     });
 });
 
-Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
+// Admin
+Route::prefix('admin')->as('admin.')->middleware('auth', 'checkRole:Admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // Periode Ujian
@@ -175,7 +176,8 @@ Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
     });
 });
 
-Route::prefix('student')->as('student.')->middleware('auth')->group(function () {
+// Mahasiswa
+Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student')->group(function () {
     Route::get('/', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
 
     // Proposal
@@ -230,7 +232,7 @@ Route::prefix('student')->as('student.')->middleware('auth')->group(function () 
 });
 
 // Dosen
-Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function () {
+Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lecturer')->group(function () {
     Route::get('/', [App\Http\Controllers\Lecturer\DashboardController::class, 'index'])->name('dashboard');
 
     // Proposal
@@ -281,7 +283,7 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth')->group(function (
 });
 
 // Special
-Route::prefix('special')->as('special.')->middleware('auth')->group(function () {
+Route::prefix('special')->as('special.')->middleware('auth', 'checkRole:Special')->group(function () {
     Route::get('/', [App\Http\Controllers\Special\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/api', [App\Http\Controllers\Special\Api\ApiController::class, 'index'])->name('api.setting');
     Route::post('/api/regenerate', [App\Http\Controllers\Special\Api\ApiController::class, 'regenerate'])->name('api.regenerate');
