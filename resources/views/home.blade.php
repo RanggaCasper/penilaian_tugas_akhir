@@ -10,21 +10,21 @@
     <meta content="Platform digital Politeknik Negeri Bali untuk mengelola penilaian tugas akhir secara efisien dan transparan, dengan fitur pendaftaran, jadwal ujian, penugasan dosen, hingga rekap nilai, mendukung kolaborasi dan standar akademik." name="description" />
     <meta content="RanggaCasper" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="{{ assset('assets/images/favicon.ico') }}">
 
     <!--Swiper slider css-->
-    <link href="assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/swiper/swiper-bundle.min.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- Layout config Js -->
-    <script src="assets/js/layout.js"></script>
+    <script src="{{ asset('assets/js/layout.js') }}"></script>
     <!-- Bootstrap Css -->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
-    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
-    <link href="assets/css/custom.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -101,27 +101,27 @@
 
                         <div class="mt-4 mt-sm-5 pt-sm-5 mb-sm-n5 demo-carousel">
                             <div class="demo-img-patten-top d-none d-sm-block">
-                                <img src="assets/images/landing/img-pattern.png" class="d-block img-fluid" alt="...">
+                                <img src="{{ asset('assets/images/landing/img-pattern.png') }}" class="d-block img-fluid" alt="...">
                             </div>
                             <div class="demo-img-patten-bottom d-none d-sm-block">
-                                <img src="assets/images/landing/img-pattern.png" class="d-block img-fluid" alt="...">
+                                <img src="{{ asset('assets/images/landing/img-pattern.png') }}" class="d-block img-fluid" alt="...">
                             </div>
                             <div class="carousel slide carousel-fade" data-bs-ride="carousel">
                                 <div class="p-2 bg-white rounded shadow-lg carousel-inner">
                                     <div class="carousel-item active" data-bs-interval="2000">
-                                        <img src="assets/images/landing/carousel-1.png" class="d-block w-100" alt="...">
+                                        <img src="{{ asset('assets/images/landing/carousel-1.png') }}" class="d-block w-100" alt="...">
                                     </div>
                                     <div class="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/landing/carousel-2.png" class="d-block w-100" alt="...">
+                                        <img src="{{ asset('assets/images/landing/carousel-2.png') }}" class="d-block w-100" alt="...">
                                     </div>
                                     <div class="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/landing/carousel-3.png" class="d-block w-100" alt="...">
+                                        <img src="{{ asset('assets/images/landing/carousel-3.png') }}" class="d-block w-100" alt="...">
                                     </div>
                                     <div class="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/landing/carousel-4.png" class="d-block w-100" alt="...">
+                                        <img src="{{ asset('assets/images/landing/carousel-4.png') }}" class="d-block w-100" alt="...">
                                     </div>
                                     <div class="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/landing/carousel-5.png" class="d-block w-100" alt="...">
+                                        <img src="{{ asset('assets/images/landing/carousel-5.png') }}" class="d-block w-100" alt="...">
                                     </div>
                                 </div>
                             </div>
@@ -142,7 +142,7 @@
                 <div class="mt-5 row align-items-center pt-lg-5 gy-4">
                     <div class="mx-auto col-lg-6 col-sm-7 col-10">
                         <div>
-                            <img src="assets/images/landing/result.png" alt="" class="img-fluid">
+                            <img src="{{ asset('assets/images/landing/result.png') }}" alt="" class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -237,7 +237,7 @@
                         <div class="card">
                             <div class="p-4 text-center card-body">
                                 <div class="mx-auto mb-4 avatar-xl position-relative">
-                                    <img src="/assets/images/users/avatar-1.jpg" alt="" class="img-fluid rounded-circle">
+                                    <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="" class="img-fluid rounded-circle">
                                     <a href="#" class="bottom-0 btn btn-success btn-sm position-absolute end-0 rounded-circle avatar-xs">
                                         <div class="bg-transparent avatar-title">
                                             <i class="align-bottom ri-github-fill"></i>
@@ -255,7 +255,7 @@
                         <div class="card">
                             <div class="p-4 text-center card-body">
                                 <div class="mx-auto mb-4 avatar-xl position-relative">
-                                    <img src="/assets/images/users/avatar-1.jpg" alt="" class="img-fluid rounded-circle">
+                                    <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="" class="img-fluid rounded-circle">
                                     <a href="#" class="bottom-0 btn btn-success btn-sm position-absolute end-0 rounded-circle avatar-xs">
                                         <div class="bg-transparent avatar-title">
                                             <i class="align-bottom ri-github-fill"></i>
@@ -273,7 +273,7 @@
                         <div class="card">
                             <div class="p-4 text-center card-body">
                                 <div class="mx-auto mb-4 avatar-xl position-relative">
-                                    <img src="/assets/images/users/avatar-1.jpg" alt="" class="img-fluid rounded-circle">
+                                    <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="" class="img-fluid rounded-circle">
                                     <a href="#" class="bottom-0 btn btn-success btn-sm position-absolute end-0 rounded-circle avatar-xs">
                                         <div class="bg-transparent avatar-title">
                                             <i class="align-bottom ri-github-fill"></i>
@@ -414,18 +414,18 @@
 
 
     <!-- JAVASCRIPT -->
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/libs/simplebar/simplebar.min.js"></script>
-    <script src="assets/libs/node-waves/waves.min.js"></script>
-    <script src="assets/libs/feather-icons/feather.min.js"></script>
-    <script src="assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
-    <script src="assets/js/plugins.js"></script>
+    <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/feather-icons/feather.min.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins.js') }}"></script>
 
     <!--Swiper slider js-->
-    <script src="assets/libs/swiper/swiper-bundle.min.js"></script>
+    <script src="{{ asset('assets/libs/swiper/swiper-bundle.min.js') }}"></script>
 
     <!-- landing init -->
-    <script src="assets/js/pages/landing.init.js"></script>
+    <script src="{{ asset('assets/js/pages/landing.init.js') }}"></script>
 </body>
 
 </html>
