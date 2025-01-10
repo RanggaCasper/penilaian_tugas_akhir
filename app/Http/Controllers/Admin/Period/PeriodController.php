@@ -6,6 +6,7 @@ use App\Models\Period;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class PeriodController extends Controller
 {
@@ -30,6 +31,7 @@ class PeriodController extends Controller
         try {
             $request->merge([
                 'is_active' => $request->has('is_active') ? 1 : 0,
+                'program_study_id' => Auth::user()->program_study_id
             ]);
 
             $request->validate([

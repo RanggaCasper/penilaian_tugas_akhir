@@ -37,14 +37,14 @@ class ScheduleController extends Controller
             ->whereHas('role', function ($query) {
                 $query->where('name', 'Student');
             })
-            ->whereHas('proposal', function ($query) {
+            ->whereHas('final_project', function ($query) {
                 $query->where('status', 'disetujui');
             })
             ->whereDoesntHave('exam', function ($query) {
-                $query->where('type', 'proposal');
+                $query->where('type', 'final_project');
             })
             ->orderBy('name', 'asc')
-            ->get(['id', 'name', 'identity']);     
+            ->get(['id', 'name', 'identity']);            
 
             return response()->json(
                 $data->map(function ($data) {
@@ -71,12 +71,13 @@ class ScheduleController extends Controller
             $search = $request->get('q');
 
             $data = User::where('name', 'like', '%' . $search . '%')
-                            ->where('program_study_id', Auth::user()->program_study_id)
-                            ->whereHas('role', function ($query) {
-                                $query->where('name', 'Lecturer');
-                            })
-                            ->orderBy('name', 'asc')
-                            ->get(['id', 'name']);
+                        ->where('program_study_id', Auth::user()->program_study_id)
+                        ->whereHas('role', function ($query) {
+                            $query->where('name', 'Lecturer');
+                        })
+                        ->orderBy('name', 'asc')
+                        ->get(['id', 'name']);
+
 
             return response()->json($data);
         }
@@ -186,19 +187,13 @@ class ScheduleController extends Controller
      */
     public function get(Request $request, Excel $excel, PDF $pdf)
     {
-        if (!$request->has('export')) {
+        if ($request->has('export')) {
             try {
-                $query = Exam::with(
-                    'student',
-                    'student.proposal',
-                    'student.program_study',
-                    'primary_examiner',
-                    'secondary_examiner',
-                    'tertiary_examiner'
-                )->where('type', 'proposal')
-                ->whereHas('student.program_study', function($query) {
-                    $query->where('id', Auth::user()->program_study->id);
-                });
+                $query = Exam::with('student', 'student.proposal', 'student.program_study', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')
+                            ->whereHas('student.program_study', function($query) {
+                                $query->where('id', Auth::user()->program_study->id);
+                            })
+                            ->where('type','proposal');
 
                 if ($request->has('exam_date')) {
                     $query->whereDate('exam_date', $request->input('exam_date'));
@@ -232,18 +227,10 @@ class ScheduleController extends Controller
             
         if ($request->ajax()) {
             try {
-                $query = Exam::with(
-                    'student',
-                    'student.proposal',
-                    'student.program_study',
-                    'primary_examiner',
-                    'secondary_examiner',
-                    'tertiary_examiner'
-                )->where('type', 'proposal')
-                ->whereHas('student.program_study', function($query) {
-                    $query->where('id', Auth::user()->program_study->id);
-                });
-                
+                $data = Exam::with('student', 'student.proposal', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')
+                                    ->whereHas('student.program_study', function($query) {
+                                        $query->where('id', Auth::user()->program_study->id);
+                                    })->where('type','proposal')->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

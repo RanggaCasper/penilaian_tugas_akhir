@@ -77,7 +77,7 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $schedule->student->identity }}</td>
                         <td>{{ $schedule->student->name }}</td>
-                        <td>{{ $schedule->student->final_project->title ?? '-' }}</td>
+                        <td>{{ $schedule->student->proposal->title ?? '-' }}</td>
                         <td>{{ $schedule->primary_examiner->name ?? '-' }}</td>
                         <td>{{ $schedule->secondary_examiner->name ?? '-' }}</td>
                         <td>{{ $schedule->tertiary_examiner->name ?? '-' }}</td>

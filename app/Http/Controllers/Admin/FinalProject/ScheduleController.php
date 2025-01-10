@@ -78,7 +78,7 @@ class ScheduleController extends Controller
             $data = User::where('name', 'like', '%' . $search . '%')
                         ->where('program_study_id', Auth::user()->program_study_id)
                         ->whereHas('role', function ($query) {
-                            $query->where('name', 'Dosen');
+                            $query->where('name', 'Lecturer');
                         })
                         ->orderBy('name', 'asc')
                         ->get(['id', 'name']);
@@ -239,7 +239,10 @@ class ScheduleController extends Controller
             
         if ($request->ajax()) {
             try {
-                $data = Exam::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')->where('type','final_project')->get();
+                $data = Exam::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')
+                        ->whereHas('student.program_study', function($query) {
+                            $query->where('id', Auth::user()->program_study->id);
+                        })->where('type','final_project')->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

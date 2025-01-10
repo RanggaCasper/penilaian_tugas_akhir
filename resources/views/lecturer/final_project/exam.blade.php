@@ -65,30 +65,33 @@ $(document).ready(function () {
                     const assessmentScores = assessment.scores || [];
                     const assessmentSubScores = assessment.scores ? assessment.scores.flatMap(s => s.sub_scores || []) : [];
 
-                    
                     data.rubric.criterias.forEach(function (criteria) {
                         if (criteria.has_sub && Array.isArray(criteria.sub_criterias) && criteria.sub_criterias.length > 0) {
                             formContainer.append(`<h5 class="mt-3">${criteria.name}</h5>`);
                             
                             const subCriteriaContainer = $('<div></div>');
-                            
-                            
-                            criteria.sub_criterias.forEach(function (subCriteria) {
-                                const subScore = assessmentSubScores.find(sub => sub.sub_criteria_id === subCriteria.id);
-                                const subValue = subScore ? subScore.score : '';  
 
-                                subCriteriaContainer.append(`
-                                    <div class="mb-2">
-                                        <label for="sub_criteria_${subCriteria.id}" class="form-label">
-                                            ${subCriteria.name} (Bobot: ${subCriteria.weight}%)
-                                        </label>
-                                        <input type="number" class="form-control" id="sub_criteria_${subCriteria.id}" 
-                                            name="sub_scores[${criteria.id}][${subCriteria.id}]" min="0" max="100" value="${subValue}">
-                                    </div>
-                                `);
-                            });
+                            if (Array.isArray(criteria.sub_criterias) && criteria.sub_criterias.length > 0) {
+                                criteria.sub_criterias.forEach(function (subCriteria) {
+                                    const subScore = assessmentSubScores.find(sub => sub.sub_criteria_id === subCriteria.id);
+                                    const subValue = subScore ? subScore.score : '';  
 
-                            formContainer.append(subCriteriaContainer);
+                                    subCriteriaContainer.append(`
+                                        <div class="mb-2">
+                                            <label for="sub_criteria_${subCriteria.id}" class="form-label">
+                                                ${subCriteria.name} (Bobot: ${subCriteria.weight}%)
+                                            </label>
+                                            <input type="number" class="form-control" id="sub_criteria_${subCriteria.id}" 
+                                                name="sub_scores[${criteria.id}][${subCriteria.id}]" min="0" max="100" value="${subValue}">
+                                        </div>
+                                    `);
+                                });
+
+                                formContainer.append(subCriteriaContainer);
+                            } else {
+                                subCriteriaContainer.append(`<p class="text-muted">Tidak ada sub kriteria untuk ${criteria.name}.</p>`);
+                                formContainer.append(subCriteriaContainer);
+                            }
                         } else {
                             const score = assessmentScores.find(s => s.criteria_id === criteria.id)?.score || ''; 
                             
@@ -98,7 +101,7 @@ $(document).ready(function () {
                                         ${criteria.name} (Bobot: ${criteria.weight}%)
                                     </label>
                                     <input type="number" class="form-control" id="criteria_${criteria.id}" 
-                                           name="scores[${criteria.id}]" min="0" max="100" value="${score}">
+                                        name="scores[${criteria.id}]" min="0" max="100" value="${score}">
                                 </div>
                             `);
                         }
@@ -107,15 +110,15 @@ $(document).ready(function () {
                     formContainer.append(`
                         <div class="mb-3">
                             <label for="feedback" class="form-label">Feedback</label>
-                            <textarea class="form-control" id="feedback" name="feedback" placeholder="Berikan saran atau kritik." rows="4">${data.assessment.feedback || ''}</textarea>
+                            <textarea class="form-control" id="feedback" name="feedback" placeholder="Berikan saran atau kritik." rows="4">${data.assessment ? data.assessment.feedback || '' : ''}</textarea>
                         </div>
                     `);
                 } else {
                     formContainer.html('<p class="text-muted">Tidak ada rubrik untuk form ini.</p>');
                 }
             },
-            error: function () {
-                formContainer.html('<p class="text-muted">Gagal mengambil data.</p>');
+            error: function (error) {
+                formContainer.html('<p class="text-muted">'+ error.responseJSON.message +'</p>');
             }
         });
     });

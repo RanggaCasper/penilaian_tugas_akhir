@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin\Rubric;
 
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use App\Models\Rubric\Rubric;
+use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class RubricController extends Controller
 {
@@ -28,6 +29,10 @@ class RubricController extends Controller
     public function store(Request $request)
     {
         try {
+            $request->merge([
+                'program_study_id' => Auth::user()->program_study_id
+            ]);
+            
             $request->validate([
                 'name' => 'required',
             ]);
@@ -63,11 +68,14 @@ class RubricController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Rubric::select(['id', 'name']);
+                $data = Rubric::select(['id', 'name', 'type']);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
                         return ++$counter;  
+                    })  
+                    ->addColumn('type', function ($row) {  
+                        return $row->type == 'proposal' ? 'Proposal' : 'Tugas Akhir';                
                     })  
                     ->addColumn('action', function ($row) {  
                         return '  

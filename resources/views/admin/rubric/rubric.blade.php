@@ -9,6 +9,14 @@
         <div class="mb-3">
             <x-input-field label="Nama" type="text" name="name" id="nama" />
         </div>
+        <div class="mb-3">
+            <label for="type">Tipe</label>
+            <select name="type" class="form-control form-select" id="type">
+                <option selected disabled>-- Pilih Tipe --</option>
+                <option value="proposal">Proposal</option>
+                <option value="final_project">Tugas Akhir</option>
+            </select>
+        </div>
         <x-button type="submit" class="btn btn-primary" label="Submit" />
         <x-button type="reset" class="btn btn-danger" label="Reset" />
     </form>
@@ -19,6 +27,7 @@
             <tr>
                 <th>No</th>
                 <th>Nama</th>
+                <th>Tipe</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -39,6 +48,14 @@
                     <div class="mb-3">
                         <x-input-field label="Nama" type="text" name="name" id="name_update" />
                     </div>
+                    <div class="mb-3">
+                        <label for="type_update">Tipe</label>
+                        <select name="type" class="form-control form-select" id="type_update">
+                            <option selected disabled>-- Pilih Tipe --</option>
+                            <option value="proposal">Proposal</option>
+                            <option value="final_project">Tugas Akhir</option>
+                        </select>
+                    </div>
                     <x-button type="submit" class="btn btn-primary" label="Submit" />
                     <x-button type="reset" class="btn btn-danger" label="Reset" />
                 </form>
@@ -58,6 +75,7 @@
             columns: [
                 { data: 'no', name: 'no' },
                 { data: 'name', name: 'name' },
+                { data: 'type', name: 'type' },
                 { data: 'action', name: 'action' },
             ],
         });
@@ -70,6 +88,7 @@
                 success: function(data) {
                     $('#form_update').attr('action', '{{ route("admin.rubric.update", ["id" => ":id"]) }}'.replace(':id', id));
                     $('#name_update').val(data.name);
+                    $('#type_update').val(data.type);
                 },
                 error: function(error) {
                     console.error(error);

@@ -23,11 +23,11 @@ return new class extends Migration
         });
 
         Schema::table('periods', function (Blueprint $table) {
-            $table->foreignId('program_study_id')->nullable()->constrained('program_studies');
+            $table->foreignId('program_study_id')->constrained('program_studies');
         });
 
         Schema::table('rubrics', function (Blueprint $table) {
-            $table->foreignId('program_study_id')->nullable()->constrained('program_studies');
+            $table->foreignId('program_study_id')->constrained('program_studies');
         });
     }
 

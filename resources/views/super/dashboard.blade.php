@@ -38,7 +38,7 @@
                         ->count() }}
                     </span>
                 </h3>
-                <h6 class="mb-0 text-muted">Total Mahasiswa</h6>
+                <h6 class="mb-0 text-muted">Total Dosen</h6>
             </div>
         </div>
     </div>
@@ -76,4 +76,72 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-6">
+        <x-card title="Statistik Program Studi">
+            <div id="programStudyChart"></div>
+        </x-card>
+    </div>
+    <div class="col-md-6">
+        <x-card title="Statistik Angkatan">
+            <div id="generationChart"></div>
+        </x-card>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    const dataProdi = @json($data_prodi);
+    const dataGeneration = @json($data_generation);
+
+    const programStudies = dataProdi.map(item => item.program_study);
+    const userCountsProdi = dataProdi.map(item => item.total);
+
+    const sortedGeneration = Object.values(dataGeneration).sort((a, b) => a.generation.localeCompare(b.generation));
+    const generations = sortedGeneration.map(item => item.generation);
+    const userCountsGeneration = sortedGeneration.map(item => item.total);
+
+    var programStudyOptions = {
+        chart: {
+            type: 'pie',
+            height: 370
+        },
+        series: userCountsProdi,
+        labels: programStudies,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var programStudyChart = new ApexCharts(document.querySelector("#programStudyChart"), programStudyOptions);
+    programStudyChart.render();
+
+    var generationOptions = {
+        chart: {
+            type: 'bar',
+            height: 350,
+            toolbar: { show: false }
+        },
+        series: [{
+            name: 'Mahasiswa',
+            data: userCountsGeneration,
+        }],
+        xaxis: {
+            categories: generations
+        }
+    };
+
+    var generationChart = new ApexCharts(document.querySelector("#generationChart"), generationOptions);
+    generationChart.render();
+</script>
+@endpush

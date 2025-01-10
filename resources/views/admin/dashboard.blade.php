@@ -40,7 +40,7 @@
                         ->count() }}
                     </span>
                 </h3>
-                <h6 class="mb-0 text-muted">Total Mahasiswa</h6>
+                <h6 class="mb-0 text-muted">Total Dosen</h6>
             </div>
         </div>
     </div>

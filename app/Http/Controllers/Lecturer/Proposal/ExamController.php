@@ -56,12 +56,19 @@ class ExamController extends Controller
         try {
             $request->validate([
                 'exam_id' => 'required|integer|exists:exams,id',
-                'scores' => 'required|array',
-                'scores.*' => 'required|integer|min:0|max:100',
-                'sub_scores' => 'required|array',
-                'sub_scores.*' => 'required|array',
-                'sub_scores.*.*' => 'required|integer|min:0|max:100',
-            ]); 
+                'scores' => $request->has('scores') ? 'required|array' : 'nullable',
+                'scores.*' => $request->has('scores') ? 'required|integer|min:0|max:100' : 'nullable',
+                'sub_scores' => $request->has('sub_scores') ? 'required|array' : 'nullable',
+                'sub_scores.*' => $request->has('sub_scores') ? 'required|array' : 'nullable',
+                'sub_scores.*.*' => $request->has('sub_scores') ? 'required|integer|min:0|max:100' : 'nullable',
+            ]);
+            
+            if (!$request->scores) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada aksi penilaian.',
+                ], 422);
+            }
 
             $exam = Exam::find($request->exam_id);
 
@@ -97,19 +104,21 @@ class ExamController extends Controller
                 );
             }
 
-            foreach ($request->sub_scores as $subCriteriaId => $subScores) {  
-                $subScoresRecord = $assessment->scores()->updateOrCreate(  
-                    ['criteria_id' => $subCriteriaId],  
-                    ['score' => null, 'has_sub' => 1]  
-                );  
-
-                foreach ($subScores as $subScoreId => $subScore) {
-                    SubScore::updateOrCreate(
-                        ['score_id' => $subScoresRecord->id, 'sub_criteria_id' => $subScoreId],
-                        ['score' => $subScore]
+            if ($request->has('sub_scores') && is_array($request->sub_scores)) {
+                foreach ($request->sub_scores as $subCriteriaId => $subScores) {
+                    $subScoresRecord = $assessment->scores()->updateOrCreate(
+                        ['criteria_id' => $subCriteriaId],
+                        ['score' => null, 'has_sub' => 1]
                     );
-                } 
-            }  
+    
+                    foreach ($subScores as $subScoreId => $subScore) {
+                        SubScore::updateOrCreate(
+                            ['score_id' => $subScoresRecord->id, 'sub_criteria_id' => $subScoreId],
+                            ['score' => $subScore]
+                        );
+                    }
+                }
+            }    
 
             return response()->json([
                 'status' => true,
@@ -138,6 +147,13 @@ class ExamController extends Controller
                 ->where('id', $id)  
                 ->first();  
             
+            if (!$rubric->is_editable) {
+                return response()->json([  
+                    'status' => false,  
+                    'message' => 'Nilai tidak dapat di perbarui.'  
+                ], 404);  
+            }
+
             if (!$rubric) {  
                 return response()->json([  
                     'status' => false,  
