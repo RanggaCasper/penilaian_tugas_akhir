@@ -280,6 +280,18 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lectur
             });
         });
     });
+
+    // Pembimbing
+    Route::prefix('mentor')->as('mentor.')->group(function () {
+        Route::controller(\App\Http\Controllers\Lecturer\Mentor\MentorController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/get', 'get')->name('get');  
+            Route::post('/', 'store')->name('store');  
+            Route::get('/get/score/{id}', 'getScoreById')->name('getScoreById');
+            Route::post('/import', 'import')->name('import');
+            Route::get('/export/template', 'exportTemplate')->name('export.template');
+        });
+    });
 });
 
 // Special

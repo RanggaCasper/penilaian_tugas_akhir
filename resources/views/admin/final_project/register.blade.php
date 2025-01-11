@@ -117,12 +117,17 @@
                 $('#is_editable_update').val(data.is_editable);
             },
             error: function(error) {
-                console.error(error);
-                Swal.fire(
-                    'Error!',
-                    'Terjadi kesalahan saat mengambil data kategori.',
-                    'error'
-                );
+                Swal.fire({
+                    html: '<div class="mt-3"><lord-icon src="https://cdn.lordicon.com/tdrtiskw.json" trigger="loop" colors="primary:#f06548,secondary:#f7b84b" style="width:120px;height:120px"></lord-icon><div class="pt-2 mt-4 fs-15"><h4>Terjadi Kesalahan !</h4><p class="mx-4 mb-0 text-muted">' +error.responseJSON.message+ '</p></div></div>',
+                    showCancelButton: !0,
+                    showConfirmButton: !1,
+                    customClass: {
+                        cancelButton: "btn btn-primary w-xs mb-1"
+                    },
+                    cancelButtonText: "Back",
+                    buttonsStyling: !1,
+                    showCloseButton: !0
+                })
             }
         });
     });

@@ -68,6 +68,8 @@
                         <x-navlink icon="ri-file-edit-line" title="Sub Kriteria" href="{{ route('admin.rubric.criteria.sub.index') }}" active="{{ request()->routeIs('admin.rubric.criteria.sub.index') }}" />
                 @elseif (auth()->user()->role->name == "Lecturer")
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('lecturer.dashboard') }}" active="{{ request()->routeIs('lecturer.dashboard') }}" />
+                    <x-menu-title title="Bimbingan" />
+                        <x-navlink icon="ri-file-edit-line" title="Penilaian Bimbingan" href="{{ route('lecturer.mentor.index') }}" active="{{ request()->routeIs('lecturer.mentor.index') }}" />
                     <x-menu-title title="Proposal" />
                         <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('lecturer.proposal.schedule.index') }}" active="{{ request()->routeIs('lecturer.proposal.schedule.index') }}" />
                         <x-navlink icon="ri-file-edit-line" title="Penilaian Ujian" href="{{ route('lecturer.proposal.exam.index') }}" active="{{ request()->routeIs('lecturer.proposal.exam.index') }}" />
@@ -97,7 +99,7 @@
                             <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('student.final_project.schedule.index') }}" active="{{ request()->routeIs('student.final_project.schedule.index') }}" />
                         @endif
                     <x-menu-title title="Hasil" />
-                        <x-navlink icon="ri-user-add-line" title="Hasil Ujian" href="{{ route('student.result.index') }}" active="{{ request()->routeIs('student.result.index') }}" />
+                        <x-navlink icon="ri-file-list-3-line" title="Hasil Ujian" href="{{ route('student.result.index') }}" active="{{ request()->routeIs('student.result.index') }}" />
                 @elseif (auth()->user()->role->name == "Special")
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('special.dashboard') }}" active="{{ request()->routeIs('special.dashboard') }}" />
                     <x-menu-title title="Api" />
