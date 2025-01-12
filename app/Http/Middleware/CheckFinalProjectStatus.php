@@ -5,10 +5,10 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\FinalProject\FinalProject;
+use App\Models\Thesis\Thesis;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckFinalProjectStatus
+class CheckThesisStatus
 {
     /**
      * Handle an incoming request.
@@ -17,12 +17,12 @@ class CheckFinalProjectStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $finalProject = FinalProject::with('period')
+        $Thesis = Thesis::with('period')
             ->where('student_id', Auth::id())
             ->where('status', 'disetujui')
             ->first();
 
-        if (!$finalProject) {
+        if (!$Thesis) {
             abort(403);
         }
         

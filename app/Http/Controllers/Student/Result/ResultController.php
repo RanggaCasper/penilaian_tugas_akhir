@@ -14,7 +14,7 @@ class ResultController extends Controller
     public function index(AssessmentService $assessmentService)
     {
         $proposal_score = $assessmentService->calculateScore(Auth::user()->id, 'proposal');
-        $final_project_score = $assessmentService->calculateScore(Auth::user()->id, 'final_project');
+        $thesis_score = $assessmentService->calculateScore(Auth::user()->id, 'thesis');
         
         $proposal = Proposal::with(['scores.mentor'])
             ->where('student_id', Auth::user()->id)
@@ -37,13 +37,13 @@ class ResultController extends Controller
         
             $final_score = [
                 'proposal_score' => $proposal_score['final_score'] ?? 0,
-                'final_project_score' => $final_project_score['final_score'] ?? 0,
+                'thesis_score' => $thesis_score['final_score'] ?? 0,
                 'mentor_scores' => $mentor_scores->toArray(), // Gunakan hasil map langsung
                 'total_score' => ($proposal_score['final_score'] ?? 0)
-                               + ($final_project_score['final_score'] ?? 0)
+                               + ($thesis_score['final_score'] ?? 0)
                                + $mentor_scores->sum('final_score'), // Langsung gunakan sum
             ];
 
-        return view('student.result.result', compact('proposal_score', 'final_project_score', 'mentor_scores', 'final_score'));
+        return view('student.result.result', compact('proposal_score', 'thesis_score', 'mentor_scores', 'final_score'));
     }
 }

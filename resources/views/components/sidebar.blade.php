@@ -60,8 +60,8 @@
                         <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.proposal.register.index') }}" active="{{ request()->routeIs('admin.proposal.register.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('admin.proposal.schedule.index') }}" active="{{ request()->routeIs('admin.proposal.schedule.index') }}" />
                     <x-menu-title title="Tugas Akhir" />
-                        <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.final_project.register.index') }}" active="{{ request()->routeIs('admin.final_project.register.index') }}" />
-                        <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('admin.final_project.schedule.index') }}" active="{{ request()->routeIs('admin.final_project.schedule.index') }}" />
+                        <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.thesis.register.index') }}" active="{{ request()->routeIs('admin.thesis.register.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('admin.thesis.schedule.index') }}" active="{{ request()->routeIs('admin.thesis.schedule.index') }}" />
                     <x-menu-title title="Rubrik Penilaian" />
                         <x-navlink icon="ri-file-edit-line" title="Rubrik" href="{{ route('admin.rubric.index') }}" active="{{ request()->routeIs('admin.rubric.index') }}" />
                         <x-navlink icon="ri-file-edit-line" title="Kriteria" href="{{ route('admin.rubric.criteria.index') }}" active="{{ request()->routeIs('admin.rubric.criteria.index') }}" />
@@ -74,12 +74,12 @@
                         <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('lecturer.proposal.schedule.index') }}" active="{{ request()->routeIs('lecturer.proposal.schedule.index') }}" />
                         <x-navlink icon="ri-file-edit-line" title="Penilaian Ujian" href="{{ route('lecturer.proposal.exam.index') }}" active="{{ request()->routeIs('lecturer.proposal.exam.index') }}" />
                     <x-menu-title title="Tugas Akhir" />
-                        <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('lecturer.final_project.schedule.index') }}" active="{{ request()->routeIs('lecturer.final_project.schedule.index') }}" />
-                        <x-navlink icon="ri-file-edit-line" title="Penilaian Ujian" href="{{ route('lecturer.final_project.exam.index') }}" active="{{ request()->routeIs('lecturer.final_project.exam.index') }}" />
+                        <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('lecturer.thesis.schedule.index') }}" active="{{ request()->routeIs('lecturer.thesis.schedule.index') }}" />
+                        <x-navlink icon="ri-file-edit-line" title="Penilaian Ujian" href="{{ route('lecturer.thesis.exam.index') }}" active="{{ request()->routeIs('lecturer.thesis.exam.index') }}" />
                             
                 @elseif (auth()->user()->role->name == "Student")
                     @php
-                        $checkFinalProject = App\Models\FinalProject\FinalProject::where('student_id', Auth::id())
+                        $checkThesis = App\Models\Thesis\Thesis::where('student_id', Auth::id())
                             ->where('status', 'disetujui')
                             ->exists();
                         $checkProposal = App\Models\Proposal\Proposal::where('student_id', Auth::id())
@@ -94,9 +94,9 @@
                             <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('student.proposal.schedule.index') }}" active="{{ request()->routeIs('student.proposal.schedule.index') }}" />
                         @endif
                     <x-menu-title title="Tugas Akhir" />
-                        <x-navlink icon="ri-user-add-line" title="Pendaftaran" href="{{ route('student.final_project.register.index') }}" active="{{ request()->routeIs('student.final_project.register.index') }}" />
-                        @if ($checkFinalProject)  
-                            <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('student.final_project.schedule.index') }}" active="{{ request()->routeIs('student.final_project.schedule.index') }}" />
+                        <x-navlink icon="ri-user-add-line" title="Pendaftaran" href="{{ route('student.thesis.register.index') }}" active="{{ request()->routeIs('student.thesis.register.index') }}" />
+                        @if ($checkThesis)  
+                            <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('student.thesis.schedule.index') }}" active="{{ request()->routeIs('student.thesis.schedule.index') }}" />
                         @endif
                     <x-menu-title title="Hasil" />
                         <x-navlink icon="ri-file-list-3-line" title="Hasil Ujian" href="{{ route('student.result.index') }}" active="{{ request()->routeIs('student.result.index') }}" />

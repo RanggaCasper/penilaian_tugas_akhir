@@ -14,7 +14,8 @@
             <select name="type" class="form-control form-select" id="type">
                 <option selected disabled>-- Pilih Tipe --</option>
                 <option value="proposal">Proposal</option>
-                <option value="final_project">Tugas Akhir</option>
+                <option value="thesis">Tugas Akhir</option>
+                <option value="guidance">Bimbingan</option>
             </select>
         </div>
         <x-button type="submit" class="btn btn-primary" label="Submit" />
@@ -53,7 +54,7 @@
                         <select name="type" class="form-control form-select" id="type_update">
                             <option selected disabled>-- Pilih Tipe --</option>
                             <option value="proposal">Proposal</option>
-                            <option value="final_project">Tugas Akhir</option>
+                            <option value="thesis">Tugas Akhir</option>
                         </select>
                     </div>
                     <x-button type="submit" class="btn btn-primary" label="Submit" />

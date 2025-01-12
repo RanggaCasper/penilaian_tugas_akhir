@@ -18,7 +18,7 @@ return new class extends Migration
             $table->time('end_time');
             $table->string('room');
             $table->boolean('is_editable')->default(false);
-            $table->enum('type', ['proposal', 'final_project']);
+            $table->enum('type', ['proposal', 'thesis']);
             $table->foreignId('student_id')->constrained('users');
             $table->foreignId('primary_examiner_id')->constrained('users');
             $table->foreignId('secondary_examiner_id')->constrained('users');

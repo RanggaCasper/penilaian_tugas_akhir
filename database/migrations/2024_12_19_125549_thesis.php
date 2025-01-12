@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('final_projects', function (Blueprint $table) {
+        Schema::create('thesis', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
             $table->string('document');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('final_projects');
+        Schema::dropIfExists('thesis');
     }
 };

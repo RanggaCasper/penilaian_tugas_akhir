@@ -62,7 +62,7 @@
             const fileExtension = format === 'excel' ? 'xlsx' : 'pdf';
 
             $.ajax({
-                url: '{{ route("lecturer.final_project.schedule.get") }}',
+                url: '{{ route("lecturer.thesis.schedule.get") }}',
                 type: 'GET',
                 data: {
                     export: format,
@@ -120,7 +120,7 @@
         processing: true,
         serverSide: false,
         scrollX: true,
-        ajax: '{{ route('lecturer.final_project.schedule.get') }}',
+        ajax: '{{ route('lecturer.thesis.schedule.get') }}',
         columns: [
             { data: 'no', name: 'no' },
             { data: 'exam_date', name: 'exam_date' },

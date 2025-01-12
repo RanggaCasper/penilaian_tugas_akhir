@@ -86,7 +86,7 @@
         processing: true,
         serverSide: false,
         scrollX: true,
-        ajax: '{{ route('admin.final_project.register.get') }}',
+        ajax: '{{ route('admin.thesis.register.get') }}',
         columns: [
             { data: 'no', name: 'no' },
             { data: 'student.name', name: 'student.name' },
@@ -102,10 +102,10 @@
     $('#datatables').on('click', '.edit-btn', function() {
         var id = $(this).data('id');
         $.ajax({
-            url: '{{ route("admin.final_project.register.getById", ["id" => ":id"]) }}'.replace(':id', id),
+            url: '{{ route("admin.thesis.register.getById", ["id" => ":id"]) }}'.replace(':id', id),
             type: 'GET',
             success: function(data) {
-                $('#form_update').attr('action', '{{ route("admin.final_project.register.update", ["id" => ":id"]) }}'.replace(':id', id));
+                $('#form_update').attr('action', '{{ route("admin.thesis.register.update", ["id" => ":id"]) }}'.replace(':id', id));
                 $('#detail-student').text(data.student.name);
                 $('#detail-identity').text(data.student.identity);
                 $('#detail-title').text(data.title);
@@ -147,7 +147,7 @@
         }).then(function(t) {
             if(t.value) {
                 $.ajax({
-                    url: '{{ route("admin.final_project.register.destroy", ["id" => ":id"]) }}'.replace(':id', id),
+                    url: '{{ route("admin.thesis.register.destroy", ["id" => ":id"]) }}'.replace(':id', id),
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',

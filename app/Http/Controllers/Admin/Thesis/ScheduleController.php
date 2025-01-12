@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\FinalProject;
+namespace App\Http\Controllers\Admin\Thesis;
 
 use Carbon\Carbon;
 use App\Models\User;
@@ -18,13 +18,13 @@ use Illuminate\Support\Facades\Auth;
 class ScheduleController extends Controller
 {
     /**
-     * Display the final project schedule view.
+     * Display the thesis schedule view.
      * 
      * @return \Illuminate\View\View
      */
     public function index()
     {
-        return view('admin.final_project.schedule');
+        return view('admin.thesis.schedule');
     }
 
     /**
@@ -42,11 +42,11 @@ class ScheduleController extends Controller
             ->whereHas('role', function ($query) {
                 $query->where('name', 'Student');
             })
-            ->whereHas('final_project', function ($query) {
+            ->whereHas('thesis', function ($query) {
                 $query->where('status', 'disetujui');
             })
             ->whereDoesntHave('exam', function ($query) {
-                $query->where('type', 'final_project');
+                $query->where('type', 'thesis');
             })
             ->orderBy('name', 'asc')
             ->get(['id', 'name', 'identity']);            
@@ -96,7 +96,7 @@ class ScheduleController extends Controller
             $search = $request->get('q');
 
             $data = Rubric::where('name', 'like', '%' . $search . '%')
-                ->where('type', 'final_project')
+                ->where('type', 'thesis')
                 ->where('program_study_id', Auth::user()->program_study_id)
                 ->orderBy('name', 'asc')
                 ->get(['id', 'name']);
@@ -118,7 +118,7 @@ class ScheduleController extends Controller
         try {
             $request->merge([
                 'is_editable' => $request->has('is_editable') ? 1 : 0,
-                'type' => 'final_project',
+                'type' => 'thesis',
             ]);
 
             $request->validate([
@@ -131,7 +131,7 @@ class ScheduleController extends Controller
                     'exists:users,id',
                     function ($attribute, $value, $fail) use ($request) {
                         $exists = Exam::where('student_id', $value)
-                            ->where('type', 'final_project')
+                            ->where('type', 'thesis')
                             ->exists();
             
                         if ($exists) {
@@ -160,7 +160,7 @@ class ScheduleController extends Controller
 
             $request->merge([
                 'end_time' => Carbon::createFromFormat('H:i', $request->start_time)->addHour()->format('H:i'),
-                'type' => 'final_project',
+                'type' => 'thesis',
             ]);
             
             Exam::create($request->all());
@@ -197,12 +197,12 @@ class ScheduleController extends Controller
             try {
                 $query = Exam::with(
                     'student',
-                    'student.final_project',
+                    'student.thesis',
                     'student.program_study',
                     'primary_examiner',
                     'secondary_examiner',
                     'tertiary_examiner'
-                )->where('type', 'final_project')
+                )->where('type', 'thesis')
                 ->whereHas('student.program_study', function($query) {
                     $query->where('id', Auth::user()->program_study->id);
                 });
@@ -221,7 +221,7 @@ class ScheduleController extends Controller
                 if ($request->export === 'pdf') {
                     $title = "Jadwal Ujian - {$date}";
 
-                    $pdf = $pdf->loadView('exports.final_project.schedule_pdf', [
+                    $pdf = $pdf->loadView('exports.thesis.schedule_pdf', [
                         'data' => $data,
                         'title' => $title,
                     ]);
@@ -239,10 +239,10 @@ class ScheduleController extends Controller
             
         if ($request->ajax()) {
             try {
-                $data = Exam::with('student', 'student.final_project', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')
+                $data = Exam::with('student', 'student.thesis', 'primary_examiner', 'secondary_examiner', 'tertiary_examiner')
                         ->whereHas('student.program_study', function($query) {
                             $query->where('id', Auth::user()->program_study->id);
-                        })->where('type','final_project')->get();
+                        })->where('type','thesis')->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Models\FinalProject;
+namespace App\Models\Thesis;
 
 use App\Models\User;
 use App\Models\Period;
 use Illuminate\Database\Eloquent\Model;
 
-class FinalProject extends Model
+class Thesis extends Model
 {
-    protected $table = 'final_projects';
+    protected $table = 'thesis';
 
     protected $guarded = [
         'id'

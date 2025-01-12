@@ -24,7 +24,7 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
         $this->data = $data;
         $examDates = $this->data->pluck('exam_date')->unique()->sort();
         $type = $this->data->pluck('type')->map(function ($type) {
-            if ($type === 'final_project') {
+            if ($type === 'thesis') {
                 return 'TUGAS AKHIR';
             } elseif ($type === 'proposal') {
                 return 'PROPOSAL';
@@ -48,8 +48,8 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                 'No' => $key + 1,
                 'NIM' => $schedule->student->identity,
                 'Mahasiswa' => $schedule->student->name,
-                'Judul' => $schedule->type === 'final_project' 
-                            ? ($schedule->student->final_project->title ?? '-') 
+                'Judul' => $schedule->type === 'thesis' 
+                            ? ($schedule->student->thesis->title ?? '-') 
                             : ($schedule->type === 'proposal' 
                                 ? ($schedule->student->proposal->title ?? '-') 
                                 : '-'),

@@ -82,7 +82,7 @@ class AssessmentService
         $weight = 0.0;
         if ($type === 'proposal') {
             $weight = 0.1;
-        } elseif ($type === 'final_project') {
+        } elseif ($type === 'thesis') {
             $weight = 0.3;
         }
 

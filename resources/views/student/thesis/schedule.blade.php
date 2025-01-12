@@ -79,11 +79,11 @@
     <script>
         $('#download-schedule').on('click', function () {
             $.ajax({
-                url: '{{ route("student.final_project.schedule.download") }}',
+                url: '{{ route("student.thesis.schedule.download") }}',
                 type: 'GET',
                 success: function (response) {
                     const link = document.createElement('a');
-                    link.href = '{{ route('student.final_project.schedule.download') }}';
+                    link.href = '{{ route('student.thesis.schedule.download') }}';
                     link.style.display = 'none';
                     document.body.appendChild(link);
                     link.click();

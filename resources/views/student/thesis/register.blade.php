@@ -2,10 +2,10 @@
 
 @section('content')
 @if ($data)
-    @if ($data instanceof \App\Models\FinalProject\FinalProject)
+    @if ($data instanceof \App\Models\Thesis\Thesis)
         <x-card title="Pendaftaran Tugas Akhir - {{ $data->period->name }}">
             @if ($data->is_editable)
-                <form action="{{ route('student.final_project.register.update') }}" data-reset="false" method="POST">  
+                <form action="{{ route('student.thesis.register.update') }}" data-reset="false" method="POST">  
                     @csrf  
                     @method('put')
                     <div class="mb-3">  
@@ -54,7 +54,7 @@
         </x-card>
     @else
         <x-card title="Pendaftaran Tugas Akhir - {{ $data->name }}">  
-            <form action="{{ route('student.final_project.register.store') }}" data-reset="false" method="POST">  
+            <form action="{{ route('student.thesis.register.store') }}" data-reset="false" method="POST">  
                 @csrf  
                 <div class="mb-3">  
                     <x-input-field label="Judul Tugas Akhir" type="text" name="title" id="title" required />  

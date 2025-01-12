@@ -29,7 +29,7 @@
                 <select name="type" class="form-control form-select" id="type">
                     <option selected disabled>-- Pilih Tipe --</option>
                     <option value="proposal">Proposal</option>
-                    <option value="final_project">Tugas Akhir</option>
+                    <option value="thesis">Tugas Akhir</option>
                 </select>
             </div>
             <div class="mb-3">
@@ -95,7 +95,7 @@
                             <select name="type" class="form-control form-select" id="type_update">
                                 <option selected disabled>-- Pilih Tipe --</option>
                                 <option value="proposal">Proposal</option>
-                                <option value="final_project">Tugas Akhir</option>
+                                <option value="thesis">Tugas Akhir</option>
                             </select>
                         </div>
                         <div class="mb-3">

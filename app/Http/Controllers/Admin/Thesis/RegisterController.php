@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Admin\FinalProject;
+namespace App\Http\Controllers\Admin\Thesis;
 
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\FinalProject\FinalProject;
+use App\Models\Thesis\Thesis;
 use Illuminate\Http\JsonResponse;
 
 class RegisterController extends Controller
 {
     public function index()
     {
-        return view('admin.final_project.register');
+        return view('admin.thesis.register');
     }
 
     /**
@@ -25,7 +25,7 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = FinalProject::with('student','student.generation')->get();
+                $data = Thesis::with('student','student.generation')->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -76,7 +76,7 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = FinalProject::with('student','student.generation')->findOrFail($id);
+                $data = Thesis::with('student','student.generation')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -111,7 +111,7 @@ class RegisterController extends Controller
                    'is_editable' => 'required|boolean',
                 ]);
                 
-                $data = FinalProject::findOrFail($id);
+                $data = Thesis::findOrFail($id);
                 
                 $data->update([
                     'status' => $request->status,
@@ -155,7 +155,7 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = FinalProject::findOrFail($id);
+                $periode = Thesis::findOrFail($id);
                 $periode->delete();
 
                 return response()->json([

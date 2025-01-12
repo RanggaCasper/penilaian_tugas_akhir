@@ -6,7 +6,7 @@ namespace App\Models;
 
 use App\Models\Exam\Exam;
 use Illuminate\Notifications\Notifiable;
-use App\Models\FinalProject\FinalProject;
+use App\Models\Thesis\Thesis;
 use App\Models\Proposal\Proposal;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -48,9 +48,9 @@ class User extends Authenticatable
         return $this->belongsTo(Generation::class);
     }
 
-    public function final_project()
+    public function thesis()
     {
-        return $this->hasOne(FinalProject::class, 'student_id');
+        return $this->hasOne(Thesis::class, 'student_id');
     }
 
     public function proposal()

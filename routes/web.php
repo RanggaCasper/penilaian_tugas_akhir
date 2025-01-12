@@ -87,10 +87,10 @@ Route::prefix('admin')->as('admin.')->middleware('auth', 'checkRole:Admin')->gro
     });
 
     // Tugas Akhir
-    Route::prefix('final-project')->as('final_project.')->group(function () {
+    Route::prefix('thesis')->as('thesis.')->group(function () {
         // Pendaftaran
         Route::prefix('register')->as('register.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\FinalProject\RegisterController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Thesis\RegisterController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/get', 'get')->name('get');
                 Route::get('/get/{id}', 'getById')->name('getById');
@@ -101,7 +101,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth', 'checkRole:Admin')->gro
 
         // Jadwal
         Route::prefix('schedule')->as('schedule.')->group(function () {
-            Route::controller(\App\Http\Controllers\Admin\FinalProject\ScheduleController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Thesis\ScheduleController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::get('/get', 'get')->name('get');
@@ -202,10 +202,10 @@ Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student'
     });
 
     // Tugas Akhir
-    Route::prefix('final-project')->as('final_project.')->group(function () {
+    Route::prefix('thesis')->as('thesis.')->group(function () {
         // Pendaftaran
         Route::prefix('register')->as('register.')->group(function () {
-            Route::controller(\App\Http\Controllers\Student\FinalProject\RegisterController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Student\Thesis\RegisterController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::put('/', 'update')->name('update');
@@ -213,9 +213,9 @@ Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student'
         });
         
         // Jadwal
-        Route::middleware('check.final_project')->group(function () {
+        Route::middleware('check.thesis')->group(function () {
             Route::prefix('schedule')->as('schedule.')->group(function () {
-                Route::controller(\App\Http\Controllers\Student\FinalProject\ScheduleController::class)->group(function () {
+                Route::controller(\App\Http\Controllers\Student\Thesis\ScheduleController::class)->group(function () {
                     Route::get('/', 'index')->name('index');
                     Route::get('/download', 'download')->name('download');
                 });
@@ -259,10 +259,10 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lectur
     });
 
     // Tugas Akhir
-    Route::prefix('final-project')->as('final_project.')->group(function () {
+    Route::prefix('thesis')->as('thesis.')->group(function () {
         // Jadwal
         Route::prefix('schedule')->as('schedule.')->group(function () {
-            Route::controller(\App\Http\Controllers\Lecturer\FinalProject\ScheduleController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Lecturer\Thesis\ScheduleController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/get', 'get')->name('get');  
             });
@@ -270,7 +270,7 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lectur
 
         // Ujian
         Route::prefix('exam')->as('exam.')->group(function () {
-            Route::controller(\App\Http\Controllers\Lecturer\FinalProject\ExamController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Lecturer\Thesis\ExamController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/get', 'get')->name('get'); 
                 Route::get('/get/rubric/{id}', 'getRubric')->name('getRubric');  

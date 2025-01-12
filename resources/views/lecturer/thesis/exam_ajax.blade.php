@@ -9,15 +9,15 @@
                         <ul class="list-group">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span class="fw-semibold w-50">Judul Tugas Akhir</span>
-                                <span class="line-break w-50 text-end">{{ $list->student->final_project->title }}</span>
+                                <span class="line-break w-50 text-end">{{ $list->student->thesis->title }}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span class="fw-semibold">Link Dokumen</span>
-                                <a href="{{ $list->student->final_project->document }}" class="btn btn-sm btn-primary" target="_blank">Lihat Dokumen</a>
+                                <a href="{{ $list->student->thesis->document }}" class="btn btn-sm btn-primary" target="_blank">Lihat Dokumen</a>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span class="fw-semibold">Link Dokumen Tambahan</span>
-                                <a href="{{ $list->student->final_project->support_document }}" class="btn btn-sm btn-primary" target="_blank">Lihat Dokumen</a>
+                                <a href="{{ $list->student->thesis->support_document }}" class="btn btn-sm btn-primary" target="_blank">Lihat Dokumen</a>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span class="fw-semibold">Waktu</span>
@@ -42,7 +42,7 @@
                                 </span>
                             </li>
                             <li class="list-group-item">
-                                <a href="{{ $list->assessments->contains('examiner_id', auth()->id()) ? route('lecturer.final_project.exam.generatePDF', $list->id) : '#' }}" 
+                                <a href="{{ $list->assessments->contains('examiner_id', auth()->id()) ? route('lecturer.thesis.exam.generatePDF', $list->id) : '#' }}" 
                                     class="mb-3 w-100 btn btn-success text-decoration-none"
                                     @if (!$list->assessments->contains('examiner_id', auth()->id()))
                                         onclick="return false;" 

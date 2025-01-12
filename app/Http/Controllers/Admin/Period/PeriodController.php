@@ -39,7 +39,7 @@ class PeriodController extends Controller
                 'start_date' => 'required|date|before_or_equal:end_date',
                 'end_date' => 'required|date|after_or_equal:start_date',
                 'generation_id' => 'required|exists:generations,id',  
-                'type' => 'required|in:proposal,final_project',
+                'type' => 'required|in:proposal,thesis',
             ]);
         
             Period::create($request->all());
@@ -158,7 +158,7 @@ class PeriodController extends Controller
                     'start_date' => 'required|date|before_or_equal:end_date',
                     'end_date' => 'required|date|after_or_equal:start_date',
                     'generation_id' => 'required|exists:generations,id',
-                    'type' => 'required|in:proposal,final_project',
+                    'type' => 'required|in:proposal,thesis',
                 ]);
             
                 $data = Period::findOrFail($id);

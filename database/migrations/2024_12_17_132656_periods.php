@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('is_active')->default(true);
-            $table->enum('type', ['proposal', 'final_project']);
+            $table->enum('type', ['proposal', 'thesis']);
             $table->foreignId('generation_id')->constrained('generations');
             $table->timestamps();
         });

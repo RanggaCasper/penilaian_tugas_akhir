@@ -17,7 +17,7 @@ class RegisterController extends Controller
      /**
      * Construct a new controller instance.
      * 
-     * This method is used to get the active period of final project for the current
+     * This method is used to get the active period of thesis for the current
      * user's generation. The period is used in the index method to display the
      * registration form.
      */
@@ -34,7 +34,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Display the final project registration view.
+     * Display the thesis registration view.
      * 
      * @return \Illuminate\View\View
      */
@@ -49,7 +49,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Store a new final project in the database.
+     * Store a new thesis in the database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
@@ -102,7 +102,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Update the specified final project in database.
+     * Update the specified thesis in database.
      * 
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse

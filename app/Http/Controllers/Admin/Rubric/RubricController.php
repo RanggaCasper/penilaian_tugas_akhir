@@ -75,6 +75,11 @@ class RubricController extends Controller
                         return ++$counter;  
                     })  
                     ->addColumn('type', function ($row) {  
+                        if ($row->type == 'proposal') {
+                            return 'Proposal';
+                        } else if ($row->type == 'thesis') {
+                            return 'Tugas Akhir';
+                        }
                         return $row->type == 'proposal' ? 'Proposal' : 'Tugas Akhir';                
                     })  
                     ->addColumn('action', function ($row) {  

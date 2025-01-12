@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Lecturer\FinalProject;
+namespace App\Http\Controllers\Lecturer\Thesis;
 
 use App\Models\Exam\Exam;
 use App\Models\Exam\Score;
@@ -19,14 +19,14 @@ class ExamController extends Controller
 {
     public function index()
     {
-        return view('lecturer.final_project.exam');
+        return view('lecturer.thesis.exam');
     }
 
     public function get(Request $request)
     {
         try {
             $exams = Exam::with(
-                'student.final_project',
+                'student.thesis',
                 'rubric',
                 'assessments',
                 'student',
@@ -39,13 +39,13 @@ class ExamController extends Controller
                     ->orWhere('secondary_examiner_id', Auth::id())
                     ->orWhere('tertiary_examiner_id', Auth::id());
             })
-            ->where('type', 'final_project')
+            ->where('type', 'thesis')
             ->orderBy('start_time', 'asc')
             ->get();
 
             return response()->json([
                 'status' => true,
-                'html' => view('lecturer.final_project.exam_ajax', compact('exams'))->render(),
+                'html' => view('lecturer.thesis.exam_ajax', compact('exams'))->render(),
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -186,7 +186,7 @@ class ExamController extends Controller
     public function generatePdf($id)
     {
         try {
-            $data = Assessment::with('student', 'student.final_project', 'examiner', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')
+            $data = Assessment::with('student', 'student.thesis', 'examiner', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')
                 ->where('exam_id', $id)
                 ->where('examiner_id', Auth::id())
                 ->firstOrFail();

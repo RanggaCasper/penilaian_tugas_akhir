@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'check.final_project' => \App\Http\Middleware\CheckFinalProjectStatus::class,
+            'check.thesis' => \App\Http\Middleware\CheckThesisStatus::class,
             'checkSignature' => \App\Http\Middleware\CheckSignature::class,
             'checkRole' => \App\Http\Middleware\CheckRole::class,
         ]);

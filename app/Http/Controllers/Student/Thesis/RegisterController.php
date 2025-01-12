@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Student\FinalProject;
+namespace App\Http\Controllers\Student\Thesis;
 
 use App\Models\Period;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\FinalProject\FinalProject;
+use App\Models\Thesis\Thesis;
 
 class RegisterController extends Controller
 {
@@ -16,7 +16,7 @@ class RegisterController extends Controller
     /**
      * Construct a new controller instance.
      * 
-     * This method is used to get the active period of final project for the current
+     * This method is used to get the active period of thesis for the current
      * user's generation. The period is used in the index method to display the
      * registration form.
      */
@@ -25,7 +25,7 @@ class RegisterController extends Controller
         $this->period = Period::whereHas('generation', function ($query) {
                                     $query->where('name', '>=', Auth::user()->generation->name);
                                 })
-                                ->where('type', 'final_project')
+                                ->where('type', 'thesis')
                                 ->where('start_date', '<=', now())
                                 ->where('end_date', '>=', now())
                                 ->where('is_active', '=', 1)
@@ -33,22 +33,22 @@ class RegisterController extends Controller
     }
 
     /**
-     * Display the final project registration view.
+     * Display the thesis registration view.
      * 
      * @return \Illuminate\View\View
      */
     public function index()
     {
-        $existingFinalProject = FinalProject::with('period')->where('student_id', Auth::user()->id)
+        $existingThesis = Thesis::with('period')->where('student_id', Auth::user()->id)
             ->where('period_id', $this->period->id ?? null)
             ->first();
 
-        $data = $existingFinalProject ?? $this->period;
-        return view('student.final_project.register', compact('data'));
+        $data = $existingThesis ?? $this->period;
+        return view('student.thesis.register', compact('data'));
     }
 
     /**
-     * Store a new final project in the database.
+     * Store a new thesis in the database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
@@ -60,7 +60,7 @@ class RegisterController extends Controller
     {
         try {
             $request->validate([
-                'title' => 'required|unique:final_projects,title',
+                'title' => 'required|unique:thesiss,title',
                 'document' => [
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
@@ -71,7 +71,7 @@ class RegisterController extends Controller
                 ],
             ]);
 
-            FinalProject::create([
+            Thesis::create([
                 'student_id' => Auth::user()->id,
                 'title' => $request['title'],
                 'document' => $request['document'],
@@ -82,7 +82,7 @@ class RegisterController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Anda berhasil mendaftar. Jika ingin memperbaharui data, hubungi administrator.',
-                'redirect_url' => route('student.final_project|.register.index'),
+                'redirect_url' => route('student.thesis|.register.index'),
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -99,7 +99,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Update the specified final project in database.
+     * Update the specified thesis in database.
      * 
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
@@ -110,7 +110,7 @@ class RegisterController extends Controller
     public function update(Request $request): JsonResponse
     {
         try {
-            $data = FinalProject::where('student_id', Auth::user()->id)->first();
+            $data = Thesis::where('student_id', Auth::user()->id)->first();
 
             if (!$data) {
                 return response()->json([
@@ -120,7 +120,7 @@ class RegisterController extends Controller
             }
 
             $request->validate([
-                'title' => 'required|unique:final_projects,title,' . $data->id,
+                'title' => 'required|unique:thesiss,title,' . $data->id,
                 'document' => [
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
@@ -141,7 +141,7 @@ class RegisterController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Anda berhasil mendaftar. Jika ingin memperbaharui data, hubungi administrator.',
-                'redirect_url' => route('student.final_project|.register.index'),
+                'redirect_url' => route('student.thesis|.register.index'),
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([

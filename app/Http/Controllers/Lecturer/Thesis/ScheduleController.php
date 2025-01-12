@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Lecturer\FinalProject;
+namespace App\Http\Controllers\Lecturer\Thesis;
 
 use Carbon\Carbon;
 use Barryvdh\DomPDF\PDF;
@@ -15,13 +15,13 @@ use Illuminate\Support\Facades\Auth;
 class ScheduleController extends Controller
 {
     /**
-     * Display the final project schedule view.
+     * Display the thesis schedule view.
      *
      * @return \Illuminate\View\View
      */
     public function index()
     {
-        return view('lecturer.final_project.schedule');
+        return view('lecturer.thesis.schedule');
     }
 
     /**
@@ -40,7 +40,7 @@ class ScheduleController extends Controller
                     $query->where('primary_examiner_id', Auth::id())
                         ->orWhere('secondary_examiner_id', Auth::id())
                         ->orWhere('tertiary_examiner_id', Auth::id());
-                })->where('type', 'final_project')->orderBy('start_time', 'asc');
+                })->where('type', 'thesis')->orderBy('start_time', 'asc');
 
                 if ($request->has('exam_date')) {
                     $query->whereDate('exam_date', $request->input('exam_date'));
@@ -62,7 +62,7 @@ class ScheduleController extends Controller
 
                     $title = "JADWAL UJIAN TUGAS AKHIR - {$date}";
 
-                    $pdf = $pdf->loadView('exports.final_project.schedule_pdf', [
+                    $pdf = $pdf->loadView('exports.thesis.schedule_pdf', [
                         'data' => $data,
                         'title' => $title,
                     ]);
@@ -86,7 +86,7 @@ class ScheduleController extends Controller
                                     ->orWhere('secondary_examiner_id', Auth::id())
                                     ->orWhere('tertiary_examiner_id', Auth::id());
                             })
-                            ->where('type', 'final_project')
+                            ->where('type', 'thesis')
                             ->orderBy('exam_date', 'desc')
                             ->orderBy('start_time', 'asc')
                             ->get();

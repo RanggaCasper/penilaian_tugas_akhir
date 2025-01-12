@@ -20,7 +20,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('lecturer.final_project.exam.store') }}" data-success="fetchData" method="POST" id="form">
+                <form action="{{ route('lecturer.thesis.exam.store') }}" data-success="fetchData" method="POST" id="form">
                     @csrf
                     <div id="form-display" class="mt-3">
                         <p class="text-muted">Sedang memuat data ...</p>
@@ -52,7 +52,7 @@ $(document).ready(function () {
         form.prepend(`<input type="hidden" name="exam_id" value="${examId}">`);
         
         $.ajax({
-            url: '{{ route("lecturer.final_project.exam.getRubric", ":id") }}'.replace(':id', examId),
+            url: '{{ route("lecturer.thesis.exam.getRubric", ":id") }}'.replace(':id', examId),
             method: 'GET',
             beforeSend: function () {
                 $('#form-display').html('<p class="text-muted">Sedang memuat data...</p>');
@@ -126,7 +126,7 @@ $(document).ready(function () {
 
 function fetchData() {
     $.ajax({
-        url: `{{ route('lecturer.final_project.exam.get') }}`,
+        url: `{{ route('lecturer.thesis.exam.get') }}`,
         type: 'GET',
         beforeSend: function () {
             $('#exam_display').html('<p class="text-muted">Sedang memuat data...</p>');

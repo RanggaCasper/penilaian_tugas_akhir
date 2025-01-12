@@ -40,7 +40,7 @@
     </x-card>
 @endif
 
-@if (!empty($final_project_score['scores']))
+@if (!empty($thesis_score['scores']))
     <x-card title="Hasil Ujian Tugas Akhir">
         <div class="table-responsive">
             <table class="table table-bordered">
@@ -52,7 +52,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($final_project_score['scores'] as $score)
+                    @forelse ($thesis_score['scores'] as $score)
                         <tr>
                             <td>{{ $score['examiner_position'] }}</td>
                             <td>{{ $score['examiner'] }}</td>
@@ -63,10 +63,10 @@
                             <td colspan="3" class="text-center">Data tidak ditemukan.</td>
                         </tr>
                     @endforelse
-                    @if (!empty($final_project_score['average_score']))
+                    @if (!empty($thesis_score['average_score']))
                         <tr>
                             <td colspan="2" class="text-center"><strong>Rata - Rata</strong></td>
-                            <td><strong>{{ number_format($final_project_score['average_score']) }}</strong></td>
+                            <td><strong>{{ number_format($thesis_score['average_score']) }}</strong></td>
                         </tr>
                     @endif
                 </tbody>
@@ -136,7 +136,7 @@
                     <tr>
                         <td>Nilai Tugas Akhir</td>
                         <td>30%</td>
-                        <td>{{ number_format($final_score['final_project_score']) }}</td>
+                        <td>{{ number_format($final_score['thesis_score']) }}</td>
                     </tr>
                     @if (!empty($final_score['mentor_scores']))
                         @foreach ($final_score['mentor_scores'] as $mentor_score)

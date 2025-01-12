@@ -4,7 +4,7 @@
 
 @section('content')
     <x-card title="Tambah Jadwal Ujian">
-        <form action="{{ route('admin.final_project.schedule.store') }}" method="POST">
+        <form action="{{ route('admin.thesis.schedule.store') }}" method="POST">
             @csrf
             <div class="row">
                 <div class="col-lg-6">
@@ -21,7 +21,7 @@
                         <label for="rubric" class="form-label">Rubrik Penilaian</label>
                         <select id="rubric" name="rubric_id" class="form-control select2" 
                                 data-placeholder="-- Pilih Rubrik --" 
-                                data-ajax-url="{{ route('admin.final_project.schedule.getRubric') }}" 
+                                data-ajax-url="{{ route('admin.thesis.schedule.getRubric') }}" 
                                 data-type="rubric"></select>
                     </div>
                 </div>
@@ -30,28 +30,28 @@
                         <label for="student" class="form-label">Mahasiswa</label>
                         <select id="student" name="student_id" class="form-control select2" 
                                 data-placeholder="-- Pilih Mahasiswa --" 
-                                data-ajax-url="{{ route('admin.final_project.schedule.getStudent') }}" 
+                                data-ajax-url="{{ route('admin.thesis.schedule.getStudent') }}" 
                                 data-type="student"></select>
                     </div>
                     <div class="mb-3">
                         <label for="examiner-1" class="form-label">Penguji 1</label>
                         <select id="examiner-1" name="primary_examiner_id" class="form-control select2" 
                                 data-placeholder="-- Pilih Penguji --" 
-                                data-ajax-url="{{ route('admin.final_project.schedule.getExaminer') }}" 
+                                data-ajax-url="{{ route('admin.thesis.schedule.getExaminer') }}" 
                                 data-type="examiner"></select>
                     </div>
                     <div class="mb-3">
                         <label for="examiner-2" class="form-label">Penguji 2</label>
                         <select id="examiner-2" name="secondary_examiner_id" class="form-control select2" 
                                 data-placeholder="-- Pilih Penguji --" 
-                                data-ajax-url="{{ route('admin.final_project.schedule.getExaminer') }}" 
+                                data-ajax-url="{{ route('admin.thesis.schedule.getExaminer') }}" 
                                 data-type="examiner"></select>
                     </div>
                     <div class="mb-3">
                         <label for="examiner-3" class="form-label">Penguji 3</label>
                         <select id="examiner-3" name="tertiary_examiner_id" class="form-control select2" 
                                 data-placeholder="-- Pilih Penguji --" 
-                                data-ajax-url="{{ route('admin.final_project.schedule.getExaminer') }}" 
+                                data-ajax-url="{{ route('admin.thesis.schedule.getExaminer') }}" 
                                 data-type="examiner"></select>
                     </div>
                 </div>
@@ -136,28 +136,28 @@
                             <label for="student_update" class="form-label">Mahasiswa</label>
                             <select id="student_update" name="student_id" class="form-control select2" 
                                     data-placeholder="-- Pilih Mahasiswa --" 
-                                    data-ajax-url="{{ route('admin.final_project.schedule.getStudent') }}" 
+                                    data-ajax-url="{{ route('admin.thesis.schedule.getStudent') }}" 
                                     data-type="student"></select>
                         </div>
                         <div class="mb-3">
                             <label for="examiner-1_update" class="form-label">Penguji 1</label>
                             <select id="examiner-1_update" name="primary_examiner_id" class="form-control select2" 
                                     data-placeholder="-- Pilih Penguji --" 
-                                    data-ajax-url="{{ route('admin.final_project.schedule.getExaminer') }}" 
+                                    data-ajax-url="{{ route('admin.thesis.schedule.getExaminer') }}" 
                                     data-type="examiner"></select>
                         </div>
                         <div class="mb-3">
                             <label for="examiner-2_update" class="form-label">Penguji 2</label>
                             <select id="examiner-2_update" name="secondary_examiner_id" class="form-control select2" 
                                     data-placeholder="-- Pilih Penguji --" 
-                                    data-ajax-url="{{ route('admin.final_project.schedule.getExaminer') }}" 
+                                    data-ajax-url="{{ route('admin.thesis.schedule.getExaminer') }}" 
                                     data-type="examiner"></select>
                         </div>
                         <div class="mb-3">
                             <label for="examiner-3_update" class="form-label">Penguji 3</label>
                             <select id="examiner-3_update" name="tertiary_examiner_id" class="form-control select2" 
                                     data-placeholder="-- Pilih Penguji --" 
-                                    data-ajax-url="{{ route('admin.final_project.schedule.getExaminer') }}" 
+                                    data-ajax-url="{{ route('admin.thesis.schedule.getExaminer') }}" 
                                     data-type="examiner"></select>
                         </div>
                         <div class="mb-3">
@@ -196,7 +196,7 @@
             const fileExtension = format === 'excel' ? 'xlsx' : 'pdf';
 
             $.ajax({
-                url: '{{ route("admin.final_project.schedule.get") }}',
+                url: '{{ route("admin.thesis.schedule.get") }}',
                 type: 'GET',
                 data: {
                     export: format,
@@ -292,14 +292,14 @@
         processing: true,
         serverSide: false,
         scrollX: true,
-        ajax: '{{ route('admin.final_project.schedule.get') }}',
+        ajax: '{{ route('admin.thesis.schedule.get') }}',
         columns: [
             { data: 'no', name: 'no' },
             { data: 'exam_date', name: 'exam_date' },
             { data: 'start_time', name: 'start_time' },
             { data: 'end_time', name: 'end_time' },
             { data: 'student.name', name: 'student.name' },
-            { data: 'student.final_project.title', name: 'student.final_project.title' },
+            { data: 'student.thesis.title', name: 'student.thesis.title' },
             { data: 'is_editable', name: 'is_editable' },
             { data: 'action', name: 'action' },
         ],
@@ -308,10 +308,10 @@
     $('#datatables').on('click', '.edit-btn', function() {
         var id = $(this).data('id');
         $.ajax({
-            url: '{{ route("admin.final_project.schedule.getById", ["id" => ":id"]) }}'.replace(':id', id),
+            url: '{{ route("admin.thesis.schedule.getById", ["id" => ":id"]) }}'.replace(':id', id),
             type: 'GET',
             success: function(data) {
-                $('#form_update').attr('action', '{{ route("admin.final_project.schedule.update", ["id" => ":id"]) }}'.replace(':id', id));
+                $('#form_update').attr('action', '{{ route("admin.thesis.schedule.update", ["id" => ":id"]) }}'.replace(':id', id));
                 $('#exam_date_update').val(data.exam_date);
                 $('#start_time_update').val(data.start_time);
                 $('#end_time_update').val(data.end_time);
@@ -356,7 +356,7 @@
         }).then(function(t) {
             if(t.value) {
                 $.ajax({
-                    url: '{{ route("admin.final_project.schedule.destroy", ["id" => ":id"]) }}'.replace(':id', id),
+                    url: '{{ route("admin.thesis.schedule.destroy", ["id" => ":id"]) }}'.replace(':id', id),
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
