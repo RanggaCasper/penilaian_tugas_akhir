@@ -174,8 +174,9 @@ class ExamController extends Controller
     public function getRubric($id, Request $request)
     {
         try {
-            $thesis = Thesis::where('id', $id)->where('status', 'disetujui')->first();
-
+            $exam = Exam::with('student','student.thesis')->where('id', $id)->where('primary_examiner_id', Auth::id())->orWhere('secondary_examiner_id', Auth::id())->orWhere('tertiary_examiner_id', Auth::id())->first();
+            $thesis = $exam->student->thesis;
+            
             if (!$thesis) {
                 return response()->json([
                     'status' => false,
