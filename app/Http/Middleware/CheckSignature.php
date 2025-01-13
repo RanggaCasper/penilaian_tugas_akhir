@@ -39,7 +39,6 @@ class CheckSignature
             if (md5($data->api_id . ':' . $data->api_key) !== $sign) {
                 return response()->json([
                     'status' => false,
-                    'ip' => $request->ip(),
                     'message' => 'Invalid Signature'
                 ], 401);
             }
