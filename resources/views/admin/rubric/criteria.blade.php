@@ -13,8 +13,8 @@
             <x-input-field label="Bobot" type="number" name="weight" id="weight" />
         </div>
         <div class="mb-3">
-            <label for="rubric_update">Rubrik</label>
-            <select name="rubric_id" id="rubric_update" class="form-control form-select">
+            <label for="rubric">Rubrik</label>
+            <select name="rubric_id" id="rubric" class="form-control form-select">
                 <option selected disabled>-- Pilih Rubrik Penilaian --</option>
                 @foreach (App\Models\Rubric\Rubric::orderBy('name', 'desc')->get() as $item)  
                     @php  
