@@ -17,6 +17,17 @@
                     <div class="mb-3">  
                         <x-input-field label="Tautan Dokumen Pendukung" type="text" value="{{ $data->support_document }}" name="support_document" id="support_document" />  
                     </div>
+                    <div class="mb-3">
+                        <label for="primary_mentor" class="form-label">Tipe</label>
+                        <select name="rubric_id" class="form-select" id="rubric_id">
+                            <option selected disabled>-- Pilih Tipe --</option>
+                            @foreach (\App\Models\Rubric\Rubric::where('program_study_id', auth()->user()->program_study_id)->where('type', 'thesis')->get() as $item)
+                                <option value="{{ $item->id }}"
+                                    {{ $item->id == $data->rubric_id ? 'selected' : '' }}>
+                                    {{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div id="buttons">
                         <x-button type="submit" class="btn btn-primary" label="Submit" />  
                         <x-button type="reset" class="btn btn-danger" label="Reset" />   
@@ -34,6 +45,9 @@
                 </div>
                 <div class="mb-3">
                     <x-input-field label="Tautan Dokumen Pendukung" type="text" name="support_document" value="{{ $data->support_document ?? '-' }}" attr="disabled" />
+                </div>
+                <div class="mb-3">
+                    <x-input-field label="Tipe" type="text" name="rubric_id" value="{{ $data->rubric->name ?? '-' }}" attr="disabled" />
                 </div>
                 <div id="buttons">
                     <p class="p-0 mb-2">Status</p>
@@ -57,13 +71,22 @@
             <form action="{{ route('student.thesis.register.store') }}" data-reset="false" method="POST">  
                 @csrf  
                 <div class="mb-3">  
-                    <x-input-field label="Judul Tugas Akhir" type="text" name="title" id="title" required />  
+                    <x-input-field label="Judul Tugas Akhir" type="text" value="{{ App\Models\Proposal\Proposal::where('student_id', auth()->user()->id)->first()->title ?? ''; }}" name="title" id="title" attr="readonly" />  
                 </div>  
                 <div class="mb-3">  
                     <x-input-field label="Tautan Dokumen" type="text" name="document" id="document" required />  
                 </div>  
                 <div class="mb-3">  
                     <x-input-field label="Tautan Dokumen Pendukung" type="text" name="support_document" id="support_document" />  
+                </div>
+                <div class="mb-3">
+                    <label for="primary_mentor" class="form-label">Tipe</label>
+                    <select name="rubric_id" class="form-select" id="rubric_id">
+                        <option selected disabled>-- Pilih Tipe --</option>
+                        @foreach (\App\Models\Rubric\Rubric::where('program_study_id', auth()->user()->program_study_id)->where('type', 'thesis')->get() as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div id="buttons">
                     <x-button type="submit" class="btn btn-primary" label="Submit" />  

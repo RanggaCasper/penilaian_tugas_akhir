@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rubrics', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type', ['proposal', 'thesis']);
+            $table->enum('type', ['proposal', 'thesis', 'guidance']);
             $table->timestamps();
         });
     }

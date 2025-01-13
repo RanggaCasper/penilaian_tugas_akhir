@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_editable')->default(false);
             $table->foreignId('student_id')->constrained('users');
             $table->foreignId('period_id')->constrained('periods');
+            $table->foreignId('rubric_id')->constrained('rubrics');
             $table->timestamps();
         });
     }

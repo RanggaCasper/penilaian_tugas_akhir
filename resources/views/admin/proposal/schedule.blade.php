@@ -17,13 +17,6 @@
                     <div class="mb-3">
                         <x-input-field label="Ruangan" type="text" name="room" id="room" />
                     </div>
-                    <div class="mb-3">
-                        <label for="rubric" class="form-label">Rubrik Penilaian</label>
-                        <select id="rubric" name="rubric_id" class="form-control select2" 
-                                data-placeholder="-- Pilih Rubrik --" 
-                                data-ajax-url="{{ route('admin.proposal.schedule.getRubric') }}" 
-                                data-type="rubric"></select>
-                    </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="mb-3">
@@ -270,8 +263,6 @@
                         query.role = 'student';
                     } else if (type === 'examiner') {
                         query.role = 'examiner';
-                    } else if (type === 'rubric') {
-                        query.role = 'rubric';
                     }
 
                     return query;

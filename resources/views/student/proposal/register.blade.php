@@ -18,6 +18,17 @@
                         <x-input-field label="Tautan Dokumen Pendukung" type="text" value="{{ $data->support_document }}" name="support_document" id="support_document" />  
                     </div>
                     <div class="mb-3">
+                        <label for="primary_mentor" class="form-label">Tipe</label>
+                        <select name="rubric_id" class="form-select" id="rubric_id">
+                            <option selected disabled>-- Pilih Tipe --</option>
+                            @foreach (\App\Models\Rubric\Rubric::where('program_study_id', auth()->user()->program_study_id)->where('type', 'proposal')->get() as $item)
+                                <option value="{{ $item->id }}"
+                                    {{ $item->id == $data->rubric_id ? 'selected' : '' }}>
+                                    {{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="primary_mentor" class="form-label">Pembimbing 1</label>
                         <select id="primary_mentor" name="primary_mentor_id" class="form-control select2">
                             <option selected disabled>-- Pilih Pembimbing --</option>
@@ -48,6 +59,9 @@
                 </div>
                 <div class="mb-3">
                     <x-input-field label="Tautan Dokumen Pendukung" type="text" name="support_document" value="{{ $data->support_document ?? '-' }}" attr="disabled" />
+                </div>
+                <div class="mb-3">
+                    <x-input-field label="Tipe" type="text" name="rubric_id" value="{{ $data->rubric->name ?? '-' }}" attr="disabled" />
                 </div>
                 <div class="mb-3">
                     <x-input-field label="Pembimbing 1" type="text" name="primary_mentor_id" value="{{ $data->primary_mentor->name ?? '-' }}" attr="disabled" />
@@ -81,6 +95,15 @@
                 </div>  
                 <div class="mb-3">  
                     <x-input-field label="Tautan Dokumen Pendukung" type="text" name="support_document" id="support_document" />  
+                </div>
+                <div class="mb-3">
+                    <label for="primary_mentor" class="form-label">Tipe</label>
+                    <select name="rubric_id" class="form-select" id="rubric_id">
+                        <option selected disabled>-- Pilih Tipe --</option>
+                        @foreach (\App\Models\Rubric\Rubric::where('program_study_id', auth()->user()->program_study_id)->where('type', 'proposal')->get() as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="primary_mentor" class="form-label">Pembimbing 1</label>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Proposal;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Exam\Assessment;
 use Yajra\DataTables\DataTables;
 use App\Models\Proposal\Proposal;
 use Illuminate\Http\JsonResponse;
@@ -80,7 +81,7 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Proposal::with('student', 'primary_mentor', 'secondary_mentor','student.generation')->findOrFail($id);
+                $data = Proposal::with('student', 'primary_mentor', 'rubric', 'guidance_rubric', 'secondary_mentor','student.generation')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -145,6 +146,8 @@ class RegisterController extends Controller
                 $request->validate([
                     'primary_mentor_id' => 'required|exists:users,id',
                     'secondary_mentor_id' => 'nullable|exists:users,id',
+                    'rubric_id' => 'required|exists:rubrics,id',
+                    'guidance_rubric_id' => 'nullable|exists:rubrics,id',
                     'status' => 'required|in:menunggu,disetujui,ditolak',
                     'is_editable' => 'required|boolean',
                 ]);
@@ -167,9 +170,11 @@ class RegisterController extends Controller
                     'primary_mentor_id' => $request->primary_mentor_id,
                     'secondary_mentor_id' => $request->secondary_mentor_id,
                     'status' => $request->status,
+                    'rubric_id' => $request->rubric_id,
+                    'guidance_rubric_id' => $request->guidance_rubric_id,
                     'is_editable' => $request->is_editable
                 ]);
-                
+
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil diubah',
@@ -188,7 +193,7 @@ class RegisterController extends Controller
             } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Terjadi kesalahan saat memperbarui data',
+                    'message' => $e->getMessage(),
                 ], 500);
             }            
         }

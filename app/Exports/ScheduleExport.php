@@ -48,9 +48,9 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                 'No' => $key + 1,
                 'NIM' => $schedule->student->identity,
                 'Mahasiswa' => $schedule->student->name,
-                'Judul' => $schedule->type === 'thesis' 
+                'Judul' => $schedule->type === 'TUGAS AKHIR' 
                             ? ($schedule->student->thesis->title ?? '-') 
-                            : ($schedule->type === 'proposal' 
+                            : ($schedule->type === 'PROPOSAL' 
                                 ? ($schedule->student->proposal->title ?? '-') 
                                 : '-'),
                 'Penguji 1' => $schedule->primary_examiner->name ?? '-',

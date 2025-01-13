@@ -13,6 +13,10 @@ class Assessment extends Model
         'id'
     ];
 
+    protected $casts = [
+        'is_exam' => 'boolean'
+    ];
+
     public function exam()
     {
         return $this->belongsTo(Exam::class, 'exam_id');
@@ -31,5 +35,15 @@ class Assessment extends Model
     public function scores()
     {
         return $this->hasMany(Score::class);
+    }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class, 'assessment_id');
+    }
+
+    public function revisions()
+    {
+        return $this->hasMany(Revision::class, 'assessment_id');
     }
 }

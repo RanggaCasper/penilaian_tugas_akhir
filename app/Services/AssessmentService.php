@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Models\Exam\Exam;
+use App\Models\Rubric\Rubric;
+use App\Models\Exam\Assessment;
+
 class AssessmentService
 {
     /**
@@ -53,8 +56,8 @@ class AssessmentService
                 }
 
                 return [
-                    'examiner_position' => $examinerPosition,
-                    'examiner' => $assessment->examiner->name ?? '-',
+                    'position' => $examinerPosition,
+                    'name' => $assessment->examiner->name ?? '-',
                     'score' => $totalScore,
                 ];
             });
@@ -66,10 +69,10 @@ class AssessmentService
                 'Penguji 2' => 2,
                 'Penguji 3' => 3,
             ];
-            return $positionOrder[$item['examiner_position']] ?? 999;
+            return $positionOrder[$item['position']] ?? 999;
         })->values();
 
-        $groupedScores = $orderedResult->groupBy('examiner_position')->map(function ($scores) {
+        $groupedScores = $orderedResult->groupBy('position')->map(function ($scores) {
             return $scores->avg('score');
         });
 
@@ -92,6 +95,62 @@ class AssessmentService
             'scores' => $orderedResult->toArray(),
             'average_score' => $averageScore,
             'final_score' => $finalScore,
+        ];
+    }
+
+    public function calculateScoreGuidance(int $studentId): array
+    {
+        $rubric = Rubric::with('criterias.sub_criterias')
+                    ->where('type', 'guidance')
+                    ->first();
+
+        if (!$rubric) {
+            return [
+                'status' => false,
+                'message' => 'Rubrik tidak ditemukan.',
+            ];
+        }
+  
+        $assessments = Assessment::with([
+            'scores.criteria',
+            'scores.sub_scores.sub_criteria',
+            'questions',
+            'revisions',
+        ])
+        ->where('student_id', $studentId)
+        ->where('rubric_id', $rubric->id)
+        ->get();
+
+        if ($assessments->isEmpty()) {
+            return [
+                'status' => false,
+                'message' => 'Tidak ada data penilaian.',
+            ];
+        }
+       
+        $result = $assessments->map(function ($assessment, $index) {
+            $totalScore = collect($assessment->scores)->sum(function ($score) {
+                $mainScore = ($score->score ?? 0) * (($score->criteria->weight ?? 0) / 100);
+                $subTotal = collect($score->sub_scores)->sum(function ($subScore) {
+                    return ($subScore->score ?? 0) * (($subScore->sub_criteria->weight ?? 0) / 100);
+                });
+                return $mainScore + $subTotal;
+            });
+
+            return [
+                'position' => 'Pembimbing ' . ($index + 1),
+                'name' => $assessment->examiner->name ?? '-',
+                'score' => $totalScore,
+                'final_score' => $totalScore * 0.3,
+            ];
+        });
+
+        $averageScore = $result->avg('score');
+
+        return [
+            'scores' => $result->toArray(),
+            'average_score' => $averageScore,
+            'final_score' => $result->sum('final_score')
         ];
     }
 }

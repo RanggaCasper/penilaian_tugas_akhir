@@ -32,14 +32,14 @@ Table periods {
   end_date date  
   is_active boolean [default: true]  
   generation_id int [ref: > generations.id]  
-  type enum('proposal', 'final_project')    
+  type enum('proposal', 'thesis')    
 }  
 
 // Tabel Rubrik 
 Table rubrics {  
   id int [pk]  
   name varchar
-  type enum('proposal', 'final_project')
+  type enum('proposal', 'thesis', 'guidance')
 }  
 
 // Tabel Unsur Rubrik
@@ -74,7 +74,7 @@ Table proposals {
 }
 
 // Tabel Tugas Akhir
-Table final_projects {
+Table thesis {
   id int [pk]  
   title varchar  
   document longtext
@@ -93,21 +93,20 @@ Table exams {
   end_time datetime
   room varchar
   is_editable boolean
-  type enum('proposal', 'final_project')
+  type enum('proposal', 'thesis')
   student_id int [ref: > users.id]
   primary_examiner_id int [ref: > users.id]
   secondary_examiner_id int [ref: > users.id]
   tertiary_examiner_id int [ref: > users.id]
-  rubric_id int [ref: > rubrics.id]
 }
 
 // Tabel Penilaian Ujian
 Table assessments {
   id int [pk]
   exam_id int [ref: > exams.id]
+  rubric_id int [ref: > rubrics.id]
   student_id int [ref: > users.id]
   examiner_id int [ref: > users.id]
-  feedback text
 }
 
 // Table Nilai Ujian
@@ -115,7 +114,7 @@ Table scores {
   id int [pk]
   score double
   has_sub boolean
-  assessments_id int [ref: > assessments.id]
+  assessment_id int [ref: > assessments.id]
   criteria_id int [ref: > criterias.id]
 }
 
@@ -125,4 +124,19 @@ Table sub_scores {
   score double
   score_id int [ref: > scores.id]
   sub_criteria_id int [ref: > sub_criterias.id]
+}
+
+Table questions {
+  id int [pk]
+  question varchar
+  weight double
+  assessment_id int [ref: > assessments.id]
+}
+
+Table revisions {
+  id int [pk]
+  description varchar
+  chapter varchar
+  page varchar
+  assessment_id int [ref: > assessments.id]
 }

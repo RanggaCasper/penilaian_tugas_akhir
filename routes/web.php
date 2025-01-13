@@ -287,9 +287,7 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lectur
             Route::get('/', 'index')->name('index');
             Route::get('/get', 'get')->name('get');  
             Route::post('/', 'store')->name('store');  
-            Route::get('/get/score/{id}', 'getScoreById')->name('getScoreById');
-            Route::post('/import', 'import')->name('import');
-            Route::get('/export/template', 'exportTemplate')->name('export.template');
+            Route::get('/get/rubric/{id}', 'getRubric')->name('getRubric');  
         });
     });
 });

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('primary_mentor_id')->constrained('users');
             $table->foreignId('secondary_mentor_id')->nullable()->constrained('users');
             $table->foreignId('period_id')->constrained('periods');
+            $table->foreignId('rubric_id')->constrained('rubrics');
+            $table->foreignId('guidance_rubric_id')->nullable()->constrained('rubrics');
             $table->timestamps();
         });
     }

@@ -51,6 +51,14 @@
                         <div class="col-sm-8" id="detail-title"></div>
                     </div>
                     <div class="mb-3 row">
+                        <label class="col-sm-4 fw-bold">Rubrik</label>
+                        <div class="col-sm-8" id="rubric"></div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 fw-bold">Rubrik Bimbingan</label>
+                        <div class="col-sm-8" id="guidance-rubric"></div>
+                    </div>
+                    <div class="mb-3 row">
                         <label class="col-sm-4 fw-bold">Dokumen</label>
                         <div class="col-sm-8"><a class="btn btn-sm btn-primary" target="_blank" id="detail-document">Lihat Dokumen</a></div>
                     </div>
@@ -84,6 +92,28 @@
                                     data-placeholder="-- Pilih Pembimbing --" 
                                     data-ajax-url="{{ route('admin.proposal.register.getMentor') }}" 
                                     data-type="mentor"></select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="mb-3">
+                                <label for="rubric_id" class="form-label">Rubrik</label>
+                                <select name="rubric_id" class="form-select" id="rubric_id">
+                                    <option selected disabled>-- Pilih Rubrik --</option>
+                                    @foreach (\App\Models\Rubric\Rubric::where('program_study_id', auth()->user()->program_study_id)->where('type', 'proposal')->get() as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="mb-3">
+                                <label for="guidance_rubric_id" class="form-label">Rubrik Bimbingan</label>
+                                <select name="guidance_rubric_id" class="form-select" id="guidance_rubric_id">
+                                    <option selected disabled>-- Pilih Rubrik --</option>
+                                    @foreach (\App\Models\Rubric\Rubric::where('program_study_id', auth()->user()->program_study_id)->where('type', 'guidance')->get() as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="status_update">Edit Status</label>
@@ -182,6 +212,10 @@
                 $('#detail-support-document').attr('href', data.support_document);
                 $('#detail-generation').text(data.student.generation.name);
                 $('#detail-status').text(data.status);
+                $('#rubric').text(data.rubric.name);
+                $('#guidance-rubric').text(data.guidance_rubric && data.guidance_rubric.name ? data.guidance_rubric.name : '-');
+                $('#rubric_id').val(data.rubric_id);
+                $('#guidance_rubric_id').val(data.guidance_rubric_id);
                 $('#status_update').val(data.status);
                 $('#is_editable_update').val(data.is_editable);
                 var primary_mentor = new Option(data.primary_mentor.name, data.primary_mentor.id, true, true);

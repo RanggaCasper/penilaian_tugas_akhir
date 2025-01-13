@@ -15,8 +15,8 @@
                 <tbody>
                     @forelse ($proposal_score['scores'] as $score)
                         <tr>
-                            <td>{{ $score['examiner_position'] }}</td>
-                            <td>{{ $score['examiner'] }}</td>
+                            <td>{{ $score['position'] }}</td>
+                            <td>{{ $score['name'] }}</td>
                             <td>{{ number_format($score['score']) }}</td>
                         </tr>
                     @empty
@@ -54,8 +54,8 @@
                 <tbody>
                     @forelse ($thesis_score['scores'] as $score)
                         <tr>
-                            <td>{{ $score['examiner_position'] }}</td>
-                            <td>{{ $score['examiner'] }}</td>
+                            <td>{{ $score['position'] }}</td>
+                            <td>{{ $score['name'] }}</td>
                             <td>{{ number_format($score['score']) }}</td>
                         </tr>
                     @empty
@@ -79,36 +79,38 @@
     </x-card>
 @endif
 
-@if (!empty($mentor_scores))
-    <x-card title="Nilai Pembimbing">
-        @if ($mentor_scores->isNotEmpty())
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
+@if (!empty($guidance_score['scores']))
+    <x-card title="Hasil Ujian Tugas Akhir">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Posisi Pembimbing</th>
+                        <th>Nama Pembimbing</th>
+                        <th>Nilai</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($guidance_score['scores'] as $score)
                         <tr>
-                            <th>Posisi Pembimbing</th>
-                            <th>Nama Pembimbing</th>
-                            <th>Nilai</th>
+                            <td>{{ $score['position'] }}</td>
+                            <td>{{ $score['name'] }}</td>
+                            <td>{{ number_format($score['score']) }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($mentor_scores as $score)
-                            <tr>
-                                <td>{{ $score['position'] }}</td>
-                                <td>{{ $score['mentor'] }}</td>
-                                <td>{{ number_format($score['score']) }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="text-center">Data tidak ditemukan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        @else
-            <p class="text-center">Data tidak ditemukan.</p>
-        @endif
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-center">Data tidak ditemukan.</td>
+                        </tr>
+                    @endforelse
+                    @if (!empty($guidance_score['average_score']))
+                        <tr>
+                            <td colspan="2" class="text-center"><strong>Rata - Rata</strong></td>
+                            <td><strong>{{ number_format($guidance_score['average_score']) }}</strong></td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
     </x-card>
 @else
     <x-card title="Hasil Ujian Tugas Akhir">
@@ -123,35 +125,39 @@
                 <thead>
                     <tr>
                         <th>Komponen</th>
-                        <th>Persentase</th>
+                        <th>Bobot</th>
                         <th>Nilai</th>
+                        <th>Bobot X Nilai</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Nilai Proposal</td>
                         <td>10%</td>
-                        <td>{{ number_format($final_score['proposal_score']) }}</td>
+                        <td>{{ number_format($final_score['proposal_score']['average_score']) }}</td>
+                        <td>{{ number_format($final_score['proposal_score']['final_score']) }}</td>
                     </tr>
                     <tr>
                         <td>Nilai Tugas Akhir</td>
                         <td>30%</td>
-                        <td>{{ number_format($final_score['thesis_score']) }}</td>
+                        <td>{{ number_format($final_score['thesis_score']['average_score']) }}</td>
+                        <td>{{ number_format($final_score['thesis_score']['final_score']) }}</td>
                     </tr>
-                    @if (!empty($final_score['mentor_scores']))
-                        @foreach ($final_score['mentor_scores'] as $mentor_score)
+                    @if (!empty($final_score['guidance_score']))
+                        @foreach ($final_score['guidance_score']['scores'] as $item)
                             <tr>
                                 <td>
-                                    <strong>{{ $mentor_score['position'] }}</strong>
-                                    <br>{{ $mentor_score['mentor'] }}
+                                    <strong>{{ $item['position'] }}</strong>
+                                    <br>{{ $item['name'] }}
                                 </td>
                                 <td>30%</td>
-                                <td>{{ number_format($mentor_score['final_score']) }}</td>
+                                <td>{{ number_format($item['score']) }}</td>
+                                <td>{{ number_format($item['final_score']) }}</td>
                             </tr>
                         @endforeach
                     @endif
                     <tr>
-                        <td colspan="2" class="text-center"><strong>Nilai Akhir</strong></td>
+                        <td colspan="3" class="text-center"><strong>Nilai Akhir</strong></td>
                         <td><strong>{{ number_format($final_score['total_score']) }}</strong></td>
                     </tr>
                 </tbody>
@@ -159,5 +165,4 @@
         </div>
     </x-card>
 @endif
-
 @endsection

@@ -41,7 +41,7 @@
                                     @endif
                                 </span>
                             </li>
-                            <li class="list-group-item">
+                            <li class="list-group-item">         
                                 <a href="{{ $list->assessments->contains('examiner_id', auth()->id()) ? route('lecturer.thesis.exam.generatePDF', $list->id) : '#' }}" 
                                     class="mb-3 w-100 btn btn-success text-decoration-none"
                                     @if (!$list->assessments->contains('examiner_id', auth()->id()))
@@ -49,7 +49,7 @@
                                         style="pointer-events: none; opacity: 0.6; cursor: not-allowed;"
                                     @endif>
                                     Download Hasil
-                                 </a>                                                                                                                      
+                                 </a>                                                                                                          
                                 <button type="button" class="w-100 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-id="{{ $list->id }}" @if (!$list->is_editable)
                                     disabled
                                 @endif>

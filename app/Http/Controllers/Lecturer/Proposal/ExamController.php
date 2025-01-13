@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Lecturer\Proposal;
 
+use Carbon\Carbon;
 use App\Models\Exam\Exam;
 use Illuminate\Http\Request;
 use App\Models\Exam\SubScore;
+use App\Models\Rubric\Rubric;
 use App\Models\Exam\Assessment;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Proposal\Proposal;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +37,7 @@ class ExamController extends Controller
                     ->orWhere('secondary_examiner_id', Auth::id())
                     ->orWhere('tertiary_examiner_id', Auth::id());
             })
+            ->whereDate('exam_date', Carbon::today())
             ->where('type', 'proposal')
             ->orderBy('start_time', 'asc')
             ->get();
@@ -50,7 +54,6 @@ class ExamController extends Controller
         }
     }
 
-
     public function store(Request $request)
     {
         try {
@@ -61,16 +64,23 @@ class ExamController extends Controller
                 'sub_scores' => $request->has('sub_scores') ? 'required|array' : 'nullable',
                 'sub_scores.*' => $request->has('sub_scores') ? 'required|array' : 'nullable',
                 'sub_scores.*.*' => $request->has('sub_scores') ? 'required|integer|min:0|max:100' : 'nullable',
+                'questions' => $request->has('questions') ? 'array' : 'nullable',
+                'questions.*.question' => $request->has('questions') ? 'required|string' : 'nullable',
+                'questions.*.weight' => $request->has('questions') ? 'required|numeric|min:0|max:100' : 'nullable',
+                'revisions' => $request->has('revisions') ? 'array' : 'nullable',
+                'revisions.*.description' => $request->has('revisions') ? 'required|string' : 'nullable',
+                'revisions.*.chapter' => $request->has('revisions') ? 'required|string' : 'nullable',
+                'revisions.*.page' => $request->has('revisions') ? 'required|string' : 'nullable',
             ]);
-            
-            if (!$request->scores) {
+
+            if (!$request->has('scores') && !$request->has('questions') && !$request->has('revisions')) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Tidak ada aksi penilaian.',
-                ], 422);
+                    'message' => 'Tidak ada aksi yang dilakukan.',
+                ]);
             }
 
-            $exam = Exam::find($request->exam_id);
+            $exam = Exam::with('student', 'student.proposal')->find($request->exam_id);
 
             if (!$exam) {
                 return response()->json([
@@ -84,24 +94,24 @@ class ExamController extends Controller
                     'status' => false,
                     'message' => 'Penilaian tidak dapat diedit.',
                 ], 403);
-            }            
+            }
 
             $assessment = Assessment::updateOrCreate(
                 [
                     'exam_id' => $request->exam_id,
+                    'rubric_id' => $exam->student->proposal->rubric_id,
                     'student_id' => $exam->student_id,
                     'examiner_id' => Auth::id(),
-                ],
-                [
-                    'feedback' => $request->feedback ?? null,
                 ]
             );
 
-            foreach ($request->scores as $criteriaId => $score) {
-                $assessment->scores()->updateOrCreate(
-                    ['criteria_id' => $criteriaId],
-                    ['score' => $score]
-                );
+            if ($request->has('scores')) {
+                foreach ($request->scores as $criteriaId => $score) {
+                    $assessment->scores()->updateOrCreate(
+                        ['criteria_id' => $criteriaId],
+                        ['score' => $score]
+                    );
+                }
             }
 
             if ($request->has('sub_scores') && is_array($request->sub_scores)) {
@@ -110,7 +120,7 @@ class ExamController extends Controller
                         ['criteria_id' => $subCriteriaId],
                         ['score' => null, 'has_sub' => 1]
                     );
-    
+
                     foreach ($subScores as $subScoreId => $subScore) {
                         SubScore::updateOrCreate(
                             ['score_id' => $subScoresRecord->id, 'sub_criteria_id' => $subScoreId],
@@ -118,13 +128,31 @@ class ExamController extends Controller
                         );
                     }
                 }
-            }    
+            }
+
+            if ($request->has('questions') && is_array($request->questions)) {
+                foreach ($request->questions as $questionData) {
+                    $assessment->questions()->firstOrCreate([
+                        'question' => $questionData['question'],
+                        'weight' => $questionData['weight'],
+                    ]);
+                }
+            }
+
+            if ($request->has('revisions') && is_array($request->revisions)) {
+                foreach ($request->revisions as $revisionData) {
+                    $assessment->revisions()->firstOrCreate([
+                        'description' => $revisionData['description'],
+                        'chapter' => $revisionData['chapter'],
+                        'page' => $revisionData['page'],
+                    ]);
+                }
+            }
 
             return response()->json([
                 'status' => true,
                 'message' => 'Data berhasil disimpan.',
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => false,
@@ -142,40 +170,51 @@ class ExamController extends Controller
 
     public function getRubric($id, Request $request)
     {
-        try {  
-            $rubric = Exam::with('rubric', 'rubric.criterias', 'rubric.criterias.sub_criterias')  
-                ->where('id', $id)  
-                ->first();  
-            
-            if (!$rubric->is_editable) {
-                return response()->json([  
-                    'status' => false,  
-                    'message' => 'Nilai tidak dapat di perbarui.'  
-                ], 404);  
+        try {
+            $proposal = Proposal::where('id', $id)->where('status', 'disetujui')->first();
+
+            if (!$proposal) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Proposal tidak ditemukan.',
+                ], 404);
             }
 
-            if (!$rubric) {  
-                return response()->json([  
-                    'status' => false,  
-                    'message' => 'Data tidak ditemukan.'  
-                ], 404);  
-            }  
-    
-            $assessment = Assessment::with('scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')  
-                ->where('exam_id', $id)  
-                ->where('examiner_id', Auth::id())
-                ->first();  
-    
-            return response()->json([  
-                'rubric' => $rubric->rubric,  
-                'assessment' => $assessment  
-            ]);  
+            $rubric = Rubric::with('criterias.sub_criterias')
+                ->where('type', 'proposal')
+                ->where('id', $proposal->rubric_id) 
+                ->first();
+
+            if (!$rubric) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Rubrik tidak ditemukan.',
+                ], 404);
+            }
+
+            $assessment = Assessment::with([
+                'scores.criteria',
+                'scores.sub_scores.sub_criteria',
+                'questions',
+                'revisions',
+            ])
+            ->where('student_id', $proposal->student_id)
+            ->where('examiner_id', Auth::user()->id)
+            ->where('rubric_id', $rubric->id)
+            ->first();
+
+            return response()->json([
+                'rubric' => $rubric,
+                'proposal' => $proposal,
+                'assessment' => $assessment,
+            ]);
         } catch (\Exception $e) {
-            return response()->json([  
-                'status' => false,  
-                'message' => 'Terjadi kesalahan saat mengambil data. Harap coba lagi nanti.'  
-            ], 500);  
-        }  
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function generatePdf($id)
@@ -188,12 +227,12 @@ class ExamController extends Controller
 
             $data = $data->toArray();
 
-            $pdf = Pdf::loadView('exports.assessment_pdf', compact('data'));
+            $pdf = Pdf::loadView('exports.proposal.assessment_pdf', compact('data'));
             return $pdf->download('penilaian_ujian.pdf');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Tidak dapat membuat PDF.',
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

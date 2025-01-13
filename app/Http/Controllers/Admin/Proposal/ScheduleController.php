@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Excel;
 use App\Models\Rubric\Rubric;
 use App\Exports\ScheduleExport;
+use App\Models\Exam\Assessment;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -109,36 +110,35 @@ class ScheduleController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        try {
-            $request->merge([
-                'is_editable' => $request->has('is_editable') ? 1 : 0,
-                'type' => 'proposal',
-            ]);
+        $request->merge([
+            'is_editable' => $request->has('is_editable') ? 1 : 0,
+            'type' => 'proposal',
+        ]);
 
-            $request->validate([
-                'exam_date' => 'required|date',
-                'start_time' => 'required|date_format:H:i',
-                'room' => 'required',
-                'is_editable' => 'required',
-                'student_id' => [
-                    'required',
-                    'exists:users,id',
-                    function ($attribute, $value, $fail) use ($request) {
-                        $exists = Exam::where('student_id', $value)
-                            ->where('type', 'proposal')
-                            ->exists();
-            
-                        if ($exists) {
-                            $fail(__('validation.unique'));
-                        }
-                    },           
-                ],
-                'primary_examiner_id' => 'required|exists:users,id',
-                'secondary_examiner_id' => 'required|exists:users,id',
-                'tertiary_examiner_id' => 'required|exists:users,id',
-                'rubric_id' => 'required|exists:rubrics,id',
-            ]);            
-            
+        $request->validate([
+            'exam_date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'room' => 'required',
+            'is_editable' => 'required',
+            'student_id' => [
+                'required',
+                'exists:users,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    $exists = Exam::where('student_id', $value)
+                        ->where('type', 'proposal')
+                        ->exists();
+        
+                    if ($exists) {
+                        $fail(__('validation.unique'));
+                    }
+                },
+            ],
+            'primary_examiner_id' => 'required|exists:users,id',
+            'secondary_examiner_id' => 'required|exists:users,id',
+            'tertiary_examiner_id' => 'required|exists:users,id',
+        ]);
+        
+        try {
             $examiner = [
                 $request->primary_examiner_id,
                 $request->secondary_examiner_id,
@@ -154,21 +154,14 @@ class ScheduleController extends Controller
 
             $request->merge([
                 'end_time' => Carbon::createFromFormat('H:i', $request->start_time)->addHour()->format('H:i'),
-                'type' => 'proposal',
             ]);
-            
+
             Exam::create($request->all());
-        
+            
             return response()->json([
                 'status' => true,
                 'message' => 'Data berhasil ditambahkan',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $e->errors(),
-            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,

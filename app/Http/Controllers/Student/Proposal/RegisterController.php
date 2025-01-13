@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Proposal\Proposal;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\Rubric\Rubric;
 use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
@@ -62,6 +63,7 @@ class RegisterController extends Controller
         try {
             $request->validate([
                 'title' => 'required|unique:proposals,title',
+                'rubric_id' => 'required|exists:rubrics,id',
                 'document' => [
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
@@ -79,6 +81,7 @@ class RegisterController extends Controller
                 'document' => $request['document'],
                 'support_document' => $request['support_document'],
                 'period_id' => $this->period->id,
+                'rubric_id' => $request['rubric_id'],
                 'primary_mentor_id' => $request['primary_mentor_id']
             ]);
 

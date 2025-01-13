@@ -5,6 +5,7 @@ namespace App\Models\Proposal;
 use App\Models\User;
 use App\Models\Period;
 use App\Models\Mentor\Score;
+use App\Models\Rubric\Rubric;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,14 +37,13 @@ class Proposal extends Model
         return $this->belongsTo(Period::class, 'period_id');
     }
 
-    public function score()
+    public function rubric()
     {
-        return $this->hasOne(Score::class, 'proposal_id')
-                    ->where('mentor_id', Auth::id());
-    }    
+        return $this->belongsTo(Rubric::class, 'rubric_id');
+    } 
 
-    public function scores()
+    public function guidance_rubric()
     {
-        return $this->hasMany(Score::class, 'proposal_id');
-    }
+        return $this->belongsTo(Rubric::class, 'guidance_rubric_id');
+    } 
 }

@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Lecturer\Mentor;
 
-use App\Exports\ScoreTemplateExport;
 use App\Models\Mentor\Score;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Excel;
 use App\Imports\ScoresImport;
+use App\Models\Exam\SubScore;
+use App\Models\Rubric\Rubric;
+use App\Models\Exam\Assessment;
 use Yajra\DataTables\DataTables;
 use App\Models\Proposal\Proposal;
 use Illuminate\Http\JsonResponse;
+use App\Exports\ScoreTemplateExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,10 +33,10 @@ class MentorController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Proposal::with('student','student.generation', 'score')
+                $data = Proposal::with('student','student.generation')
                         ->where(function ($query) {
-                            $query->where('primary_mentor_id', Auth::id())
-                                ->orWhere('secondary_mentor_id', Auth::id());
+                            $query->where('primary_mentor_id', Auth::user()->id)
+                                ->orWhere('secondary_mentor_id', Auth::user()->id);
                         })
                         ->where('status', 'disetujui')
                         ->get();
@@ -43,17 +46,10 @@ class MentorController extends Controller
                         return ++$counter;  
                     })
                     ->editColumn('position', function ($row) {  
-                        if ($row->primary_mentor_id == Auth::id()) {
+                        if ($row->primary_mentor_id == Auth::user()->id) {
                             return 'Pembimbing 1';
-                        } elseif ($row->secondary_mentor_id == Auth::id()) {
+                        } elseif ($row->secondary_mentor_id == Auth::user()->id) {
                             return 'Pembimbing 2';
-                        } else {
-                            return '-';
-                        }
-                    })
-                    ->editColumn('score', function ($row) {  
-                        if ($row->score) {
-                            return $row->score->score;
                         } else {
                             return '-';
                         }
@@ -68,37 +64,7 @@ class MentorController extends Controller
             } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Terjadi kesalahan saat mengambil data',
-                ], 500);
-            }
-        }
-
-        abort(403);
-    }
-
-    /**
-     * Get the specified score by ID.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getScoreById(Request $request, $id): JsonResponse
-    {
-        if ($request->ajax()) {
-            try {
-                $data = Score::where('mentor_id', Auth::user()->id)->where('proposal_id', $id)->first();
-
-                return response()->json($data);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Data tidak ditemukan',
-                ], 404);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => "Terjadi kesalahan saat mengambil data",
+                    'message' => $e->getMessage(),
                 ], 500);
             }
         }
@@ -114,19 +80,15 @@ class MentorController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        if(!$request->proposal_id) {
+            return response()->json([
+                'status' => false,
+                'message' => "Data tidak valid.",
+            ], 404);
+        }
+        
         try {
-            if(!$request->proposal_id) {
-                return response()->json([
-                    'status' => false,
-                    'message' => "Data tidak valid.",
-                ], 404);
-            }
-            
-            $request->validate([
-                'score' => 'required|numeric|min:0|max:100',
-            ]);
-
-            $proposal = Proposal::where('id', $request->proposal_id)->where('primary_mentor_id', Auth::id())->orWhere('secondary_mentor_id', Auth::id())->where('status', 'disetujui')->first();
+            $proposal = Proposal::where('id', $request->proposal_id)->where('primary_mentor_id', Auth::user()->id)->orWhere('secondary_mentor_id', Auth::user()->id)->where('status', 'disetujui')->first();
 
             if(!$proposal) {
                 return response()->json([
@@ -134,21 +96,59 @@ class MentorController extends Controller
                     'message' => "Data tidak valid.",
                 ], 404);
             }
-       
-            Score::updateOrCreate(
+
+            $request->validate([
+                'proposal_id' => 'required|integer|exists:proposals,id',
+                'scores' => $request->has('scores') ? 'required|array' : 'nullable',
+                'scores.*' => $request->has('scores') ? 'required|integer|min:0|max:100' : 'nullable',
+                'sub_scores' => $request->has('sub_scores') ? 'required|array' : 'nullable',
+                'sub_scores.*' => $request->has('sub_scores') ? 'required|array' : 'nullable',
+                'sub_scores.*.*' => $request->has('sub_scores') ? 'required|integer|min:0|max:100' : 'nullable',
+            ]);
+            
+            if (!$request->scores) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada aksi penilaian.',
+                ], 422);
+            } 
+
+            $assessment = Assessment::firstOrCreate(
                 [
-                    'proposal_id' => $proposal->id,
-                    'mentor_id' => Auth::id(),
-                ],
-                [
-                    'score' => $request->score,
+                    'rubric_id' => $proposal->guidance_rubric_id,
+                    'student_id' => $proposal->student_id,
+                    'examiner_id' => Auth::user()->id,
                 ]
-            );            
+            );
+
+            foreach ($request->scores as $criteriaId => $score) {
+                $assessment->scores()->updateOrCreate(
+                    ['criteria_id' => $criteriaId],
+                    ['score' => $score]
+                );
+            }
+
+            if ($request->has('sub_scores') && is_array($request->sub_scores)) {
+                foreach ($request->sub_scores as $subCriteriaId => $subScores) {
+                    $subScoresRecord = $assessment->scores()->updateOrCreate(
+                        ['criteria_id' => $subCriteriaId],
+                        ['score' => null, 'has_sub' => 1]
+                    );
+    
+                    foreach ($subScores as $subScoreId => $subScore) {
+                        SubScore::updateOrCreate(
+                            ['score_id' => $subScoresRecord->id, 'sub_criteria_id' => $subScoreId],
+                            ['score' => $subScore]
+                        );
+                    }
+                }
+            }    
 
             return response()->json([
                 'status' => true,
-                'message' => 'Data berhasil ditambahkan',
+                'message' => 'Data berhasil disimpan.',
             ]);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => false,
@@ -158,58 +158,64 @@ class MentorController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->getMessage(),
+                'message' => 'Terjadi kesalahan saat menyimpan data',
+                'errors' => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Import scores from Excel.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $id
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function import(Request $request, Excel $excel)
+    public function getRubric($id, Request $request): JsonResponse
     {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,csv|max:2048',
-        ]);
-
         try {
-            $import = new ScoresImport();
-            $excel->import($import, $request->file('file'));
+            $proposal = Proposal::where('id', $id)->where('primary_mentor_id', Auth::user()->id)->orWhere('secondary_mentor_id', Auth::user()->id)->where('status', 'disetujui')->first();
 
-            $errors = $import->getErrors();
-
-            if (!empty($errors)) {
+            if (!$proposal) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Beberapa baris gagal diproses.',
-                    'is_file' => true,
-                    'errors' => $errors,
-                ], 422);
+                    'message' => 'Proposal tidak ditemukan.',
+                ], 404);
             }
 
+            $rubric = Rubric::with('criterias.sub_criterias')
+                ->where('type', 'guidance')
+                ->where('id', $proposal->guidance_rubric_id)
+                ->first();
+
+            if (!$rubric) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Rubrik tidak ditemukan.',
+                ], 404);
+            }
+
+            $assessment = Assessment::with([
+                'scores.criteria',
+                'scores.sub_scores.sub_criteria',
+                'questions',
+                'revisions',
+            ])
+            ->where('examiner_id', Auth::user()->id)
+            ->where('student_id', $proposal->student_id)
+            ->where('rubric_id', $rubric->id)
+            ->first();
+
             return response()->json([
-                'status' => true,
-                'message' => 'Data nilai berhasil diimport.',
+                'rubric' => $rubric,
+                'proposal' => $proposal,
+                'assessment' => $assessment,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->getMessage(),
+                'message' => 'Terjadi kesalahan saat mengambil data.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-    /**
-     * Download the score template as an Excel file.
-     *
-     * @param \Maatwebsite\Excel\Excel $excel
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
-     */
-    public function exportTemplate(Excel $excel)
-    {
-        return $excel->download(new ScoreTemplateExport, 'template-nilai.xlsx');
-    }
 }

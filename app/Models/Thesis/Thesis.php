@@ -4,6 +4,7 @@ namespace App\Models\Thesis;
 
 use App\Models\User;
 use App\Models\Period;
+use App\Models\Rubric\Rubric;
 use Illuminate\Database\Eloquent\Model;
 
 class Thesis extends Model
@@ -33,4 +34,9 @@ class Thesis extends Model
     {
         return $this->belongsTo(User::class, 'student_id');
     }
+
+    public function rubric()
+    {
+        return $this->belongsTo(Rubric::class, 'rubric_id');
+    } 
 }

@@ -76,7 +76,7 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Thesis::with('student','student.generation')->findOrFail($id);
+                $data = Thesis::with('student', 'student.generation')->findOrFail($id);
 
                 return response()->json($data);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

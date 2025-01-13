@@ -39,11 +39,10 @@ class RegisterController extends Controller
      */
     public function index()
     {
-        $existingThesis = Thesis::with('period')->where('student_id', Auth::user()->id)
+        $exsiting = Thesis::with('period')->where('student_id', Auth::user()->id)
             ->where('period_id', $this->period->id ?? null)
             ->first();
-
-        $data = $existingThesis ?? $this->period;
+        $data = $exsiting ?? $this->period;
         return view('student.thesis.register', compact('data'));
     }
 
@@ -60,7 +59,8 @@ class RegisterController extends Controller
     {
         try {
             $request->validate([
-                'title' => 'required|unique:thesiss,title',
+                'title' => 'required|unique:thesis,title',
+                'rubric_id' => 'required|exists:rubrics,id',
                 'document' => [
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
@@ -75,6 +75,7 @@ class RegisterController extends Controller
                 'student_id' => Auth::user()->id,
                 'title' => $request['title'],
                 'document' => $request['document'],
+                'rubric_id' => $request['rubric_id'],
                 'support_document' => $request['support_document'],
                 'period_id' => $this->period->id,
             ]);
@@ -82,7 +83,7 @@ class RegisterController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Anda berhasil mendaftar. Jika ingin memperbaharui data, hubungi administrator.',
-                'redirect_url' => route('student.thesis|.register.index'),
+                'redirect_url' => route('student.thesis.register.index'),
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -93,7 +94,7 @@ class RegisterController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -120,7 +121,7 @@ class RegisterController extends Controller
             }
 
             $request->validate([
-                'title' => 'required|unique:thesiss,title,' . $data->id,
+                'title' => 'required|unique:thesis,title,' . $data->id,
                 'document' => [
                     'required',
                     'regex:/^https:\/\/drive\.google\.com\//',
@@ -141,7 +142,7 @@ class RegisterController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Anda berhasil mendaftar. Jika ingin memperbaharui data, hubungi administrator.',
-                'redirect_url' => route('student.thesis|.register.index'),
+                'redirect_url' => route('student.thesis.register.index'),
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([

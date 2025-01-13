@@ -18,12 +18,11 @@ return new class extends Migration
             $table->time('end_time');
             $table->string('room');
             $table->boolean('is_editable')->default(false);
-            $table->enum('type', ['proposal', 'thesis']);
+            $table->enum('type', ['proposal', 'thesis', 'guidance']);
             $table->foreignId('student_id')->constrained('users');
             $table->foreignId('primary_examiner_id')->constrained('users');
             $table->foreignId('secondary_examiner_id')->constrained('users');
             $table->foreignId('tertiary_examiner_id')->constrained('users');
-            $table->foreignId('rubric_id')->constrained('rubrics');
             $table->timestamps();  
         });
     }
