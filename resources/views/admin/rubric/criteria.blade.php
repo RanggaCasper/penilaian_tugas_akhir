@@ -13,12 +13,20 @@
             <x-input-field label="Bobot" type="number" name="weight" id="weight" />
         </div>
         <div class="mb-3">
-            <label for="evaluation">Penilaian</label>
-            <select name="rubric_id" id="evaluation" class="form-control form-select">
-                <option selected disabled>-- Pilih Kriteria Penilaian --</option>
-                @foreach (App\Models\Rubric\Rubric::orderBy('name', 'desc')->get() as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach
+            <label for="rubric_update">Rubrik</label>
+            <select name="rubric_id" id="rubric_update" class="form-control form-select">
+                <option selected disabled>-- Pilih Rubrik Penilaian --</option>
+                @foreach (App\Models\Rubric\Rubric::orderBy('name', 'desc')->get() as $item)  
+                    @php  
+                        $typeLabel = match ($item->type) {  
+                            'thesis' => 'Tugas Akhir',  
+                            'proposal' => 'Proposal',  
+                            'guidance' => 'Bimbingan',  
+                            default => $item->type, 
+                        };  
+                    @endphp  
+                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $typeLabel }}</option>  
+                @endforeach  
             </select>
         </div>
         <div class="mb-3">
@@ -65,12 +73,20 @@
                         <x-input-field label="Bobot" type="number" name="weight" id="weight_update" />
                     </div>
                     <div class="mb-3">
-                        <label for="rubric_update">Penilaian</label>
+                        <label for="rubric_update">Rubrik</label>
                         <select name="rubric_id" id="rubric_update" class="form-control form-select">
-                            <option selected disabled>-- Pilih Kriteria Penilaian --</option>
-                            @foreach (App\Models\Rubric\Rubric::orderBy('name', 'desc')->get() as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                            @endforeach
+                            <option selected disabled>-- Pilih Rubrik Penilaian --</option>
+                            @foreach (App\Models\Rubric\Rubric::orderBy('name', 'desc')->get() as $item)  
+                                @php  
+                                    $typeLabel = match ($item->type) {  
+                                        'thesis' => 'Tugas Akhir',  
+                                        'proposal' => 'Proposal',  
+                                        'guidance' => 'Bimbingan',  
+                                        default => $item->type, 
+                                    };  
+                                @endphp  
+                                <option value="{{ $item->id }}">{{ $item->name }} - {{ $typeLabel }}</option>  
+                            @endforeach  
                         </select>
                     </div>
                     <div class="mb-3">

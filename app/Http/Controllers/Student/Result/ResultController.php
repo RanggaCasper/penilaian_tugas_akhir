@@ -18,16 +18,16 @@ class ResultController extends Controller
         $guidance_score = $assessmentService->calculateScoreGuidance(Auth::user()->id, 'guidance');
         
         $final_score = [
-            'proposal_score' => $proposal_score,
-            'thesis_score' => $thesis_score,
-            'guidance_score' => $guidance_score,
+            'proposal_score' => $proposal_score ?? null,
+            'thesis_score' => $thesis_score ?? null,
+            'guidance_score' => $guidance_score ?? null,
             'total_score' => array_sum([
-                $proposal_score['final_score'],
-                $thesis_score['final_score'],
-                $guidance_score['final_score'],
+                $proposal_score['final_score'] ?? 0,
+                $thesis_score['final_score'] ?? 0,
+                $guidance_score['final_score'] ?? 0,
             ])
         ];
-// dd($final_score);
+
         return view('student.result.result', compact('proposal_score', 'thesis_score', 'guidance_score', 'final_score'));
     }
 }

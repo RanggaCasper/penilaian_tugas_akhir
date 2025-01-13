@@ -55,6 +55,7 @@
                             <option selected disabled>-- Pilih Tipe --</option>
                             <option value="proposal">Proposal</option>
                             <option value="thesis">Tugas Akhir</option>
+                            <option value="guidance">Bimbingan</option>
                         </select>
                     </div>
                     <x-button type="submit" class="btn btn-primary" label="Submit" />

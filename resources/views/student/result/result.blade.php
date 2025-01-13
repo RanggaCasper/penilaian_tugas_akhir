@@ -118,51 +118,59 @@
     </x-card>
 @endif
 
-@if (!empty($final_score))
-    <x-card title="Nilai Akhir">
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Komponen</th>
-                        <th>Bobot</th>
-                        <th>Nilai</th>
-                        <th>Bobot X Nilai</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Nilai Proposal</td>
-                        <td>10%</td>
-                        <td>{{ number_format($final_score['proposal_score']['average_score']) }}</td>
-                        <td>{{ number_format($final_score['proposal_score']['final_score']) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Nilai Tugas Akhir</td>
-                        <td>30%</td>
-                        <td>{{ number_format($final_score['thesis_score']['average_score']) }}</td>
-                        <td>{{ number_format($final_score['thesis_score']['final_score']) }}</td>
-                    </tr>
-                    @if (!empty($final_score['guidance_score']))
-                        @foreach ($final_score['guidance_score']['scores'] as $item)
-                            <tr>
-                                <td>
-                                    <strong>{{ $item['position'] }}</strong>
-                                    <br>{{ $item['name'] }}
-                                </td>
-                                <td>30%</td>
-                                <td>{{ number_format($item['score']) }}</td>
-                                <td>{{ number_format($item['final_score']) }}</td>
-                            </tr>
-                        @endforeach
+@if (!empty($final_score))  
+    <x-card title="Nilai Akhir">  
+        <div class="table-responsive">  
+            <table class="table table-bordered">  
+                <thead>  
+                    <tr>  
+                        <th>Komponen</th>  
+                        <th>Bobot</th>  
+                        <th>Nilai</th>  
+                        <th>Bobot X Nilai</th>  
+                    </tr>  
+                </thead>  
+                <tbody>  
+                    @if (!empty($final_score['proposal_score']['scores']))
+                        <tr>  
+                            <td>Nilai Proposal</td>  
+                            <td>10%</td>  
+                            <td>{{ isset($final_score['proposal_score']['average_score']) ? number_format($final_score['proposal_score']['average_score']) : 'N/A' }}</td>  
+                            <td>{{ isset($final_score['proposal_score']['final_score']) ? number_format($final_score['proposal_score']['final_score']) : 'N/A' }}</td>  
+                        </tr>  
                     @endif
-                    <tr>
-                        <td colspan="3" class="text-center"><strong>Nilai Akhir</strong></td>
-                        <td><strong>{{ number_format($final_score['total_score']) }}</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                    @if (!empty($final_score['thesis_score']['scores']))
+                        <tr>  
+                            <td>Nilai Tugas Akhir</td>  
+                            <td>30%</td>  
+                            <td>{{ isset($final_score['thesis_score']['average_score']) ? number_format($final_score['thesis_score']['average_score']) : 'N/A' }}</td>  
+                            <td>{{ isset($final_score['thesis_score']['final_score']) ? number_format($final_score['thesis_score']['final_score']) : 'N/A' }}</td>  
+                        </tr>  
+                    @endif
+                    @if (!empty($final_score['guidance_score']['scores']))  
+                        @foreach ($final_score['guidance_score']['scores'] as $item)  
+                            <tr>  
+                                <td>  
+                                    <strong>{{ $item['position'] }}</strong>  
+                                    <br>{{ $item['name'] }}  
+                                </td>  
+                                <td>30%</td>  
+                                <td>{{ isset($item['score']) ? number_format($item['score']) : 'N/A' }}</td>  
+                                <td>{{ isset($item['final_score']) ? number_format($item['final_score']) : 'N/A' }}</td>  
+                            </tr>  
+                        @endforeach  
+                    @endif  
+                    <tr>  
+                        <td colspan="3" class="text-center"><strong>Nilai Akhir</strong></td>  
+                        <td><strong>{{ isset($final_score['total_score']) ? number_format($final_score['total_score']) : 'N/A' }}</strong></td>  
+                    </tr>  
+                </tbody>  
+            </table>  
+        </div>  
+    </x-card>  
+@else
+    <x-card title="Hasil Ujian Tugas Akhir">
+        <p class="text-center">Data tidak ditemukan.</p>
     </x-card>
 @endif
 @endsection
