@@ -131,7 +131,7 @@
                     $('#form_update').attr('action', '{{ route("admin.rubric.criteria.update", ["id" => ":id"]) }}'.replace(':id', id));
                     $('#name_update').val(data.name);
                     $('#weight_update').val(data.weight);
-                    $('#rubric_update').val(data.rubric.id);
+                    $('#rubric_update').val(data.rubric_id);
                     $('#has_sub_update').prop('checked', !!data.has_sub);
                 },
                 error: function(error) {

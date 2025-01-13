@@ -171,7 +171,15 @@ class ExamController extends Controller
     public function getRubric($id, Request $request)
     {
         try {
-            $exam = Exam::with('student','student.proposal')->where('id', $id)->where('primary_examiner_id', Auth::id())->orWhere('secondary_examiner_id', Auth::id())->orWhere('tertiary_examiner_id', Auth::id())->first();
+            $exam = Exam::with('student', 'student.proposal')
+                            ->where('id', $id)
+                            ->where(function ($query) {
+                                $query->where('primary_examiner_id', Auth::id())
+                                    ->orWhere('secondary_examiner_id', Auth::id())
+                                    ->orWhere('tertiary_examiner_id', Auth::id());
+                            })
+                            ->first();
+        
             $proposal = $exam->student->proposal;
 
             if (!$proposal) {
