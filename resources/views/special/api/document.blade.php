@@ -64,7 +64,7 @@ $apiId = '{{ $data->api_id }}'; // Api Id Anda
 $apiKey = '{{ $data->api_key }}'; // Api Key Anda
 
 // Buat Signature
-$sign = md5($apiId . ':' . $apiKey);
+$signature = md5($apiId . ':' . $apiKey);
 
 $curl = curl_init();
 
@@ -74,7 +74,7 @@ curl_setopt_array($curl, [
     CURLOPT_HTTPHEADER => [
         'Content-Type: application/json',
         'key: ' . $apiKey,                // Tambahkan API key ke header
-        'sign: ' . $sign                  // Tambahkan signature ke header
+        'signature: ' . $signature                  // Tambahkan signature ke header
     ],
     CURLOPT_FAILONERROR => true
 ]);

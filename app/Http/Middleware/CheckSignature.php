@@ -18,7 +18,7 @@ class CheckSignature
     {
         try {
             $key = $request->header('key');
-            $sign = $request->header('sign');
+            $sign = $request->header('signature');
 
             if (!$key || !$sign) {
                 return response()->json([
