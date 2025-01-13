@@ -5,23 +5,28 @@
 <x-card title="Request">
     <ul class="mb-3 nav nav-tabs nav-border-top nav-border-top-primary" role="tablist">
         <li class="nav-item" role="presentation">
-            <a class="nav-link active" data-bs-toggle="tab" href="#nav-border-top-home" role="tab" aria-selected="true">
+            <a class="nav-link active" data-bs-toggle="tab" href="#endpoint" role="tab" aria-selected="true">
                 Endpoint
             </a>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" data-bs-toggle="tab" href="#nav-border-top-profile" role="tab" aria-selected="false" tabindex="-1">
+            <a class="nav-link" data-bs-toggle="tab" href="#header" role="tab" aria-selected="false" tabindex="-1">
                 Header
             </a>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" data-bs-toggle="tab" href="#nav-border-top-messages" role="tab" aria-selected="false" tabindex="-1">
+            <a class="nav-link" data-bs-toggle="tab" href="#body" role="tab" aria-selected="false" tabindex="-1">
+                Body
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" href="#request" role="tab" aria-selected="false" tabindex="-1">
                 Contoh Request
             </a>
         </li>
     </ul>
     <div class="tab-content text-muted">
-        <div class="tab-pane active show" id="nav-border-top-home" role="tabpanel">
+        <div class="tab-pane active show" id="endpoint" role="tabpanel">
             <div class="d-flex">
                 <div class="flex-shrink-0">
                     <span class="badge bg-primary">POST</span>
@@ -31,7 +36,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane" id="nav-border-top-profile" role="tabpanel">
+        <div class="tab-pane" id="header" role="tabpanel">
             <table class="table table-responsive">
                 <thead>
                     <tr>
@@ -54,7 +59,27 @@
                 </tbody>
             </table>
         </div>
-        <div class="tab-pane" id="nav-border-top-messages" role="tabpanel"><pre><code data-language="php">
+        <div class="tab-pane" id="body" role="tabpanel">
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Wajib</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NIM</td>
+                        <td>{nim}</td>
+                        <td>Tidak</td>
+                        <td>Masukan NIM untuk mengambil data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane" id="request" role="tabpanel"><pre><code data-language="php">
 &lt;?php
 // Endpoint API
 $apiUrl = '{{ route('api.proposal.get') }}';
@@ -66,6 +91,15 @@ $apiKey = '{{ $data->api_key }}'; // Api Key Anda
 // Buat Signature
 $signature = md5($apiId . ':' . $apiKey);
 
+// Nim yang ingin difilter
+$nim = '2215354079'; // Ganti dengan nim yang diinginkan
+
+// Data yang akan dikirimkan dalam body
+$requestData = [
+    'nim' => $nim
+];
+
+// Inisialisasi cURL
 $curl = curl_init();
 
 curl_setopt_array($curl, [
@@ -73,12 +107,15 @@ curl_setopt_array($curl, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
         'Content-Type: application/json',
-        'key: ' . $apiKey,                // Tambahkan API key ke header
+        'key: ' . $apiKey,                          // Tambahkan API key ke header
         'signature: ' . $signature                  // Tambahkan signature ke header
     ],
+    CURLOPT_POST => true,
+    CURLOPT_POSTFIELDS => json_encode($requestData), // Kirimkan nim dalam body JSON (Hapus jika tidak dibutuhkan)
     CURLOPT_FAILONERROR => true
 ]);
 
+// Eksekusi cURL
 $response = curl_exec($curl);
 $error = curl_error($curl);
 
@@ -112,13 +149,43 @@ if ($error) {
 </x-card>
 
 <x-card title="Response">
-    <h6>Response Sukses (200 OK)</h6>
+    <h6>Response Sukses (200 OK) - Tanpa Fillter</h6>
     <pre><code data-language="json">
 {
     "status": true,
     "data": [
         {
             "id": 1,
+            "nim": "2215354059",
+            "status": false
+        },
+        {
+            "id": 2,
+            "nim": "2215354071",
+            "status": true
+        },
+        {
+            "id": 3,
+            "nim": "2215354079",
+            "status": true
+        },
+        {
+            "id": 4,
+            "nim": "2215354091",
+            "status": false
+        }
+    ]
+}
+
+</code></pre>
+
+<h6>Response Sukses (200 OK) - Dengan Fillter NIM</h6>
+    <pre><code data-language="json">
+{
+    "status": true,
+    "data": [
+        {
+            "id": 3,
             "nim": "2215354079",
             "status": true
         }

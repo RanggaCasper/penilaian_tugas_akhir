@@ -13,21 +13,29 @@ class ProposalController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function get()
+    public function get(Request $request)
     {
         try {
-            $exams = Exam::with('student')->where('type', 'proposal')->get();
-        
+            $query = Exam::with('student')->where('type', 'proposal');
+            
+            if ($request->has('nim')) {
+                $query->whereHas('student', function ($query) use ($request) {
+                    $query->where('identity', $request->nim);
+                });
+            }
+
+            $exams = $query->get();
+
             $data = $exams->map(function($exam) {
-                try {                 
+                try {
                     $end_exam = Carbon::parse($exam->exam_date . ' ' . $exam->end_time);
-        
+            
                     return [
                         'id' => $exam->id,
                         'nim' => $exam->student->identity,
                         'status' => $end_exam->isPast()
                     ];
-                } catch (\Exception $e) {                  
+                } catch (\Exception $e) {  
                     return [
                         'id' => $exam->id,
                         'nim' => $exam->student->identity ?? 'Unknown',
@@ -35,7 +43,7 @@ class ProposalController extends Controller
                     ];
                 }
             });
-        
+
             return response()->json([
                 'status' => true,
                 'data' => $data,
