@@ -16,7 +16,9 @@ Route::post('auth/logout', [\App\Http\Controllers\Auth\LoginController::class, '
 // Super Admin
 Route::prefix('super')->as('super.')->middleware('auth', 'checkRole:Super')->group(function () {
     Route::get('/', [\App\Http\Controllers\Super\DashboardController::class, 'index'])->name('dashboard');
-
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'store'])->name('profile.store');
+    
     // Mahasiswa
     Route::prefix('student')->as('student.')->group(function () {
         Route::controller(\App\Http\Controllers\Super\Student\StudentController::class)->group(function () {
@@ -43,6 +45,8 @@ Route::prefix('super')->as('super.')->middleware('auth', 'checkRole:Super')->gro
 // Admin
 Route::prefix('admin')->as('admin.')->middleware('auth', 'checkRole:Admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'store'])->name('profile.store');
 
     // Periode Ujian
     Route::prefix('period')->as('period.')->group(function () {
@@ -179,6 +183,8 @@ Route::prefix('admin')->as('admin.')->middleware('auth', 'checkRole:Admin')->gro
 // Mahasiswa
 Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student')->group(function () {
     Route::get('/', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'store'])->name('profile.store');
 
     // Proposal
     Route::prefix('proposal')->as('proposal.')->group(function () {
@@ -234,6 +240,8 @@ Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student'
 // Dosen
 Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lecturer')->group(function () {
     Route::get('/', [App\Http\Controllers\Lecturer\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'store'])->name('profile.store');
 
     // Proposal
     Route::prefix('proposal')->as('proposal.')->group(function () {
@@ -294,6 +302,9 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lectur
 
 // Special
 Route::prefix('special')->as('special.')->middleware('auth', 'checkRole:Special')->group(function () {
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'store'])->name('profile.store');
+    
     Route::get('/', [App\Http\Controllers\Special\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/api', [App\Http\Controllers\Special\Api\ApiController::class, 'index'])->name('api.setting');
     Route::post('/api/regenerate', [App\Http\Controllers\Special\Api\ApiController::class, 'regenerate'])->name('api.regenerate');
