@@ -9,6 +9,7 @@ use App\Imports\ScoresImport;
 use App\Models\Exam\SubScore;
 use App\Models\Rubric\Rubric;
 use App\Models\Exam\Assessment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
 use App\Models\Proposal\Proposal;
 use Illuminate\Http\JsonResponse;
@@ -54,11 +55,16 @@ class MentorController extends Controller
                             return '-';
                         }
                     })
-                    ->addColumn('action', function ($row) {  
-                        return '  
-                            <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Nilai</button>  
-                        ';  
-                    })  
+                    ->addColumn('action', function ($row) {
+                        $assessment = $row->student->assessments()->where('examiner_id', Auth::user()->id)->first();
+                        $buttons = '<button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Nilai</button>';
+                    
+                        if ($assessment) {
+                            $buttons .= ' <a href="' . route('lecturer.mentor.generatePDF', $row->student->id) . '" class="btn btn-success btn-sm">Download</a>';
+                        }
+                    
+                        return $buttons;
+                    })                                     
                     ->rawColumns(['action'])
                     ->make(true);
             } catch (\Exception $e) {
@@ -218,4 +224,24 @@ class MentorController extends Controller
         }
     }
 
+    public function generatePdf($id)
+    {
+        try {
+            $data = Assessment::with('student', 'student.proposal', 'examiner', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')
+                ->where('student_id', $id)
+                ->where('examiner_id', Auth::id())
+                ->firstOrFail();
+
+            $data = $data->toArray();
+
+            $pdf = Pdf::loadView('exports.mentor.assessment_pdf', compact('data'));
+            
+            return $pdf->download('penilaian_pembimbing.pdf');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

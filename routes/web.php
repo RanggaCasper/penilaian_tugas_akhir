@@ -234,6 +234,13 @@ Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student'
         Route::controller(\App\Http\Controllers\Student\Result\ResultController::class)->group(function () {
             Route::get('/', 'index')->name('index');
         });
+
+        // Dokumen
+        Route::prefix('document')->as('document.')->group(function () {
+            Route::controller(\App\Http\Controllers\Student\Result\DocumentController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+            });
+        });
     });
 });
 
@@ -296,6 +303,7 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lectur
             Route::get('/get', 'get')->name('get');  
             Route::post('/', 'store')->name('store');  
             Route::get('/get/rubric/{id}', 'getRubric')->name('getRubric');  
+            Route::get('/download/pdf/{id}', 'generatePDF')->name('generatePDF'); 
         });
     });
 });
@@ -304,7 +312,7 @@ Route::prefix('lecturer')->as('lecturer.')->middleware('auth', 'checkRole:Lectur
 Route::prefix('special')->as('special.')->middleware('auth', 'checkRole:Special')->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
     Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'store'])->name('profile.store');
-    
+
     Route::get('/', [App\Http\Controllers\Special\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/api', [App\Http\Controllers\Special\Api\ApiController::class, 'index'])->name('api.setting');
     Route::post('/api/regenerate', [App\Http\Controllers\Special\Api\ApiController::class, 'regenerate'])->name('api.regenerate');
