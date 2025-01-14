@@ -16,7 +16,6 @@ class ResultController extends Controller
         $proposal_score = $assessmentService->calculateScore(Auth::user()->id, 'proposal');
         $thesis_score = $assessmentService->calculateScore(Auth::user()->id, 'thesis');
         $guidance_score = $assessmentService->calculateScoreGuidance(Auth::user()->id, 'guidance');
-        
         $final_score = [
             'proposal_score' => $proposal_score ?? null,
             'thesis_score' => $thesis_score ?? null,

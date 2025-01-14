@@ -113,7 +113,7 @@
         </div>
     </x-card>
 @else
-    <x-card title="Hasil Ujian Tugas Akhir">
+    <x-card title="Nilai Pembimbing">
         <p class="text-center">Data tidak ditemukan.</p>
     </x-card>
 @endif

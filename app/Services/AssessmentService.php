@@ -56,6 +56,7 @@ class AssessmentService
                 }
 
                 return [
+                    'id' => $assessment->examiner->id,
                     'position' => $examinerPosition,
                     'name' => $assessment->examiner->name ?? '-',
                     'score' => $totalScore,
@@ -138,6 +139,7 @@ class AssessmentService
             });
 
             return [
+                'id' => $assessment->examiner->id,
                 'position' => 'Pembimbing ' . ($index + 1),
                 'name' => $assessment->examiner->name ?? '-',
                 'score' => $totalScore,
