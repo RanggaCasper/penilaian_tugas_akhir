@@ -23,7 +23,7 @@ class DocumentController extends Controller
     public function generatePdf($type, $id)
     {
         try {
-            $data = Assessment::with('student', 'student.proposal', 'examiner', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')
+            $data = Assessment::with('student', 'student.proposal', 'student.thesis', 'examiner', 'scores.criteria', 'scores.sub_scores', 'scores.sub_scores.sub_criteria')
                 ->where('student_id', Auth::id())
                 ->where('examiner_id', $id)
                 ->firstOrFail();
