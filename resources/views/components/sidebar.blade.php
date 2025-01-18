@@ -48,7 +48,6 @@
                     <x-menu-title title="Pengguna" />
                         <x-navlink icon="ri-user-line" title="Kelola Mahasiswa" href="{{ route('super.student.index') }}" active="{{ request()->routeIs('super.student.index') }}" />
                         <x-navlink icon="ri-user-line" title="Kelola Dosen" href="{{ route('super.lecturer.index') }}" active="{{ request()->routeIs('super.lecturer.index') }}" />
-                            
                 @elseif (auth()->user()->role->name == "Admin")
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('admin.dashboard') }}" active="{{ request()->routeIs('admin.dashboard') }}" />
                     <x-menu-title title="Pengguna" />
@@ -62,6 +61,8 @@
                     <x-menu-title title="Tugas Akhir" />
                         <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.thesis.register.index') }}" active="{{ request()->routeIs('admin.thesis.register.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('admin.thesis.schedule.index') }}" active="{{ request()->routeIs('admin.thesis.schedule.index') }}" />
+                    <x-menu-title title="Laporan Hasil" />
+                        <x-navlink icon="ri-file-list-3-line" title="Laporan Hasil Nilai" href="{{ route('admin.result.index') }}" active="{{ request()->routeIs('admin.result.index') }}" />
                     <x-menu-title title="Rubrik Penilaian" />
                         <x-navlink icon="ri-file-edit-line" title="Rubrik" href="{{ route('admin.rubric.index') }}" active="{{ request()->routeIs('admin.rubric.index') }}" />
                         <x-navlink icon="ri-file-edit-line" title="Kriteria" href="{{ route('admin.rubric.criteria.index') }}" active="{{ request()->routeIs('admin.rubric.criteria.index') }}" />

@@ -178,6 +178,17 @@ Route::prefix('admin')->as('admin.')->middleware('auth', 'checkRole:Admin')->gro
             Route::delete('{id}', 'destroy')->name('destroy');
         });
     });
+
+    // Hasil
+    Route::prefix('result')->as('result.')->group(function () {       
+        Route::controller(\App\Http\Controllers\Admin\Result\ResultController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/get', 'get')->name('get');
+            Route::get('/get/{id}', 'getById')->name('getById');
+            Route::put('{id}', 'update')->name('update');
+            Route::get('/download/{type}/{id}/{download}', 'download')->name('download');            
+        });
+    });
 });
 
 // Mahasiswa
