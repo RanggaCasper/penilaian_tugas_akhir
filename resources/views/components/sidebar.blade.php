@@ -62,7 +62,8 @@
                         <x-navlink icon="ri-user-add-line" title="Kelola Pendaftaran" href="{{ route('admin.thesis.register.index') }}" active="{{ request()->routeIs('admin.thesis.register.index') }}" />
                         <x-navlink icon="ri-calendar-event-line" title="Jadwal Ujian" href="{{ route('admin.thesis.schedule.index') }}" active="{{ request()->routeIs('admin.thesis.schedule.index') }}" />
                     <x-menu-title title="Laporan Hasil" />
-                        <x-navlink icon="ri-file-list-3-line" title="Laporan Hasil Nilai" href="{{ route('admin.result.index') }}" active="{{ request()->routeIs('admin.result.index') }}" />
+                        <x-navlink icon="ri-file-list-3-line" title="Laporan Nilai Ujian" href="{{ route('admin.result.score.index') }}" active="{{ request()->routeIs('admin.result.score.index') }}" />
+                        <x-navlink icon="ri-file-list-3-line" title="Laporan Nilai Akhir" href="{{ route('admin.result.final_score.index') }}" active="{{ request()->routeIs('admin.result.final_score.index') }}" />
                     <x-menu-title title="Rubrik Penilaian" />
                         <x-navlink icon="ri-file-edit-line" title="Rubrik" href="{{ route('admin.rubric.index') }}" active="{{ request()->routeIs('admin.rubric.index') }}" />
                         <x-navlink icon="ri-file-edit-line" title="Kriteria" href="{{ route('admin.rubric.criteria.index') }}" active="{{ request()->routeIs('admin.rubric.criteria.index') }}" />

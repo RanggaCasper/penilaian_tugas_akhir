@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
-class ScoresExport implements FromCollection, WithHeadings, WithStyles, WithEvents, WithCustomStartCell
+class ScoreExport implements FromCollection, WithHeadings, WithStyles, WithEvents, WithCustomStartCell
 {
     protected $data;
     protected $title;
@@ -68,7 +68,6 @@ class ScoresExport implements FromCollection, WithHeadings, WithStyles, WithEven
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                // Judul di baris pertama
                 $sheet->mergeCells('A1:G1');
                 $sheet->setCellValue('A1', $this->title);
                 $sheet->getStyle('A1')->applyFromArray([
@@ -79,7 +78,6 @@ class ScoresExport implements FromCollection, WithHeadings, WithStyles, WithEven
                     ],
                 ]);
 
-                // Header tabel
                 $sheet->getStyle('A3:G3')->applyFromArray([
                     'font' => [
                         'bold' => true,
@@ -101,7 +99,6 @@ class ScoresExport implements FromCollection, WithHeadings, WithStyles, WithEven
                     ],
                 ]);
 
-                // Isi tabel
                 $rowCount = 3 + count($this->data);
                 $sheet->getStyle("A4:G{$rowCount}")->applyFromArray([
                     'fill' => [
@@ -120,12 +117,10 @@ class ScoresExport implements FromCollection, WithHeadings, WithStyles, WithEven
                     ],
                 ]);
 
-                // Autofit kolom
                 foreach (range('A', 'G') as $column) {
                     $sheet->getColumnDimension($column)->setAutoSize(true);
                 }
 
-                // Filter pada header
                 $sheet->setAutoFilter('A3:G3');
             },
         ];
@@ -133,6 +128,6 @@ class ScoresExport implements FromCollection, WithHeadings, WithStyles, WithEven
 
     public function startCell(): string
     {
-        return 'A3'; // Header dimulai dari baris 3
+        return 'A3';
     }
 }
