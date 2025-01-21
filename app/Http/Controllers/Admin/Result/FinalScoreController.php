@@ -24,7 +24,9 @@ class FinalScoreController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Period::with('generation')->select(['id', 'name', 'generation_id', 'type'])->where('type', 'proposal');
+                $data = Period::with('generation')->select(['id', 'name', 'generation_id', 'type'])
+                        ->where('program_study_id', Auth::user()->program_study_id)
+                        ->where('type', 'proposal');
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

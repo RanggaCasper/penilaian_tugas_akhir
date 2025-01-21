@@ -68,7 +68,7 @@ class RubricController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Rubric::select(['id', 'name', 'type']);
+                $data = Rubric::select(['id', 'name', 'type'])->where('program_study_id', Auth::user()->program_study_id);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

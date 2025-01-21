@@ -24,7 +24,8 @@ class ScoreController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Period::with('generation')->select(['id', 'name', 'generation_id', 'type']);
+                $data = Period::with('generation')->select(['id', 'name', 'generation_id', 'type'])
+                        ->where('program_study_id', Auth::user()->program_study_id);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

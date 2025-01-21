@@ -9,6 +9,7 @@ use Yajra\DataTables\DataTables;
 use App\Models\Proposal\Proposal;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -27,7 +28,10 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Proposal::with('student', 'primary_mentor', 'secondary_mentor', 'student.generation')->get();
+                $data = Proposal::with('student', 'primary_mentor', 'secondary_mentor', 'student.generation')
+                        ->whereHas('student.program_study', function($query) {
+                            $query->where('id', Auth::user()->program_study->id);
+                        })->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

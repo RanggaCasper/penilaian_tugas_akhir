@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin\Rubric;
 
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use App\Models\Rubric\Criteria;
+use Yajra\DataTables\DataTables;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class CriteriaController extends Controller
 {
@@ -78,7 +79,10 @@ class CriteriaController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Criteria::with('Rubric')->select(['id', 'name', 'weight', 'rubric_id', 'has_sub']);
+                $data = Criteria::with('rubric')->select(['id', 'name', 'weight', 'rubric_id', 'has_sub'])
+                        ->whereHas('rubric', function ($query) {  
+                            $query->where('program_study_id', Auth::user()->program_study_id); // Replace as needed  
+                        });
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

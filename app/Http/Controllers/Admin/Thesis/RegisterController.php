@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin\Thesis;
 
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
-use App\Http\Controllers\Controller;
 use App\Models\Thesis\Thesis;
+use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -25,7 +26,11 @@ class RegisterController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Thesis::with('student','student.generation')->get();
+                $data = Thesis::with('student','student.generation')
+                        ->whereHas('student.program_study', function($query) {
+                            $query->where('id', Auth::user()->program_study->id);
+                        })
+                        ->get();
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  

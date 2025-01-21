@@ -72,7 +72,7 @@ class PeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $data = Period::with('generation')->select(['id', 'name', 'start_date', 'end_date', 'generation_id', 'type', 'is_active']);
+                $data = Period::with('generation')->select(['id', 'name', 'start_date', 'end_date', 'generation_id', 'type', 'is_active', 'program_study_id'])->where('program_study_id', Auth::user()->program_study_id);
                 return DataTables::of($data)  
                     ->addColumn('no', function ($row) {  
                         static $counter = 0;  
@@ -202,7 +202,7 @@ class PeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = Period::with('proposals')->findOrFail($id);
+                $periode = Period::with('proposals')->where('program_study_id', Auth::user()->program_study_id)->findOrFail($id);
             
                 if ($periode->proposals()->count() > 0 || $periode->thesis()->count() > 0) {  
                     return response()->json([  
