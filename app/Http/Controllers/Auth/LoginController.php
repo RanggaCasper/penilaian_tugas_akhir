@@ -40,12 +40,12 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        if (env('APP_ENV') !== 'production') {
+        if (env('APP_ENV') == 'production') {
             $request->validate([
                 'g-recaptcha-response' => 'required|captcha'
             ]);
         }
-        
+
         $credentials = $request->validate([
             'identity' => 'required',
             'password' => 'required',
