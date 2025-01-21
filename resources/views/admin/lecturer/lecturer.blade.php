@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Periode Ujian Tugas Akhir')
+@section('title', 'Kelola Dosen')
 
 @section('content')
     <x-card title="Data Dosen">         
