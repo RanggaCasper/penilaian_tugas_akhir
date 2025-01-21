@@ -80,7 +80,7 @@
 @endif
 
 @if (!empty($guidance_score['scores']))
-    <x-card title="Hasil Ujian Tugas Akhir">
+    <x-card title="Nilai Pembimbing ">
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
