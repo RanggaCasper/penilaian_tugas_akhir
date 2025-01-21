@@ -1,20 +1,19 @@
-<?php
+<?php  
 
-namespace App\Http\Middleware;
+namespace App\Http\Middleware;  
 
-use Closure;
-use App\Models\ApiKey;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
-use Symfony\Component\HttpFoundation\Response;
+use Closure;  
+use App\Models\ApiKey;  
+use Illuminate\Http\Request;  
+use Symfony\Component\HttpFoundation\Response;  
 
-class CheckSignature
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
+class CheckSignature  
+{  
+    /**  
+     * Handle an incoming request.  
+     *  
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next  
+     */  
     public function handle(Request $request, Closure $next)  
     {  
         try {  
@@ -44,33 +43,19 @@ class CheckSignature
                 ], 401);  
             }  
 
-            $ip = $request->ip();  
-            $keyIdentifier = 'api:' . $key;  
-            $maxAttempts = 30;  
-            $decayMinutes = 1;  
-
-            if (RateLimiter::tooManyAttempts($keyIdentifier, $maxAttempts)) {  
-                return response()->json([  
-                    'status' => false,  
-                    'message' => 'Too many requests. Please try again later.'  
-                ], 429);  
-            }  
-
-            RateLimiter::hit($keyIdentifier, $decayMinutes);  
-
             $userIp = $request->ip();  
             $whiteIps = $data->ips;  
-
+    
             if (empty($whiteIps) || (is_array($whiteIps) && count(array_filter($whiteIps)) === 0)) {  
                 return $next($request);  
             }  
-            
+
             if (!in_array($userIp, $whiteIps)) {  
                 return response()->json([  
                     'status' => false,  
                     'message' => 'Access denied: IP ' . $userIp . ' not allowed!'  
                 ], 403);  
-            }     
+            }  
 
             return $next($request);  
         } catch (\Exception $e) {  
