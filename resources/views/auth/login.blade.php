@@ -26,8 +26,11 @@
                                 <span class="mt-1 message-error text-danger"></span>
                             </div>
                         </div>         
-                        <div class="mb-3">
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
                             {!! NoCaptcha::display() !!}
+                            <div>
+                                <button type="button" class="btn btn-primary" id="refreshCaptcha"><i class="ri-refresh-line"></i></button> 
+                            </div>
                         </div>               
                         <div class="mt-4">
                             <x-button type="submit" class="btn btn-primary w-100" label="Submit" />
@@ -44,4 +47,9 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/action.js') }}"></script>
+<script>
+    document.getElementById('refreshCaptcha').addEventListener('click', function() {  
+            grecaptcha.reset();  
+        });  
+</script>
 @endpush
