@@ -32,12 +32,30 @@ Route::prefix('super')->as('super.')->middleware('auth', 'checkRole:Super')->gro
     Route::prefix('lecturer')->as('lecturer.')->group(function () {
         Route::controller(\App\Http\Controllers\Super\Lecturer\LecturerController::class)->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/get', 'get')->name('get');
+            Route::post('/get-data', 'getData')->name('getData');
+        });
+    });
+
+    // Admin
+    Route::prefix('admin')->as('admin.')->group(function () {
+        Route::controller(\App\Http\Controllers\Super\Admin\AdminController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::get('/get', 'get')->name('get');
             Route::post('/get-data', 'getData')->name('getData');
             Route::get('/get/{id}', 'getById')->name('getById');
             Route::put('{id}', 'update')->name('update');
             Route::delete('{id}', 'destroy')->name('destroy');
+        });
+    });
+
+     // Program Study
+     Route::prefix('program_study')->as('program_study.')->group(function () {
+        Route::controller(\App\Http\Controllers\Super\ProgramStudy\ProgramStudyController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/get', 'get')->name('get');
+            Route::post('/get-data', 'getData')->name('getData');
         });
     });
 });

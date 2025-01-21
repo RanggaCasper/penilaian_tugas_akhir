@@ -46,8 +46,11 @@
                 @if (auth()->user()->role->name == "Super")
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('super.dashboard') }}" active="{{ request()->routeIs('super.dashboard') }}" />
                     <x-menu-title title="Pengguna" />
-                        <x-navlink icon="ri-user-line" title="Kelola Mahasiswa" href="{{ route('super.student.index') }}" active="{{ request()->routeIs('super.student.index') }}" />
+                        <x-navlink icon="ri-user-line" title="Kelola Admin" href="{{ route('super.admin.index') }}" active="{{ request()->routeIs('super.admin.index') }}" />
                         <x-navlink icon="ri-user-line" title="Kelola Dosen" href="{{ route('super.lecturer.index') }}" active="{{ request()->routeIs('super.lecturer.index') }}" />
+                        <x-navlink icon="ri-user-line" title="Kelola Mahasiswa" href="{{ route('super.student.index') }}" active="{{ request()->routeIs('super.student.index') }}" />
+                    <x-menu-title title="Lainnya" />
+                        <x-navlink icon="ri-user-line" title="Kelola Program Study" href="{{ route('super.program_study.index') }}" active="{{ request()->routeIs('super.program_study.index') }}" />
                 @elseif (auth()->user()->role->name == "Admin")
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('admin.dashboard') }}" active="{{ request()->routeIs('admin.dashboard') }}" />
                     <x-menu-title title="Pengguna" />
