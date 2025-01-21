@@ -49,20 +49,20 @@ $(document).ready(function () {
     });
 
     $('#modal').on('show.bs.modal', function (event) {
-    const button = $(event.relatedTarget);
-    const examId = button.data('id');
-    const form = $('#form');
-    const formContainer = $('#form-display');
-    const questionsContainer = $('#questions-display');
-    const revisionsContainer = $('#revisions-display');
+        const button = $(event.relatedTarget);
+        const examId = button.data('id');
+        const form = $('#form');
+        const formContainer = $('#form-display');
+        const questionsContainer = $('#questions-display');
+        const revisionsContainer = $('#revisions-display');
 
-    form.find('input[name="exam_id"]').remove();
-    form.prepend(`<input type="hidden" name="exam_id" value="${examId}">`);
+        form.find('input[name="exam_id"]').remove();
+        form.prepend(`<input type="hidden" name="exam_id" value="${examId}">`);
 
-    // Reset content when modal is opened
-    questionsContainer.html('');
-    revisionsContainer.html('');
-    
+        // Reset content when modal is opened
+        questionsContainer.html('');
+        revisionsContainer.html('');
+        
     $.ajax({
         url: '{{ route("lecturer.proposal.exam.getRubric", ":id") }}'.replace(':id', examId),
         method: 'GET',

@@ -237,7 +237,8 @@
                         <div class="card">
                             <div class="p-4 text-center card-body">
                                 <div class="mx-auto mb-4 avatar-xl position-relative">
-                                    <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="" class="img-fluid rounded-circle">
+                                    <!-- Rounded-circle Image -->
+                                    <img src="{{ asset('assets/images/users/agus.jpg') }}" alt="" class="rounded-circle avatar-xl material-shadow">
                                     <a href="#" class="bottom-0 btn btn-success btn-sm position-absolute end-0 rounded-circle avatar-xs">
                                         <div class="bg-transparent avatar-title">
                                             <i class="align-bottom ri-github-fill"></i>
@@ -255,7 +256,7 @@
                         <div class="card">
                             <div class="p-4 text-center card-body">
                                 <div class="mx-auto mb-4 avatar-xl position-relative">
-                                    <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="" class="img-fluid rounded-circle">
+                                    <img src="{{ asset('assets/images/users/wibawa.jpg') }}" alt="" class="rounded-circle avatar-xl material-shadow">
                                     <a href="#" class="bottom-0 btn btn-success btn-sm position-absolute end-0 rounded-circle avatar-xs">
                                         <div class="bg-transparent avatar-title">
                                             <i class="align-bottom ri-github-fill"></i>
@@ -273,7 +274,7 @@
                         <div class="card">
                             <div class="p-4 text-center card-body">
                                 <div class="mx-auto mb-4 avatar-xl position-relative">
-                                    <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="" class="img-fluid rounded-circle">
+                                    <img src="{{ asset('assets/images/users/johan.jpg') }}" alt="" class="rounded-circle avatar-xl material-shadow">
                                     <a href="#" class="bottom-0 btn btn-success btn-sm position-absolute end-0 rounded-circle avatar-xs">
                                         <div class="bg-transparent avatar-title">
                                             <i class="align-bottom ri-github-fill"></i>
@@ -333,8 +334,8 @@
                                 <div class="mt-3 text-muted">
                                     <ul class="list-unstyled ff-secondary footer-list">
                                         <li><a href="https://www.youtube.com/channel/UCp5kuekAFrF3OBeyqO5Xl1w"><i class="ri ri-youtube-fill me-2"></i>Youtube</a></li>
-                                        <li><a href="https://www.instagram.com/teknologiinformasi.pnb/?hl=en"><i class="ri ri-facebook-fill me-2"></i>Facebook</a></a></li>
-                                        <li><a href="https://www.facebook.com/profile.php?id=61555520697261"><i class="ri ri-instagram-fill me-2"></i>Instagram</a></a></li>
+                                        <li><a href="https://www.facebook.com/profile.php?id=61555520697261"><i class="ri ri-facebook-fill me-2"></i>Facebook</a></a></li>
+                                        <li><a href="https://www.instagram.com/teknologiinformasi.pnb/?hl=en"><i class="ri ri-instagram-fill me-2"></i>Instagram</a></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -342,8 +343,8 @@
                                 <h5 class="mb-0 text-white">Kontak</h5>
                                 <div class="mt-3 text-muted">
                                     <ul class="list-unstyled ff-secondary footer-list">
-                                        <li><a href="mailto:mirangganata@gmail.com"><i class="ri ri-mail-fill me-2"></i>mirangganata@gmail.com</a></li>
-                                        <li><a href="https://wa.me/6283189944777"><i class="ri ri-phone-fill me-2"></i>083189944777</a></li>
+                                        <li><a href="mailto:poltek@pnb.ac.id"><i class="ri ri-mail-fill me-2"></i>poltek@pnb.ac.id</a></li>
+                                        <li><a href="tel:(0361)701981"><i class="ri ri-phone-fill me-2"></i>(0361) 701981</a></li>
                                         <li><a href="https://maps.app.goo.gl/WDJE9Bf3vJ3wuDPx9"><i class="ri ri-map-pin-fill me-2"></i>Kampus Politeknik Negeri Bali, Bukit Jimbaran, Kuta Selatan, Badung - Bali 80361
                                             PO BOX 1064 Tuban</a></li>
                                     </ul>

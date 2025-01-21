@@ -202,7 +202,15 @@ class PeriodController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $periode = Period::findOrFail($id);
+                $periode = Period::with('proposals')->findOrFail($id);
+            
+                if ($periode->proposals()->count() > 0 || $periode->thesis()->count() > 0) {  
+                    return response()->json([  
+                        'status' => false,  
+                        'message' => 'Tidak dapat menghapus periode ini karena ada entri yang terkait.',  
+                    ], 409);
+                }  
+
                 $periode->delete();
 
                 return response()->json([
@@ -217,7 +225,7 @@ class PeriodController extends Controller
             } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Terjadi kesalahan saat menghapus data',
+                    'message' => $e->getMessage(),
                 ], 500);
             }
         }

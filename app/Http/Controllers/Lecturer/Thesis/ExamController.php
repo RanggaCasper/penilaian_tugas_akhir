@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Lecturer\Thesis;
 
+use Carbon\Carbon;
 use App\Models\Exam\Exam;
 use App\Models\Exam\Score;
 use Illuminate\Http\Request;
 use App\Models\Exam\SubScore;
 use App\Models\Rubric\Rubric;
+use App\Models\Thesis\Thesis;
 use App\Models\Exam\Assesment;
 use App\Models\Exam\Assessment;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -15,7 +17,6 @@ use App\Models\Rubric\SubCriteria;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Evaluation\Evaluation;
-use App\Models\Thesis\Thesis;
 
 class ExamController extends Controller
 {
@@ -41,6 +42,7 @@ class ExamController extends Controller
                     ->orWhere('secondary_examiner_id', Auth::id())
                     ->orWhere('tertiary_examiner_id', Auth::id());
             })
+            ->whereDate('exam_date', Carbon::today())
             ->where('type', 'thesis')
             ->orderBy('start_time', 'asc')
             ->get();

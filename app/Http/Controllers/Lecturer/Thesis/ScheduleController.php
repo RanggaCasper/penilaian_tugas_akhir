@@ -111,12 +111,17 @@ class ScheduleController extends Controller
                             return '-';
                         }
                     })                   
-                    ->addColumn('action', function ($row) {  
-                        return '  
-                            <button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Lihat</button>  
-                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Hapus</button>  
-                        ';  
-                    })  
+                    ->addColumn('action', function ($row) {
+                        $examDate = Carbon::parse($row->exam_date);  
+                        if($examDate->isPast()) {
+                            $buttons = '<button type="button" class="btn btn-primary btn-sm edit-btn me-1" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Nilai</button>';  
+                            if ($row->assessments->contains('examiner_id', Auth::user()->id)) {  
+                                $buttons .= '<a href="' . route('lecturer.thesis.exam.generatePDF', $row->id) . '" class="btn btn-success btn-sm">Download</a>';  
+                            }  
+    
+                            return $buttons;
+                        }
+                    })
                     ->rawColumns(['action', 'status'])
                     ->make(true);
             } catch (\Exception $e) {
