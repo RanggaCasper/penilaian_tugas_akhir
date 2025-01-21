@@ -88,10 +88,10 @@
             <form action="{{ route('student.proposal.register.store') }}" data-reset="false" method="POST">  
                 @csrf  
                 <div class="mb-3">  
-                    <x-input-field label="Judul Proposal" type="text" name="title" id="title" required />  
+                    <x-input-field label="Judul Proposal" type="text" name="title" id="title" attr="readonly" />  
                 </div>  
                 <div class="mb-3">  
-                    <x-input-field label="Tautan Dokumen" type="text" name="document" id="document" required />  
+                    <x-input-field label="Tautan Dokumen" type="text" name="document" id="document" />  
                 </div>  
                 <div class="mb-3">  
                     <x-input-field label="Tautan Dokumen Pendukung" type="text" name="support_document" id="support_document" />  
@@ -112,7 +112,7 @@
                         @foreach (\App\Models\User::whereHas('role', function ($query) {
                                 $query->where('name', 'Lecturer');
                             })->get() as $item)
-                            <option value="{{ $item->id }}">{{ $item->name . ' - ' . $item->secondary_identity }}</option>
+                            <option value="{{ $item->secondary_identity }}">{{ $item->name . ' - ' . $item->secondary_identity }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -142,6 +142,38 @@
     $('#primary_mentor').select2({
         placeholder: "-- Pilih Pembimbing --",
         allowClear: true
+    });
+
+    $.ajax({
+        url: '{{ route('student.proposal.register.getApi') }}',
+        type: 'GET',
+        success: function (response) {
+            const data = response[0];
+            $('#title').val(data.judul_proposal);
+            const rubricOptions = {  
+                "PEMBUATAN ALAT/PERANGKAT LUNAK": 1,  
+                "PERENCANAAN/ANALISA SISTEM": 2  
+            };  
+            
+            const rubricId = rubricOptions[data.jenis_proposal]; 
+            if (rubricId) {  
+                $('#rubric_id').val(rubricId);  
+            }  
+            $('#primary_mentor').val(data.nip).trigger('change');  
+        },
+        error: function (error) {
+            Swal.fire({
+                html: '<div class="mt-3"><lord-icon src="https://cdn.lordicon.com/tdrtiskw.json" trigger="loop" colors="primary:#f06548,secondary:#f7b84b" style="width:120px;height:120px"></lord-icon><div class="pt-2 mt-4 fs-15"><h4>Terjadi Kesalahan !</h4><p class="mx-4 mb-0 text-muted">' +error.responseJSON.message+ '</p></div></div>',
+                showCancelButton: !0,
+                showConfirmButton: !1,
+                customClass: {
+                    cancelButton: "btn btn-primary w-xs mb-1"
+                },
+                cancelButtonText: "Back",
+                buttonsStyling: !1,
+                showCloseButton: !0
+            });
+        }
     });
 </script>
 @endpush

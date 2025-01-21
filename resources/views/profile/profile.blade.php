@@ -15,7 +15,7 @@
                         <img src="{{ auth()->user()->profile_image ? auth()->user()->profile_image : 'https://www.casperproject.my.id/storage/profile/default.jpg' }}" class="rounded-circle avatar-xl img-thumbnail user-profile-image material-shadow" alt="user-profile-image">
                     </div>
                     <h5 class="mb-1 fs-16">{{ auth()->user()->name }}</h5>
-                    <p class="mb-0 text-muted">{{ auth()->user()->program_study->name }}</p>
+                    <p class="mb-0 text-muted">{{ auth()->user()->program_study->name ?? '-' }}</p>
                 </div>
             </div>
         </div>

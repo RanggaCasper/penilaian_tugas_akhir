@@ -25,8 +25,10 @@
                                 </button>
                                 <span class="mt-1 message-error text-danger"></span>
                             </div>
-                        </div>                        
-
+                        </div>         
+                        <div class="mb-3">
+                            {!! NoCaptcha::display() !!}
+                        </div>               
                         <div class="mt-4">
                             <x-button type="submit" class="btn btn-primary w-100" label="Submit" />
                         </div>

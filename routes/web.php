@@ -220,6 +220,7 @@ Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student'
                 Route::post('/', 'store')->name('store');
                 Route::put('/', 'update')->name('update');
                 Route::get('/get/mentor', 'getMentor')->name('getMentor');
+                Route::get('/get', 'getApi')->name('getApi');
             });
         });
         
