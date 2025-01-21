@@ -112,7 +112,7 @@
                         @foreach (\App\Models\User::whereHas('role', function ($query) {
                                 $query->where('name', 'Lecturer');
                             })->get() as $item)
-                            <option value="{{ $item->secondary_identity }}">{{ $item->name . ' - ' . $item->secondary_identity }}</option>
+                            <option value="{{ $item->id }}">{{ $item->name . ' - ' . $item->secondary_identity }}</option>
                         @endforeach
                     </select>
                 </div>
