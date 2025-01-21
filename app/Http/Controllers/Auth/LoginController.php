@@ -41,9 +41,12 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         if (env('APP_ENV') == 'production') {
-            $request->validate([
-                'g-recaptcha-response' => 'required|captcha'
-            ]);
+            $request->validate([  
+                'g-recaptcha-response' => 'required|captcha'  
+            ], [  
+                'g-recaptcha-response.required' => 'The reCAPTCHA field is required.',  
+                'g-recaptcha-response.captcha' => 'The reCAPTCHA verification failed. Please try again.'  
+            ]); 
         }
 
         $credentials = $request->validate([
