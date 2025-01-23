@@ -279,6 +279,22 @@ Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student'
             Route::get('/', 'index')->name('index');
         });
 
+        // Dokumen Revisi
+        Route::prefix('revisi')->as('revisi.')->group(function () {
+            Route::controller(\App\Http\Controllers\Student\Result\RevisiController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/download/{type}/{id}', 'generatePdf')->name('generatePdf');
+            });
+        });
+
+        // Dokumen Pertanyaan
+        Route::prefix('question')->as('question.')->group(function () {
+            Route::controller(\App\Http\Controllers\Student\Result\QuestionController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/download/{type}/{id}', 'generatePdf')->name('generatePdf');
+            });
+        });
+
         // Dokumen
         Route::prefix('document')->as('document.')->group(function () {
             Route::controller(\App\Http\Controllers\Student\Result\DocumentController::class)->group(function () {
@@ -286,6 +302,7 @@ Route::prefix('student')->as('student.')->middleware('auth', 'checkRole:Student'
                 Route::get('/download/{type}/{id}', 'generatePdf')->name('generatePdf');
             });
         });
+
     });
 });
 

@@ -58,7 +58,7 @@ class ScheduleController extends Controller
                 }
 
                 if ($request->export === 'pdf') {
-                    $date = Carbon::parse($date)->locale('id')->isoFormat('DD MMMM YYYY');
+                    $date = Carbon::parse($date)->locale('id')->isoFormat('dddd, DD MMMM YYYY');
 
                     $title = "JADWAL UJIAN TUGAS AKHIR - {$date}";
 
@@ -112,9 +112,13 @@ class ScheduleController extends Controller
                         }
                     })                   
                     ->addColumn('action', function ($row) {
-                        $examDate = Carbon::parse($row->exam_date);  
+                        $examDate = Carbon::parse($row->exam_date);
                         if($examDate->isPast()) {
-                            $buttons = '<button type="button" class="btn btn-primary btn-sm edit-btn me-1" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Nilai</button>';  
+                            $buttons = null;
+                            
+                            if ($row->is_editable) {
+                                $buttons = '<button type="button" class="btn btn-primary btn-sm edit-btn me-1" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#modal">Nilai</button>';  
+                            }
                             if ($row->assessments->contains('examiner_id', Auth::user()->id)) {  
                                 $buttons .= '<a href="' . route('lecturer.thesis.exam.generatePDF', $row->id) . '" class="btn btn-success btn-sm">Download</a>';  
                             }  

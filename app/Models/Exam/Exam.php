@@ -14,6 +14,10 @@ class Exam extends Model
         'id'
     ];
 
+    protected $casts = [
+        'is_editable' => 'boolean'
+    ];
+
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');

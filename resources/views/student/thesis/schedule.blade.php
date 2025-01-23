@@ -10,7 +10,7 @@
                     type="text" 
                     name="exam_date" 
                     id="exam_date" 
-                    value="{{ $schedule && $schedule->exam_date ? \Carbon\Carbon::parse($schedule->exam_date)->locale('id')->translatedFormat('j F Y') : 'Tidak Ada Tanggal' }}"
+                    value="{{ $schedule && $schedule->exam_date ? \Carbon\Carbon::parse($schedule->exam_date)->locale('id')->translatedFormat('l, j F Y') : 'Tidak Ada Tanggal' }}"
                     attr="disabled" 
                 />
             </div>

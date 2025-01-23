@@ -106,6 +106,8 @@
                     <x-menu-title title="Hasil" />
                         <x-navlink icon="ri-file-list-3-line" title="Hasil Ujian" href="{{ route('student.result.index') }}" active="{{ request()->routeIs('student.result.index') }}" />
                         <x-navlink icon="ri-file-download-line" title="Download Hasil" href="{{ route('student.result.document.index') }}" active="{{ request()->routeIs('student.result.document.index') }}" />
+                        <x-navlink icon="ri-file-download-line" title="Download Perbaikan" href="{{ route('student.result.revisi.index') }}" active="{{ request()->routeIs('student.result.revisi.index') }}" />
+                        <x-navlink icon="ri-file-download-line" title="Download Pertanyaan" href="{{ route('student.result.question.index') }}" active="{{ request()->routeIs('student.result.question.index') }}" />
                 @elseif (auth()->user()->role->name == "Special")
                     <x-navlink icon="ri-dashboard-line" title="Dashboard" href="{{ route('special.dashboard') }}" active="{{ request()->routeIs('special.dashboard') }}" />
                     <x-menu-title title="Api" />

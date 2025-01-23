@@ -200,7 +200,7 @@ class ScheduleController extends Controller
                 }
 
                 if ($request->export === 'pdf') {
-                    $title = "Jadwal Ujian - {$date}";
+                    $title = "JADWAL UJIAN PROPOSAL - ". Carbon::parse($date)->locale('id')->isoFormat('dddd, DD MMMM YYYY');
 
                     $pdf = $pdf->loadView('exports.proposal.schedule_pdf', [
                         'data' => $data,

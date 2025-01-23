@@ -2,6 +2,7 @@
 
 namespace App\Models\Exam;
 
+use App\Models\Rubric\Rubric;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,6 +31,11 @@ class Assessment extends Model
     public function examiner()
     {
         return $this->belongsTo(User::class, 'examiner_id');
+    }
+
+    public function rubric()
+    {
+        return $this->belongsTo(Rubric::class, 'rubric_id');
     }
 
     public function scores()

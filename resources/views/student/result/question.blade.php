@@ -2,7 +2,7 @@
 
 @section('content')
 @if (!empty($proposal_score['scores']))
-    <x-card title="Hasil Ujian Proposal">
+    <x-card title="Pertanyaan Ujian Proposal">
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -17,11 +17,11 @@
                         <tr>
                             <td>{{ $score['position'] }}</td>
                             <td>{{ $score['name'] }}</td>
-                            <td><a href="{{ route('student.result.document.generatePdf', ['type' => 'proposal', 'id' => $score['id']]) }}" class="btn btn-primary btn-sm">Download</a></td>
+                            <td><a href="{{ route('student.result.question.generatePdf', ['type' => 'proposal', 'id' => $score['id']]) }}" class="btn btn-primary btn-sm">Download</a></td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center">Tidak ada data Nilai untuk proposal.</td>
+                            <td colspan="3" class="text-center">Tidak ada data untuk proposal.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -29,14 +29,14 @@
         </div>
     </x-card>
 @else
-    <x-card title="Hasil Ujian Proposal">
+    <x-card title="Pertanyaan Ujian Proposal">
         <p class="text-center">Data tidak ditemukan.</p>
     </x-card>
 @endif
 
 
 @if (!empty($thesis_score['scores']))
-    <x-card title="Hasil Ujian Tugas Akhir">
+    <x-card title="Pertanyaan Ujian Tugas Akhir">
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -51,7 +51,7 @@
                         <tr>
                             <td>{{ $score['position'] }}</td>
                             <td>{{ $score['name'] }}</td>
-                            <td><a href="{{ route('student.result.document.generatePdf', ['type' => 'thesis', 'id' => $score['id']]) }}" class="btn btn-primary btn-sm">Download</a></td>
+                            <td><a href="{{ route('student.result.question.generatePdf', ['type' => 'thesis', 'id' => $score['id']]) }}" class="btn btn-primary btn-sm">Download</a></td>
                         </tr>
                     @empty
                         <tr>
@@ -63,40 +63,7 @@
         </div>
     </x-card>
 @else
-    <x-card title="Hasil Ujian Tugas Akhir">
-        <p class="text-center">Data tidak ditemukan.</p>
-    </x-card>
-@endif
-
-@if (!empty($guidance_score['scores']))
-    <x-card title="Nilai Pembimbing">
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Posisi Pembimbing</th>
-                        <th>Nama Pembimbing</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($guidance_score['scores'] as $score)
-                        <tr>
-                            <td>{{ $score['position'] }}</td>
-                            <td>{{ $score['name'] }}</td>
-                            <td><a href="{{ route('student.result.document.generatePdf', ['type' => 'guidance', 'id' => $score['id']]) }}" class="btn btn-primary btn-sm">Download</a></td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center">Data tidak ditemukan.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </x-card>
-@else
-    <x-card title="Hasil Ujian Tugas Akhir">
+    <x-card title="Pertanyaan Ujian Tugas Akhir">
         <p class="text-center">Data tidak ditemukan.</p>
     </x-card>
 @endif

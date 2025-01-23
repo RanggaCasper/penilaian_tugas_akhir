@@ -48,9 +48,9 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
                 'No' => $key + 1,
                 'NIM' => $schedule->student->identity,
                 'Mahasiswa' => $schedule->student->name,
-                'Judul' => $schedule->type === 'TUGAS AKHIR' 
+                'Judul' => $schedule->type === 'TUGAS AKHIR' || $schedule->type === 'thesis'
                             ? ($schedule->student->thesis->title ?? '-') 
-                            : ($schedule->type === 'PROPOSAL' 
+                            : ($schedule->type === 'PROPOSAL' || $schedule->type === 'proposal'
                                 ? ($schedule->student->proposal->title ?? '-') 
                                 : '-'),
                 'Penguji 1' => $schedule->primary_examiner->name ?? '-',
@@ -154,6 +154,6 @@ class ScheduleExport implements FromCollection, WithHeadings, WithStyles, WithEv
 
     private function formatDate($date): string
     {
-        return Carbon::parse($date)->locale('id')->isoFormat('DD MMMM YYYY');
+        return Carbon::parse($date)->locale('id')->isoFormat('dddd, DD MMMM YYYY');
     }
 }

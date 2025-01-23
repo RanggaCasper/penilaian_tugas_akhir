@@ -14,7 +14,7 @@ class AssessmentService
      * @param int $studentId
      * @return array
      */
-    public function calculateScore(int $studentId, ?string $type = null): array
+    public function calculateScore(int $studentId, ?string $type = null, bool $is_editable = true): array
     {
         $query = Exam::with([
             'assessments.scores.criteria',
@@ -29,6 +29,10 @@ class AssessmentService
                 $query->where('type', $type);
             }
         });
+
+        if ($is_editable) {
+            $query->where('is_editable', false);
+        }
 
         $exams = $query->get();
 
