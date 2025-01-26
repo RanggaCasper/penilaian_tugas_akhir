@@ -197,37 +197,4 @@ class RegisterController extends Controller
 
         abort(403);
     }
-
-    public function getApi()  
-    {  
-        $nim = Auth::user()->identity;
-        // dd($nim);
-        $client = new Client();  
-
-        try {  
-            $response = $client->get('http://localhost:8080/pnbbs/capi/get_peserta');  
-            $data = json_decode($response->getBody(), true); // Decode response ke array asosiatif  
-
-            // Jika nim di-set, filter data berdasarkan nim  
-            if ($nim) {  
-                // Filter data berdasarkan nim  
-                $filteredData = array_filter($data, function ($item) use ($nim) {  
-                    return isset($item['nim']) && $item['nim'] === $nim;  
-                });  
-                // Ubah kembali ke indeks numerik (optional)  
-                $filteredData = array_values($filteredData);  
-                return response()->json($filteredData);  
-            }  
-            
-            // Jika tidak ada nim yang diberikan, kembalikan semua data  
-            return response()->json($data);  
-
-        } catch (\GuzzleHttp\Exception\RequestException $e) {  
-            // Tangani kesalahan jika request gagal  
-            return response()->json([  
-                'error' => 'Tidak dapat mengambil data',  
-                'message' => $e->getMessage()  
-            ], $e->getCode() ?: 500);  
-        }  
-    }
 }
